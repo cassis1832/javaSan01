@@ -1,5 +1,6 @@
 package com.holis.san01.controller;
 
+import com.holis.san01.exceptions.ApiDeleteException;
 import com.holis.san01.exceptions.NotFoundRequestException;
 import com.holis.san01.model.EntidadeDTO;
 import com.holis.san01.services.EntidadeService;
@@ -20,7 +21,7 @@ import javax.validation.Valid;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value="/api/entds", produces=MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/entds", produces = MediaType.APPLICATION_JSON_VALUE)
 public class EntidadeController {
 
     private final EntidadeService entidadeService;
@@ -49,6 +50,7 @@ public class EntidadeController {
      */
     @GetMapping("/listarPag")
     public ResponseEntity<Page<EntidadeDTO>> listarEntidades(
+            @RequestParam(name = "tipo", defaultValue = "todos") String tipo,
             @RequestParam(name = "status", defaultValue = "A") String status,
             @RequestParam(name = "filterText", defaultValue = "") String filterText,
             @PageableDefault(page = 0, size = 40)
@@ -56,9 +58,7 @@ public class EntidadeController {
                     @SortDefault(sort = "codEntd")
             }) Pageable pageable) {
 
-        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        Page<EntidadeDTO> clientes = entidadeService.listarEntidades(status, filterText, pageable);
-        System.out.println("BBBBBBBBBBBBBBBBBBBBBBBBBBB");
+        Page<EntidadeDTO> clientes = entidadeService.listarEntidades(tipo, status, filterText, pageable);
         return new ResponseEntity<>(clientes, HttpStatus.OK);
     }
 
@@ -97,7 +97,11 @@ public class EntidadeController {
     @DeleteMapping("/excluir")
     public ResponseEntity<?> excluirEntidade(@RequestParam(name = "codEntd") Integer codEntd) {
 
-        entidadeService.excluirEntidade(codEntd);
+        try {
+            entidadeService.excluirEntidade(codEntd);
+        } catch (Exception ex) {
+            throw new ApiDeleteException(ex.getMessage());
+        }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

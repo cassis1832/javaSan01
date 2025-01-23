@@ -24,4 +24,31 @@ public interface EntidadeRepository extends JpaRepository<Entidade, Integer> {
             "(e.razaoSocial like concat('%',?1,'%') or e.nome like concat('%',?1,'%')) " +
             "order by codEntd")
     Page<Entidade> findEntidades(String status, String filterText, Pageable pageable);
+
+    @Query("select e from Entidade e Where " +
+            "e.indCliente = 'S' and " +
+            "e.status = ?1 " +
+            "order by codEntd")
+    Page<Entidade> findClientes(String status, Pageable pageable);
+
+    @Query("select e from Entidade e Where " +
+            "e.indCliente = 'S' and " +
+            "e.status = ?1 and " +
+            "(e.razaoSocial like concat('%',?1,'%') or e.nome like concat('%',?1,'%')) " +
+            "order by codEntd")
+    Page<Entidade> findClientes(String status, String filterText, Pageable pageable);
+
+    @Query("select e from Entidade e Where " +
+            "e.indFornec = 'S' and " +
+            "e.status = ?1 " +
+            "order by codEntd")
+    Page<Entidade> findFornecedores(String status, Pageable pageable);
+
+    @Query("select e from Entidade e Where " +
+            "e.indFornec = 'S' and " +
+            "e.status = ?1 and " +
+            "(e.razaoSocial like concat('%',?1,'%') or e.nome like concat('%',?1,'%')) " +
+            "order by codEntd")
+    Page<Entidade> findFornecedores(String status, String filterText, Pageable pageable);
+
 }

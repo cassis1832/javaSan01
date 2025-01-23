@@ -1,10 +1,13 @@
 package com.holis.san01.services;
 
+import com.holis.san01.exceptions.ApiDeleteException;
 import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.exceptions.NotFoundRequestException;
 import com.holis.san01.model.Entidade;
 import com.holis.san01.model.EntidadeDTO;
+import com.holis.san01.model.PedVenda;
 import com.holis.san01.repository.EntidadeRepository;
+import com.holis.san01.repository.PedVendaRepository;
 import com.holis.san01.util.Converter;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -26,6 +30,7 @@ public class EntidadeService {
 
     private final SequenciaService sequenciaService;
     private final EntidadeRepository entidadeRepository;
+    private final PedVendaRepository pedVendaRepository;
 
     public EntidadeDTO lerEntidade(Integer codEntd) {
 
@@ -36,17 +41,40 @@ public class EntidadeService {
         return Converter.mapTo(entidade, EntidadeDTO.class);
     }
 
-    public Page<EntidadeDTO> listarEntidades(String codSit, String filterText, Pageable pageable) {
+    public Page<EntidadeDTO> listarEntidades(
+            String tipo, String status, String filterText, Pageable pageable) {
 
-        Page<Entidade> Entidades;
+        Page<Entidade> Entidades = null;
 
-        if (StringUtils.isBlank(filterText)) {
-            Entidades = entidadeRepository.findEntidades(codSit, pageable);
-        } else {
-            Entidades = entidadeRepository.findEntidades(codSit, filterText, pageable);
+        if (tipo.equals("todos")) {
+            if (StringUtils.isBlank(filterText)) {
+                Entidades = entidadeRepository.findEntidades(status, pageable);
+            } else {
+                Entidades = entidadeRepository.findEntidades(status, filterText, pageable);
+            }
         }
 
-        return Entidades.map(this::toDto);
+        if (tipo.equals("clientes")) {
+            if (StringUtils.isBlank(filterText)) {
+                Entidades = entidadeRepository.findClientes(status, pageable);
+            } else {
+                Entidades = entidadeRepository.findClientes(status, filterText, pageable);
+            }
+        }
+
+        if (tipo.equals("fornecedores")) {
+            if (StringUtils.isBlank(filterText)) {
+                Entidades = entidadeRepository.findFornecedores(status, pageable);
+            } else {
+                Entidades = entidadeRepository.findFornecedores(status, filterText, pageable);
+            }
+        }
+
+        if (Entidades != null) {
+            return Entidades.map(this::toDto);
+        }
+
+        throw new ApiRequestException("Parametros invalidos no HTTP!");
     }
 
     public EntidadeDTO incluirEntidade(EntidadeDTO dto) {
@@ -58,6 +86,20 @@ public class EntidadeService {
         }
 
         Entidade entidade = Converter.mapTo(dto, Entidade.class);
+
+        // Campos chave estrangeira tem que ser convertidos para NULL
+        if (entidade.getCodCondPag() == null || entidade.getCodCondPag().isEmpty()) {
+            entidade.setCodCondPag(null);
+        }
+
+        if (entidade.getTipoFinIdEnt() == 0) {
+            entidade.setTipoFinIdEnt(null);
+        }
+
+        if (entidade.getTipoFinIdSai() == 0) {
+            entidade.setTipoFinIdSai(null);
+        }
+        // ----------------------------------------------------------
 
         entidade.setDtCriacao(new Date());
         entidade.setStatus("A");
@@ -95,6 +137,20 @@ public class EntidadeService {
         entidade.setObservacoes(dto.getObservacoes());
         entidade.setSituacao(dto.getSituacao());
         entidade.setStatus(dto.getStatus());
+
+        // Campos chave estrangeira tem que ser convertidos para NULL
+        if (entidade.getCodCondPag() == null || entidade.getCodCondPag().isEmpty()) {
+            entidade.setCodCondPag(null);
+        }
+
+        if (entidade.getTipoFinIdEnt() == 0) {
+            entidade.setTipoFinIdEnt(null);
+        }
+
+        if (entidade.getTipoFinIdSai() == 0) {
+            entidade.setTipoFinIdSai(null);
+        }
+
         entidade = entidadeRepository.saveAndFlush(entidade);
         return Converter.mapTo(entidade, EntidadeDTO.class);
     }
@@ -105,8 +161,16 @@ public class EntidadeService {
                 .orElseThrow(() -> new NotFoundRequestException(
                         "Entidade não encontrado para efetuar exclusão"));
 
-        entidadeRepository.delete(entidade);
+        //  Verifica se há pedido de venda relacionado
+        List<PedVenda> pedidos = pedVendaRepository.ListPedVendas(entidade.getCodEntd());
+
+        if (pedidos == null || pedidos.isEmpty()) {
+            entidadeRepository.deleteById(entidade.getCodEntd());
+        } else {
+            throw new ApiDeleteException("Não é possível excluir o cliente. Existem pedidos de vendas associados.");
+        }
     }
+
 
     public Integer obterProximoCodigo() {
 

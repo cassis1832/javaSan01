@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
-public class ItemDto {
+public class ItemDTO {
     @NotNull(message = "Código do item é obrigatório")
     private String codItem;
     @NotNull(message = "Descrição do item é obrigatória")
