@@ -20,27 +20,22 @@ public class SequenciaService {
     /**
      * Obter o proximo numero
      */
-    public Integer proximoNumero(String codSeq) {
-
+    public Long proximoNumero(final String codSeq) {
         Sequencia seq = sequenciaRepository.findSequencia(codSeq)
                 .orElseThrow(() -> new NotFoundRequestException("Numeração não encontrada"));
-
         return seq.getNumeroSeguinte();
     }
 
     /**
      * Obtem o último numero usado
      */
-    public Integer ultimoNumero(String codSeq) {
-
+    public Long ultimoNumero(final String codSeq) {
         Sequencia seq = sequenciaRepository.findSequencia(codSeq)
                 .orElseThrow(() -> new NotFoundRequestException("Numeração não encontrada"));
-
         return seq.getNumeroAtual();
     }
 
-    public void salvaSequencia(String codSeq, Integer numero) {
-
+    public void salvaSequencia(final String codSeq, final Long numero) {
         Sequencia seq = sequenciaRepository.findSequencia(codSeq)
                 .orElseThrow(() -> new NotFoundRequestException("Numeração não encontrada"));
 

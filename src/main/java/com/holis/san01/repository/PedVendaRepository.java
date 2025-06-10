@@ -6,17 +6,22 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface PedVendaRepository extends JpaRepository<PedVenda, Integer> {
-    @Query("select p from PedVenda p Where " +
-            "p.id = ?1")
-    Optional<PedVenda> findPedVenda(Integer id);
+@Repository
+public interface PedVendaRepository extends JpaRepository<PedVenda, Long> {
+    /**
+     * Ler um registro de pedido de venda por nr_pedido
+     */
+    @Query("select p from PedVenda p Where p.nrPedido = ?1")
+    Optional<PedVenda> findPedVenda(Long nrPedido);
 
-    //  Lista dos pedidos da entidade
-    @Query("select p from PedVenda p Where " +
-            "p.codEntd = ?1")
-    List<PedVenda> ListPedVendas(Integer codEntd);
+    /**
+     * Listar os pedidos de um determinado cliente
+     */
+    @Query("select p from PedVenda p Where p.codEntd = ?1")
+    List<PedVenda> listPedVendas(Long codEntd);
 }

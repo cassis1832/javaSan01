@@ -1,7 +1,8 @@
 package com.holis.san01.model;
 
-import jakarta.persistence.Column;
+import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
@@ -10,7 +11,13 @@ import java.util.Date;
 
 @Data
 public class UsuarioDTO {
+    @Column(nullable = false)
     private Long id;
+    @Column(nullable = false)
+    @Pattern(regexp = "[SN]", message = "O campo 'archive' deve ser 'S' ou 'N'.")
+    private String archive;
+    private String situacao;
+    private Date dtCriacao;
     @NotNull(message = "Email é obrigatório")
     @Email(message = "Email com formato inválido")
     private String email;
@@ -24,9 +31,4 @@ public class UsuarioDTO {
     private Date dtAltSenha;
     private Date dtRecuperacao;
     private String tipoMenu;
-    private String situacao;
-    private Date dtCriacao;
-    @Column(nullable = false)
-    @Pattern(regexp = "[AI]", message = "O campo código da situação deve ser 'A' ou 'I'.")
-    private String status;
 }

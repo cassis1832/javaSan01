@@ -5,7 +5,7 @@ import com.holis.san01.exceptions.NotFoundRequestException;
 import com.holis.san01.model.Item;
 import com.holis.san01.model.ItemDTO;
 import com.holis.san01.repository.ItemRepository;
-import com.holis.san01.util.Converter;
+import com.holis.san01.util.Mapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -26,43 +26,53 @@ public class ItemService {
 
     private final ItemRepository itemRepository;
 
-    public ItemDTO lerItem(String codItem) {
+    public ItemDTO lerItem(final String codItem) {
         Item item = itemRepository.findItem(codItem)
                 .orElseThrow(() -> new NotFoundRequestException("Item não encontrado"));
-        return Converter.mapTo(item, ItemDTO.class);
+        return Mapper.mapTo(item, ItemDTO.class);
     }
 
-    public Page<ItemDTO> listarItens(String status, String filterText, Pageable pageable) {
+    public Page<ItemDTO> listarItens(final String tipoItem, final String archive, final String filterText, final Pageable pageable) {
         Page<Item> itens;
 
-        if (StringUtils.isBlank(filterText)) {
-            itens = itemRepository.findItens(status, pageable);
+        if (tipoItem.equals("T")) {
+            if (StringUtils.isBlank(filterText)) {
+                itens = itemRepository.listItens(archive, pageable);
+            } else {
+                itens = itemRepository.listItens(archive, filterText, pageable);
+            }
         } else {
-            itens = itemRepository.findItens(status, filterText, pageable);
+            if (StringUtils.isBlank(filterText)) {
+                itens = itemRepository.listItensPorTipo(tipoItem, archive, pageable);
+            } else {
+                itens = itemRepository.listItensPorTipo(tipoItem, archive, filterText, pageable);
+            }
         }
+
         return itens.map(this::toDto);
     }
 
-    public ItemDTO incluirItem(ItemDTO dto) {
+    public ItemDTO incluirItem(final ItemDTO dto) {
         Optional<Item> opt = itemRepository.findItem(dto.getCodItem());
 
         if (opt.isPresent()) {
             throw new ApiRequestException("Este código de item já existe!");
         }
 
-        Item item = Converter.mapTo(dto, Item.class);
-        item.setStatus("A");
+        Item item = Mapper.mapTo(dto, Item.class);
+        item.setArchive("N");
         item.setDtCriacao(new Date());
         item = itemRepository.saveAndFlush(item);
-        return Converter.mapTo(item, ItemDTO.class);
+        return Mapper.mapTo(item, ItemDTO.class);
     }
 
-    public ItemDTO alterarItem(ItemDTO dto) {
+    public ItemDTO alterarItem(final ItemDTO dto) {
         Item item = itemRepository.findItem(dto.getCodItem())
                 .orElseThrow(() -> new NotFoundRequestException("Item não encontrado"));
 
         item.setCodItem(dto.getCodItem());
-        item.setStatus(dto.getStatus());
+        item.setArchive(dto.getArchive());
+        item.setTipoItem(dto.getTipoItem());
         item.setAliquotaIpi(dto.getAliquotaIpi());
         item.setClassFiscal(dto.getClassFiscal());
         item.setCodLocaliz(dto.getCodLocaliz());
@@ -100,17 +110,16 @@ public class ItemService {
         item.setUnimed(dto.getUnimed());
         item.setUsuarioObsol(dto.getUsuarioObsol());
         item = itemRepository.saveAndFlush(item);
-        return Converter.mapTo(item, ItemDTO.class);
+        return Mapper.mapTo(item, ItemDTO.class);
     }
 
-    public void excluirItem(String codItem) {
+    public void excluirItem(final String codItem) {
         Item item = itemRepository.findItem(codItem)
                 .orElseThrow(() -> new NotFoundRequestException("Item não encontrado"));
-
-        itemRepository.delete(item);
+        itemRepository.deleteById(item.getId());
     }
 
-    private ItemDTO toDto(Item item) {
-        return Converter.mapTo(item, ItemDTO.class);
+    private ItemDTO toDto(final Item item) {
+        return Mapper.mapTo(item, ItemDTO.class);
     }
 }

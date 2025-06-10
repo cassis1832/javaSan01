@@ -2,6 +2,7 @@ package com.holis.san01.model;
 
 import jakarta.persistence.Column;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -9,8 +10,15 @@ import java.util.Date;
 
 @Data
 public class EntidadeDTO {
+    @Column(nullable = false)
+    private Long id;
+    @Column(nullable = false)
+    @Pattern(regexp = "[SN]", message = "O campo 'archive' deve ser 'S' ou 'N'.")
+    private String archive;
+    private String situacao;
+    private Date dtCriacao;
     @NotNull(message = "Código do cliente/fornecedor é obrigatório")
-    private Integer codEntd;
+    private Long codEntd;
     @NotNull(message = "Nome abreviado/fantasia é obrigatório")
     private String nome;
     @NotNull(message = "Razão social é obrigatório")
@@ -62,11 +70,6 @@ public class EntidadeDTO {
     private String setor;
     private String segmento;
     private String ramo;
-    private String situacao;
     private String obsEntrega;
     private String observacoes;
-    private Date dtCriacao;
-    @Column(nullable = false)
-    @Pattern(regexp = "[AI]", message = "O campo código da situação deve ser 'A' ou 'I'.")
-    private String status;
 }

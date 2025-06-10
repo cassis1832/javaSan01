@@ -13,13 +13,13 @@ public class PedVenda {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
-    private Integer codEntd;
+    private Long nrPedido;
     @Column(nullable = false)
-    private Integer codFilial;
+    private Long codEntd;
+    @Column(nullable = false)
+    private Long codFilial;
     private String descricao;
     private Integer tpPedido;
-    @Column(nullable = false)
-    private Integer nrPedido;
     private Integer nrCotacao;
     private Integer nrContrato;
     private String nrPedcli;
@@ -91,6 +91,7 @@ public class PedVenda {
     private Double descValorPed;
     private Integer tipoFinId;
     private String condPag;
-    private Date dtSituacao;
     private String situacao;
+    private Date dtSituacao;
+    private String archive;
 }

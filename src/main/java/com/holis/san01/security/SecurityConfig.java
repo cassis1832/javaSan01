@@ -1,9 +1,14 @@
 package com.holis.san01.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -31,18 +36,24 @@ public class SecurityConfig {
             pageSerializationMode = EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO
     )
     public class JacksonConfig {
+//        @Bean
+//        @Primary
+//        public ObjectMapper objectMapper(Jackson2ObjectMapperBuilder builder) {
+//            ObjectMapper mapper = new ObjectMapper();
+//            mapper.registerModule(new JSR310Module());
+//            mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+//            return mapper;
+//        }
     }
+
     @Autowired
-    public SecurityConfig(CustomUserDetailsService userDetailsService,
-                          JwtAuthEntryPoint authEntryPoint) {
+    public SecurityConfig(CustomUserDetailsService userDetailsService, JwtAuthEntryPoint authEntryPoint) {
         this.userDetailsService = userDetailsService;
         this.authEntryPoint = authEntryPoint;
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http)
-            throws Exception {
-
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .cors(Customizer.withDefaults()) // by default, use a bean of the name corsConfigurationSource
                 .csrf().disable()
@@ -63,9 +74,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration authenticationConfiguration)
-            throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
@@ -76,7 +85,6 @@ public class SecurityConfig {
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
-
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("*"));
         configuration.setAllowedMethods(Arrays.asList("*"));

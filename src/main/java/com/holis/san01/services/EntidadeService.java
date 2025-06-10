@@ -8,9 +8,8 @@ import com.holis.san01.model.EntidadeDTO;
 import com.holis.san01.model.PedVenda;
 import com.holis.san01.repository.EntidadeRepository;
 import com.holis.san01.repository.PedVendaRepository;
-import com.holis.san01.util.Converter;
+import com.holis.san01.util.Mapper;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,70 +24,90 @@ import java.util.Optional;
  */
 @Service
 @Transactional
-@RequiredArgsConstructor
 public class EntidadeService {
 
     private final SequenciaService sequenciaService;
     private final EntidadeRepository entidadeRepository;
     private final PedVendaRepository pedVendaRepository;
 
-    public EntidadeDTO lerEntidade(Integer codEntd) {
+    public EntidadeService(SequenciaService sequenciaService, EntidadeRepository entidadeRepository, PedVendaRepository pedVendaRepository) {
+        this.sequenciaService = sequenciaService;
+        this.entidadeRepository = entidadeRepository;
+        this.pedVendaRepository = pedVendaRepository;
+    }
 
+    /**
+     * Ler uma ENTIDADE pelo codEntd
+     *
+     * @param codEntd
+     * @return
+     */
+    public EntidadeDTO lerEntidade(final Long codEntd) {
         Entidade entidade = entidadeRepository.findEntidade(codEntd)
-                .orElseThrow(() -> new NotFoundRequestException(
-                        "Entidade não encontrado"));
-
-        return Converter.mapTo(entidade, EntidadeDTO.class);
+                .orElseThrow(() -> new NotFoundRequestException("Entidade não encontrada"));
+        return Mapper.mapTo(entidade, EntidadeDTO.class);
     }
 
-    public Page<EntidadeDTO> listarEntidades(
-            String tipo, String status, String filterText, Pageable pageable) {
+    /**
+     * Listar Entidades
+     *
+     * @param tipo
+     * @param archive
+     * @param filterText
+     * @param pageable
+     * @return
+     */
+    public Page<EntidadeDTO> listarEntidades(final String tipo, final String archive, final String filterText, final Pageable pageable) {
+        Page<Entidade> entidades = null;
 
-        Page<Entidade> Entidades = null;
-
-        if (tipo.equals("todos")) {
+        if (tipo.equalsIgnoreCase("todos")) {
             if (StringUtils.isBlank(filterText)) {
-                Entidades = entidadeRepository.findEntidades(status, pageable);
+                entidades = entidadeRepository.listEntidades(archive, pageable);
             } else {
-                Entidades = entidadeRepository.findEntidades(status, filterText, pageable);
+                entidades = entidadeRepository.listEntidades(archive, filterText, pageable);
             }
         }
 
-        if (tipo.equals("clientes")) {
+        if (tipo.equalsIgnoreCase("clientes")) {
             if (StringUtils.isBlank(filterText)) {
-                Entidades = entidadeRepository.findClientes(status, pageable);
+                entidades = entidadeRepository.listClientes(archive, pageable);
             } else {
-                Entidades = entidadeRepository.findClientes(status, filterText, pageable);
+                entidades = entidadeRepository.listClientes(archive, filterText, pageable);
             }
         }
 
-        if (tipo.equals("fornecedores")) {
+        if (tipo.equalsIgnoreCase("fornecedores")) {
             if (StringUtils.isBlank(filterText)) {
-                Entidades = entidadeRepository.findFornecedores(status, pageable);
+                entidades = entidadeRepository.listFornecedores(archive, pageable);
             } else {
-                Entidades = entidadeRepository.findFornecedores(status, filterText, pageable);
+                entidades = entidadeRepository.listFornecedores(archive, filterText, pageable);
             }
         }
 
-        if (Entidades != null) {
-            return Entidades.map(this::toDto);
+        if (entidades == null) {
+            throw new ApiRequestException("Parametros invalidos no HTTP!");
         }
 
-        throw new ApiRequestException("Parametros invalidos no HTTP!");
+        return entidades.map(this::toDto);
     }
 
-    public EntidadeDTO incluirEntidade(EntidadeDTO dto) {
-
+    /**
+     * Criar nova Entidade
+     *
+     * @param dto
+     * @return
+     */
+    public EntidadeDTO incluirEntidade(final EntidadeDTO dto) {
         Optional<Entidade> opt = entidadeRepository.findEntidade(dto.getCodEntd());
 
         if (opt.isPresent()) {
             throw new ApiRequestException("Este código de Entidade já existe!");
         }
 
-        Entidade entidade = Converter.mapTo(dto, Entidade.class);
+        Entidade entidade = Mapper.mapTo(dto, Entidade.class);
 
         // Campos chave estrangeira tem que ser convertidos para NULL
-        if (entidade.getCodCondPag() == null || entidade.getCodCondPag().isEmpty()) {
+        if (StringUtils.isBlank(entidade.getCodCondPag())) {
             entidade.setCodCondPag(null);
         }
 
@@ -102,13 +121,12 @@ public class EntidadeService {
         // ----------------------------------------------------------
 
         entidade.setDtCriacao(new Date());
-        entidade.setStatus("A");
+        entidade.setArchive("N");
         entidade = entidadeRepository.saveAndFlush(entidade);
-        return Converter.mapTo(entidade, EntidadeDTO.class);
+        return Mapper.mapTo(entidade, EntidadeDTO.class);
     }
 
-    public EntidadeDTO alterarEntidade(EntidadeDTO dto) {
-
+    public EntidadeDTO alterarEntidade(final EntidadeDTO dto) {
         Entidade entidade = entidadeRepository.findEntidade(dto.getCodEntd())
                 .orElseThrow(() -> new NotFoundRequestException("Entidade não encontrado"));
 
@@ -136,10 +154,10 @@ public class EntidadeService {
         entidade.setObsEntrega(dto.getObsEntrega());
         entidade.setObservacoes(dto.getObservacoes());
         entidade.setSituacao(dto.getSituacao());
-        entidade.setStatus(dto.getStatus());
+        entidade.setArchive(dto.getArchive());
 
         // Campos chave estrangeira tem que ser convertidos para NULL
-        if (entidade.getCodCondPag() == null || entidade.getCodCondPag().isEmpty()) {
+        if (StringUtils.isBlank(entidade.getCodCondPag())) {
             entidade.setCodCondPag(null);
         }
 
@@ -152,29 +170,36 @@ public class EntidadeService {
         }
 
         entidade = entidadeRepository.saveAndFlush(entidade);
-        return Converter.mapTo(entidade, EntidadeDTO.class);
+        return Mapper.mapTo(entidade, EntidadeDTO.class);
     }
 
-    public void excluirEntidade(Integer codEntd) {
-
+    /**
+     * Excluir um registro de Entidade
+     *
+     * @param codEntd
+     */
+    public void excluirEntidade(final Long codEntd) {
         Entidade entidade = entidadeRepository.findEntidade(codEntd)
                 .orElseThrow(() -> new NotFoundRequestException(
                         "Entidade não encontrado para efetuar exclusão"));
 
         //  Verifica se há pedido de venda relacionado
-        List<PedVenda> pedidos = pedVendaRepository.ListPedVendas(entidade.getCodEntd());
+        List<PedVenda> pedidos = pedVendaRepository.listPedVendas(entidade.getCodEntd());
 
         if (pedidos == null || pedidos.isEmpty()) {
-            entidadeRepository.deleteById(entidade.getCodEntd());
+            entidadeRepository.deleteById(entidade.getId());
         } else {
             throw new ApiDeleteException("Não é possível excluir o cliente. Existem pedidos de vendas associados.");
         }
     }
 
-
-    public Integer obterProximoCodigo() {
-
-        Integer codigo = sequenciaService.proximoNumero("cod_entd");
+    /**
+     * Obter o próximo código de entidade disponivel
+     *
+     * @return
+     */
+    public Long obterProximoCodigo() {
+        Long codigo = sequenciaService.proximoNumero("cod_entd");
 
         while (true) {
             Optional<Entidade> opt = entidadeRepository.findEntidade(codigo);
@@ -186,7 +211,7 @@ public class EntidadeService {
         }
     }
 
-    private EntidadeDTO toDto(Entidade Entidade) {
-        return Converter.mapTo(Entidade, EntidadeDTO.class);
+    private EntidadeDTO toDto(final Entidade entidade) {
+        return Mapper.mapTo(entidade, EntidadeDTO.class);
     }
 }

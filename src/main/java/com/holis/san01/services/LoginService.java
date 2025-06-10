@@ -2,10 +2,13 @@ package com.holis.san01.services;
 
 import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.exceptions.NotFoundRequestException;
-import com.holis.san01.model.*;
+import com.holis.san01.model.LoginDTO;
+import com.holis.san01.model.TokenResponse;
+import com.holis.san01.model.Usuario;
+import com.holis.san01.model.UsuarioDTO;
 import com.holis.san01.repository.UsuarioRepository;
 import com.holis.san01.security.JwtGenerator;
-import com.holis.san01.util.Converter;
+import com.holis.san01.util.Mapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,12 +32,9 @@ public class LoginService {
     private final JwtGenerator jwtGenerator;
 //    private final JavaMailSender mailSender;
 
-    public TokenResponse login(LoginDTO loginDTO) {
-
+    public TokenResponse login(final LoginDTO loginDTO) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginDTO.getUsername(),
-                        loginDTO.getPassword()));
+                new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         Usuario usuario = usuarioRepository.findByEmail(loginDTO.getUsername())
@@ -46,37 +46,32 @@ public class LoginService {
     /**
      * Ler o usuario ativo por email
      */
-    public UsuarioDTO lerUsuarioPorEmail(
-            String email) {
-
+    public UsuarioDTO lerUsuarioPorEmail(final String email) {
         Usuario usr = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundRequestException("Usuário não encontrado"));
-
-        return Converter.mapTo(usr, UsuarioDTO.class);
+        return Mapper.mapTo(usr, UsuarioDTO.class);
     }
 
     /**
      * O usuario esqueceu sua senha
      * Gerar um numero randomico e enviar por email
      */
-    public void enviarNovaSenha(
-            String email) {
-
+    public void enviarNovaSenha(final String email) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
         Random r = new Random();
-        Long nova = (long) (r.nextDouble() * 1000000);
+        long nova = (long) (r.nextDouble() * 1000000);
         Optional<Usuario> opt = usuarioRepository.findByEmail(email);
 
-        if (!opt.isPresent())
+        if (opt.isEmpty())
             throw new ApiRequestException("Email não encontrado no sistema!");
 
         Usuario usr = opt.get();
-        usr.setNovaSenha(encoder.encode(nova.toString()));
+        usr.setNovaSenha(encoder.encode(Long.toString(nova)));
         usr.setDtRecuperacao(new Date());
 
         var conteudo = "Use a senha abaixo em seu próximo Login.<br/>";
-        conteudo = conteudo + nova.toString();
+        conteudo = conteudo + nova;
         conteudo = conteudo
                 + "<br/><br/>Desconsidere este email caso você não tenha solicitado a alteração da senha.";
 

@@ -45,17 +45,13 @@ public class JwtGenerator {
         String userRoles = "";
 
         for (GrantedAuthority authority : authentication.getAuthorities()) {
-            if (!userRoles.equals("")) {
+            if (!userRoles.isEmpty()) {
                 userRoles = userRoles + ",";
             }
             userRoles = userRoles + authority.getAuthority();
         }
 
-        return new TokenResponse(
-                usuario.getNome(),
-                usuario.getEmail(),
-                userRoles,
-                token);
+        return new TokenResponse(usuario.getNome(), usuario.getEmail(), userRoles, token);
     }
 
     public String getEmailFromJWT(String token) {

@@ -1,21 +1,29 @@
 package com.holis.san01.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import javax.validation.constraints.Pattern;
 import java.util.Date;
 
-@Data
+@Data // @Getter, @Setter, @ToString, @EqualsAndHashCode e @RequiredArgsConstructor
 @Entity
 @Table(name = "entidade")
 public class Entidade {
     @Id
     @Column(nullable = false)
-    private Integer codEntd;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    @Pattern(regexp = "[SN]", message = "O campo 'archive' deve ser 'S' ou 'N'.")
+    private String archive;
+
+    private String situacao;
+    private Date dtCriacao;
+
+    @Column(nullable = false)
+    private Long codEntd;
     @Column(nullable = false)
     private String nome;
     private String razaoSocial;
@@ -65,11 +73,6 @@ public class Entidade {
     private String setor;
     private String segmento;
     private String ramo;
-    private String situacao;
     private String obsEntrega;
     private String observacoes;
-    private Date dtCriacao;
-    @Column(nullable = false)
-    @Pattern(regexp = "[AI]", message = "O campo código da situação deve ser 'A' ou 'I'.")
-    private String status;
 }

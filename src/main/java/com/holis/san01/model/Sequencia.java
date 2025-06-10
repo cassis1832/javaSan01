@@ -13,8 +13,8 @@ public class Sequencia {
     @Column(nullable = false)
     private String descricao;
     @Column(nullable = false)
-    private Integer numeroAtual;
+    private Long numeroAtual;
     @Column(nullable = false)
     private Integer passo;
-    private Integer numeroSeguinte;
+    private Long numeroSeguinte;
 }

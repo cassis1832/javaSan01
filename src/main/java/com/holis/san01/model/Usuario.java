@@ -11,8 +11,17 @@ import java.util.Date;
 @Table(name = "usuario")
 public class Usuario {
     @Id
+    @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
+    @Pattern(regexp = "[SN]", message = "O campo 'archive' deve ser 'S' ou 'N'.")
+    private String archive;
+
+    private String situacao;
+    private Date dtCriacao;
+
     @Column(nullable = false)
     private String nome;
     @Column(nullable = false)
@@ -29,9 +38,4 @@ public class Usuario {
     private Date dtRecuperacao;
     private Date dtAltSenha;
     private String tipoMenu;
-    private String situacao;
-    private Date dtCriacao;
-    @Column(nullable = false)
-    @Pattern(regexp = "[AI]", message = "O campo código da situação deve ser 'A' ou 'I'.")
-    private String status;
 }
