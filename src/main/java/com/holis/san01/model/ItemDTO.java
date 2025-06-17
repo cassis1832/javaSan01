@@ -4,29 +4,25 @@ import jakarta.persistence.Column;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
 public class ItemDTO {
-    @Column(nullable = false)
-    private Long id;
-    @Column(nullable = false)
-    @Pattern(regexp = "[SN]", message = "O campo 'archive' deve ser 'S' ou 'N'.")
-    private String archive;
-    private String situacao;
-    private Date dtCriacao;
-    @NotNull(message = "Código do item é obrigatório")
+    @NotBlank(message = "Código do item é obrigatório")
     private String codItem;
-    @NotNull(message = "Descrição do item é obrigatória")
+
+    @NotBlank(message = "Descrição do item é obrigatória")
     private String descricao;
-    @NotNull(message = "Unidade de medida é obrigatória")
+    @NotBlank(message = "Unidade de medida é obrigatória")
     private String unimed;
-    @NotNull(message = "Tipo de item é obrigatório")
+    @NotBlank(message = "Tipo de item é obrigatório")
     private String tipoItem;
-    @NotNull(message = "Tipo fiscal de item é obrigatório")
+    @NotBlank(message = "Tipo fiscal de item é obrigatório")
     private String codTipoItem;
     private BigDecimal precoBase;
     private Date dtBase;
@@ -73,4 +69,10 @@ public class ItemDTO {
     private Integer tempoRessup;
     private String gtin;
     private Integer prazoEntrega;
+    private String situacao;
+    private Date dtCriacao;
+    @NotBlank
+    @Size(min = 1, max = 1)
+    @Pattern(regexp = "[SN]", message = "O campo 'archive' deve ser 'S' ou 'N'.")
+    private String archive;
 }

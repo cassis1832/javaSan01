@@ -4,7 +4,7 @@ import com.holis.san01.exceptions.NotFoundRequestException;
 import com.holis.san01.model.Sequencia;
 import com.holis.san01.repository.SequenciaRepository;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,10 +12,9 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @Transactional
-@RequiredArgsConstructor
 public class SequenciaService {
-
-    private final SequenciaRepository sequenciaRepository;
+    @Autowired
+    private SequenciaRepository sequenciaRepository;
 
     /**
      * Obter o proximo numero

@@ -1,27 +1,21 @@
 package com.holis.san01.model;
 
-import jakarta.persistence.Column;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.util.Date;
 
 @Data
 public class EntidadeDTO {
-    @Column(nullable = false)
-    private Long id;
-    @Column(nullable = false)
-    @Pattern(regexp = "[SN]", message = "O campo 'archive' deve ser 'S' ou 'N'.")
-    private String archive;
-    private String situacao;
-    private Date dtCriacao;
     @NotNull(message = "Código do cliente/fornecedor é obrigatório")
     private Long codEntd;
-    @NotNull(message = "Nome abreviado/fantasia é obrigatório")
+
+    @NotBlank(message = "Nome abreviado/fantasia é obrigatório")
     private String nome;
-    @NotNull(message = "Razão social é obrigatório")
+    @NotBlank(message = "Razão social é obrigatório")
     private String razaoSocial;
     private String indCliente;
     private String indFornec;
@@ -72,4 +66,10 @@ public class EntidadeDTO {
     private String ramo;
     private String obsEntrega;
     private String observacoes;
+    private String situacao;
+    private Date dtCriacao;
+    @NotBlank
+    @Size(min = 1, max = 1)
+    @Pattern(regexp = "[SN]", message = "O campo 'archive' deve ser 'S' ou 'N'.")
+    private String archive;
 }

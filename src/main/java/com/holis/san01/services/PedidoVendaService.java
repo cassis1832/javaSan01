@@ -9,8 +9,8 @@ import com.holis.san01.repository.PedVendaItemRepository;
 import com.holis.san01.repository.PedVendaRepository;
 import com.holis.san01.repository.VwPedVendaItemRepository;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -23,13 +23,15 @@ import java.util.Optional;
  */
 @Service
 @Transactional
-@RequiredArgsConstructor
 public class PedidoVendaService {
-
-    private final PedVendaRepository pedVendaRepository;
-    private final PedVendaItemRepository pedVendaItemRepository;
-    private final VwPedVendaItemRepository vwPedVendaItemRepository;
-    private final SequenciaService sequenciaService;
+    @Autowired
+    private PedVendaRepository pedVendaRepository;
+    @Autowired
+    private PedVendaItemRepository pedVendaItemRepository;
+    @Autowired
+    private VwPedVendaItemRepository vwPedVendaItemRepository;
+    @Autowired
+    private SequenciaService sequenciaService;
 
     /**
      * Ler o pedido de venda pelo numero do pedido

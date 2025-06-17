@@ -1,9 +1,9 @@
 package com.holis.san01.controller;
 
 import com.holis.san01.exceptions.ApiDeleteException;
-import com.holis.san01.exceptions.NotFoundRequestException;
 import com.holis.san01.model.EntidadeDTO;
 import com.holis.san01.services.EntidadeService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -21,15 +21,11 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping(value = "/api/entds", produces = MediaType.APPLICATION_JSON_VALUE)
 public class EntidadeController {
-
-    private final EntidadeService entidadeService;
-
-    public EntidadeController(EntidadeService entidadeService) {
-        this.entidadeService = entidadeService;
-    }
+    @Autowired
+    private EntidadeService entidadeService;
 
     /**
-     * Ler um determinado registro pelo código
+     * Ler um determinado registro pelo código da entidade
      */
     @GetMapping("/ler")
     public ResponseEntity<EntidadeDTO> lerEntidade(
@@ -52,7 +48,7 @@ public class EntidadeController {
     }
 
     /**
-     * Incluir um novo registro
+     * Incluir um novo registro de entidade
      */
     @PostMapping("/incluir")
     public ResponseEntity<EntidadeDTO> incluirEntidade(@RequestBody @Valid EntidadeDTO entidadeDTO) {
@@ -80,17 +76,5 @@ public class EntidadeController {
             throw new ApiDeleteException(ex.getMessage());
         }
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    /**
-     * Obter o próximo codigo de cliente disponivel para criar um novo cliente
-     */
-    @GetMapping("/proximocodigo")
-    public ResponseEntity<Long> obterProximoCodigo() {
-        Long proximoCodigo = entidadeService.obterProximoCodigo();
-        if (proximoCodigo == null) {
-            throw new NotFoundRequestException("Retornando null no proximo código");
-        }
-        return new ResponseEntity<>(proximoCodigo, HttpStatus.OK);
     }
 }

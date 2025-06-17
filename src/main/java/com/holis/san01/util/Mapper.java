@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Mapper {
-
     private static final ModelMapper modelMapper = new ModelMapper();
 
     /**

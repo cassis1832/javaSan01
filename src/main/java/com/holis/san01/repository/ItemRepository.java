@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface ItemRepository extends JpaRepository<Item, Long> {
+public interface ItemRepository extends JpaRepository<Item, String> {
     @Query("select i from Item i Where " +
             "upper(i.codItem) =  upper(?1)")
     Optional<Item> findItem(String codItem);

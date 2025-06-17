@@ -2,13 +2,11 @@ package com.holis.san01.controller;
 
 import com.holis.san01.exceptions.ApiDeleteException;
 import com.holis.san01.exceptions.NotFoundRequestException;
-import com.holis.san01.model.EntidadeDTO;
 import com.holis.san01.model.PedVenda;
 import com.holis.san01.model.PedVendaItem;
 import com.holis.san01.model.VwPedVendaItem;
-import com.holis.san01.services.EntidadeService;
 import com.holis.san01.services.PedidoVendaService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -25,11 +23,11 @@ import java.util.List;
  * Controller para tratamento de Pedidos de Vendas
  */
 @RestController
-@RequiredArgsConstructor
 @RequestMapping(value = "/api/pedvs", produces = MediaType.APPLICATION_JSON_VALUE)
 public class PedidoVendaController {
 
-    private final PedidoVendaService pedidoVendaService;
+    @Autowired
+    private PedidoVendaService pedidoVendaService;
 
     /**
      * Ler um determinado pedido de venda pelo nr_pedido

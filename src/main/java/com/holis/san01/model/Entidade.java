@@ -2,6 +2,7 @@ package com.holis.san01.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.Pattern;
 import java.util.Date;
@@ -13,19 +14,11 @@ public class Entidade {
     @Id
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(nullable = false)
-    @Pattern(regexp = "[SN]", message = "O campo 'archive' deve ser 'S' ou 'N'.")
-    private String archive;
-
-    private String situacao;
-    private Date dtCriacao;
-
-    @Column(nullable = false)
     private Long codEntd;
+
     @Column(nullable = false)
     private String nome;
+    @Column(nullable = false)
     private String razaoSocial;
     private String indCliente;
     private String indFornec;
@@ -75,4 +68,9 @@ public class Entidade {
     private String ramo;
     private String obsEntrega;
     private String observacoes;
+    private String situacao;
+    private Date dtCriacao;
+    @Column(nullable = false)
+    @Pattern(regexp = "[SN]", message = "O campo 'archive' deve ser 'S' ou 'N'.")
+    private String archive;
 }

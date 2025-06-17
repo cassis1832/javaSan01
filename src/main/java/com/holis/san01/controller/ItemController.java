@@ -3,7 +3,7 @@ package com.holis.san01.controller;
 import com.holis.san01.exceptions.ApiDeleteException;
 import com.holis.san01.model.ItemDTO;
 import com.holis.san01.services.ItemService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -21,12 +21,8 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping(value = "/api/items", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ItemController {
-
-    private final ItemService itemService;
-
-    public ItemController(ItemService itemService) {
-        this.itemService = itemService;
-    }
+    @Autowired
+    private ItemService itemService;
 
     /**
      * Ler um determinado registro pelo código

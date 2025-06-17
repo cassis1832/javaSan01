@@ -7,8 +7,8 @@ import com.holis.san01.model.ItemDTO;
 import com.holis.san01.repository.ItemRepository;
 import com.holis.san01.util.Mapper;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,15 +21,16 @@ import java.util.Optional;
  */
 @Service
 @Transactional
-@RequiredArgsConstructor
 public class ItemService {
-
-    private final ItemRepository itemRepository;
+    @Autowired
+    private ItemRepository itemRepository;
+    @Autowired
+    private ItemMapper itemMapper;
 
     public ItemDTO lerItem(final String codItem) {
         Item item = itemRepository.findItem(codItem)
                 .orElseThrow(() -> new NotFoundRequestException("Item não encontrado"));
-        return Mapper.mapTo(item, ItemDTO.class);
+        return itemMapper.toDto(item);
     }
 
     public Page<ItemDTO> listarItens(final String tipoItem, final String archive, final String filterText, final Pageable pageable) {
@@ -49,7 +50,7 @@ public class ItemService {
             }
         }
 
-        return itens.map(this::toDto);
+        return itens.map(itemMapper::toDto);
     }
 
     public ItemDTO incluirItem(final ItemDTO dto) {
@@ -63,7 +64,7 @@ public class ItemService {
         item.setArchive("N");
         item.setDtCriacao(new Date());
         item = itemRepository.saveAndFlush(item);
-        return Mapper.mapTo(item, ItemDTO.class);
+        return itemMapper.toDto(item);
     }
 
     public ItemDTO alterarItem(final ItemDTO dto) {
@@ -110,16 +111,17 @@ public class ItemService {
         item.setUnimed(dto.getUnimed());
         item.setUsuarioObsol(dto.getUsuarioObsol());
         item = itemRepository.saveAndFlush(item);
-        return Mapper.mapTo(item, ItemDTO.class);
+
+        return itemMapper.toDto(item);
     }
 
     public void excluirItem(final String codItem) {
         Item item = itemRepository.findItem(codItem)
                 .orElseThrow(() -> new NotFoundRequestException("Item não encontrado"));
-        itemRepository.deleteById(item.getId());
+        itemRepository.deleteById(item.getCodItem());
     }
 
-    private ItemDTO toDto(final Item item) {
-        return Mapper.mapTo(item, ItemDTO.class);
-    }
+//    private ItemDTO toDto(final Item item) {
+//        return Mapper.mapTo(item, ItemDTO.class);
+//    }
 }

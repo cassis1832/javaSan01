@@ -10,7 +10,7 @@ import com.holis.san01.repository.UsuarioRepository;
 import com.holis.san01.security.JwtGenerator;
 import com.holis.san01.util.Mapper;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,12 +24,13 @@ import java.util.Random;
 
 @Service
 @Transactional
-@RequiredArgsConstructor
 public class LoginService {
-
-    private final AuthenticationManager authenticationManager;
-    private final UsuarioRepository usuarioRepository;
-    private final JwtGenerator jwtGenerator;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+    @Autowired
+    private JwtGenerator jwtGenerator;
 //    private final JavaMailSender mailSender;
 
     public TokenResponse login(final LoginDTO loginDTO) {

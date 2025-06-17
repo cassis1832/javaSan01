@@ -11,6 +11,7 @@ import com.holis.san01.repository.PedVendaRepository;
 import com.holis.san01.util.Mapper;
 import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,16 +26,12 @@ import java.util.Optional;
 @Service
 @Transactional
 public class EntidadeService {
-
-    private final SequenciaService sequenciaService;
-    private final EntidadeRepository entidadeRepository;
-    private final PedVendaRepository pedVendaRepository;
-
-    public EntidadeService(SequenciaService sequenciaService, EntidadeRepository entidadeRepository, PedVendaRepository pedVendaRepository) {
-        this.sequenciaService = sequenciaService;
-        this.entidadeRepository = entidadeRepository;
-        this.pedVendaRepository = pedVendaRepository;
-    }
+    @Autowired
+    private EntidadeRepository entidadeRepository;
+    @Autowired
+    private PedVendaRepository pedVendaRepository;
+    @Autowired
+    private EntidadeMapper entidadeMapper;
 
     /**
      * Ler uma ENTIDADE pelo codEntd
@@ -44,8 +41,8 @@ public class EntidadeService {
      */
     public EntidadeDTO lerEntidade(final Long codEntd) {
         Entidade entidade = entidadeRepository.findEntidade(codEntd)
-                .orElseThrow(() -> new NotFoundRequestException("Entidade não encontrada"));
-        return Mapper.mapTo(entidade, EntidadeDTO.class);
+                .orElseThrow(() -> new NotFoundRequestException("Cliente/fornecedor não encontrado"));
+        return entidadeMapper.toDto(entidade);
     }
 
     /**
@@ -88,7 +85,13 @@ public class EntidadeService {
             throw new ApiRequestException("Parametros invalidos no HTTP!");
         }
 
-        return entidades.map(this::toDto);
+        //return entidadeMapper.toDto(entidade);
+        return entidades.map(entidadeMapper::toDto);
+
+        // é o mesmo que isso
+        //        return entidades.stream()
+        //                .map(entidade -> entidadeMapper.toDto(entidade))
+        //                .collect(Collectors.toList());
     }
 
     /**
@@ -101,7 +104,7 @@ public class EntidadeService {
         Optional<Entidade> opt = entidadeRepository.findEntidade(dto.getCodEntd());
 
         if (opt.isPresent()) {
-            throw new ApiRequestException("Este código de Entidade já existe!");
+            throw new ApiRequestException("Este código de cliente/fornecedor já existe!");
         }
 
         Entidade entidade = Mapper.mapTo(dto, Entidade.class);
@@ -111,19 +114,10 @@ public class EntidadeService {
             entidade.setCodCondPag(null);
         }
 
-        if (entidade.getTipoFinIdEnt() == 0) {
-            entidade.setTipoFinIdEnt(null);
-        }
-
-        if (entidade.getTipoFinIdSai() == 0) {
-            entidade.setTipoFinIdSai(null);
-        }
-        // ----------------------------------------------------------
-
         entidade.setDtCriacao(new Date());
         entidade.setArchive("N");
         entidade = entidadeRepository.saveAndFlush(entidade);
-        return Mapper.mapTo(entidade, EntidadeDTO.class);
+        return entidadeMapper.toDto(entidade);
     }
 
     public EntidadeDTO alterarEntidade(final EntidadeDTO dto) {
@@ -161,16 +155,8 @@ public class EntidadeService {
             entidade.setCodCondPag(null);
         }
 
-        if (entidade.getTipoFinIdEnt() == 0) {
-            entidade.setTipoFinIdEnt(null);
-        }
-
-        if (entidade.getTipoFinIdSai() == 0) {
-            entidade.setTipoFinIdSai(null);
-        }
-
         entidade = entidadeRepository.saveAndFlush(entidade);
-        return Mapper.mapTo(entidade, EntidadeDTO.class);
+        return entidadeMapper.toDto(entidade);
     }
 
     /**
@@ -181,37 +167,19 @@ public class EntidadeService {
     public void excluirEntidade(final Long codEntd) {
         Entidade entidade = entidadeRepository.findEntidade(codEntd)
                 .orElseThrow(() -> new NotFoundRequestException(
-                        "Entidade não encontrado para efetuar exclusão"));
+                        "Cliente/fornecedor não encontrado para exclusão"));
 
         //  Verifica se há pedido de venda relacionado
         List<PedVenda> pedidos = pedVendaRepository.listPedVendas(entidade.getCodEntd());
 
         if (pedidos == null || pedidos.isEmpty()) {
-            entidadeRepository.deleteById(entidade.getId());
+            entidadeRepository.deleteById(entidade.getCodEntd());
         } else {
             throw new ApiDeleteException("Não é possível excluir o cliente. Existem pedidos de vendas associados.");
         }
     }
 
-    /**
-     * Obter o próximo código de entidade disponivel
-     *
-     * @return
-     */
-    public Long obterProximoCodigo() {
-        Long codigo = sequenciaService.proximoNumero("cod_entd");
-
-        while (true) {
-            Optional<Entidade> opt = entidadeRepository.findEntidade(codigo);
-
-            if (opt.isEmpty()) {
-                return codigo;
-            }
-            codigo++;
-        }
-    }
-
-    private EntidadeDTO toDto(final Entidade entidade) {
-        return Mapper.mapTo(entidade, EntidadeDTO.class);
-    }
+//    private EntidadeDTO toDto(final Entidade entidade) {
+//        return Mapper.mapTo(entidade, EntidadeDTO.class);
+//    }
 }
