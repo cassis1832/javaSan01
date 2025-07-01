@@ -27,51 +27,85 @@ public class EntidadeController {
     /**
      * Ler um determinado registro pelo código da entidade
      */
-    @GetMapping("/ler")
-    public ResponseEntity<EntidadeDTO> lerEntidade(
-            @RequestParam(name = "codEntd", defaultValue = "") Long codEntd) {
-        return ResponseEntity.status(HttpStatus.OK).body(entidadeService.lerEntidade(codEntd));
+    @GetMapping
+    public ResponseEntity<EntidadeDTO> ler(
+            @RequestParam(name = "codEntd", defaultValue = "0") Long codEntd) {
+        return ResponseEntity.status(HttpStatus.OK).body(entidadeService.ler(codEntd));
     }
 
     /**
-     * Ler uma lista de entidades filtrando pelo nome/codigo e situacao
+     * Ler uma lista de clientes paginada com filtro
      */
-    @GetMapping("/listarPag")
-    public ResponseEntity<Page<EntidadeDTO>> listarEntidades(
-            @RequestParam(name = "tipo", defaultValue = "todos") String tipo,
+    @GetMapping("/clientpages")
+    public ResponseEntity<Page<EntidadeDTO>> listarClientesPaging(
             @RequestParam(name = "archive", defaultValue = "N") String archive,
             @RequestParam(name = "filterText", defaultValue = "") String filterText,
             @PageableDefault(page = 0, size = 40)
             @SortDefault.SortDefaults({@SortDefault(sort = "codEntd")}) Pageable pageable) {
-        Page<EntidadeDTO> clientes = entidadeService.listarEntidades(tipo, archive, filterText, pageable);
+
+        Page<EntidadeDTO> clientes = entidadeService.listarPaging("clientes", archive, filterText, pageable);
+        return new ResponseEntity<>(clientes, HttpStatus.OK);
+    }
+
+    /**
+     * Ler uma lista de fornecedores paginada com filtro
+     */
+    @GetMapping("/fornecpages")
+    public ResponseEntity<Page<EntidadeDTO>> listarFornecedoresPaging(
+            @RequestParam(name = "archive", defaultValue = "N") String archive,
+            @RequestParam(name = "filterText", defaultValue = "") String filterText,
+            @PageableDefault(page = 0, size = 40)
+            @SortDefault.SortDefaults({@SortDefault(sort = "codEntd")}) Pageable pageable) {
+
+        Page<EntidadeDTO> clientes = entidadeService.listarPaging("fornecedores", archive, filterText, pageable);
+        return new ResponseEntity<>(clientes, HttpStatus.OK);
+    }
+
+    /**
+     * Ler uma lista de entidades paginada com filtro
+     */
+    @GetMapping("/pages")
+    public ResponseEntity<Page<EntidadeDTO>> listarTodosPaging(
+            @RequestParam(name = "archive", defaultValue = "N") String archive,
+            @RequestParam(name = "filterText", defaultValue = "") String filterText,
+            @PageableDefault(page = 0, size = 40)
+            @SortDefault.SortDefaults({@SortDefault(sort = "codEntd")}) Pageable pageable) {
+
+        Page<EntidadeDTO> clientes = entidadeService.listarPaging("todos", archive, filterText, pageable);
         return new ResponseEntity<>(clientes, HttpStatus.OK);
     }
 
     /**
      * Incluir um novo registro de entidade
      */
-    @PostMapping("/incluir")
-    public ResponseEntity<EntidadeDTO> incluirEntidade(@RequestBody @Valid EntidadeDTO entidadeDTO) {
-        entidadeDTO = entidadeService.incluirEntidade(entidadeDTO);
+    @PostMapping
+    public ResponseEntity<EntidadeDTO> incluir(
+            @RequestBody @Valid EntidadeDTO entidadeDTO) {
+
+        entidadeDTO = entidadeService.incluir(entidadeDTO);
         return new ResponseEntity<>(entidadeDTO, HttpStatus.CREATED);
     }
 
     /**
      * Alterar um registro existente
      */
-    @PutMapping("/alterar")
-    public ResponseEntity<EntidadeDTO> alterarEntidade(@RequestBody @Valid EntidadeDTO entidadeDTO) {
-        entidadeDTO = entidadeService.alterarEntidade(entidadeDTO);
+    @PutMapping
+    public ResponseEntity<EntidadeDTO> alterar(
+            @RequestBody @Valid EntidadeDTO entidadeDTO) {
+
+        entidadeDTO = entidadeService.alterar(entidadeDTO);
         return new ResponseEntity<>(entidadeDTO, HttpStatus.OK);
     }
 
     /**
      * Excluir um registro
      */
-    @DeleteMapping("/excluir")
-    public ResponseEntity<?> excluirEntidade(@RequestParam(name = "codEntd") Long codEntd) {
+    @DeleteMapping
+    public ResponseEntity<?> excluir(
+            @RequestParam(name = "codEntd") Long codEntd) {
+
         try {
-            entidadeService.excluirEntidade(codEntd);
+            entidadeService.excluir(codEntd);
         } catch (Exception ex) {
             throw new ApiDeleteException(ex.getMessage());
         }

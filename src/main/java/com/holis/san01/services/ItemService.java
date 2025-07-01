@@ -20,7 +20,6 @@ import java.util.Optional;
  * Service para tratamento da tabela itens
  */
 @Service
-@Transactional
 public class ItemService {
     @Autowired
     private ItemRepository itemRepository;
@@ -53,6 +52,7 @@ public class ItemService {
         return itens.map(itemMapper::toDto);
     }
 
+    @Transactional
     public ItemDTO incluirItem(final ItemDTO dto) {
         Optional<Item> opt = itemRepository.findItem(dto.getCodItem());
 
@@ -67,6 +67,7 @@ public class ItemService {
         return itemMapper.toDto(item);
     }
 
+    @Transactional
     public ItemDTO alterarItem(final ItemDTO dto) {
         Item item = itemRepository.findItem(dto.getCodItem())
                 .orElseThrow(() -> new NotFoundRequestException("Item não encontrado"));
@@ -115,6 +116,7 @@ public class ItemService {
         return itemMapper.toDto(item);
     }
 
+    @Transactional
     public void excluirItem(final String codItem) {
         Item item = itemRepository.findItem(codItem)
                 .orElseThrow(() -> new NotFoundRequestException("Item não encontrado"));

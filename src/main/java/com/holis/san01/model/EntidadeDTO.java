@@ -14,6 +14,7 @@ public class EntidadeDTO {
     private Long codEntd;
 
     @NotBlank(message = "Nome abreviado/fantasia é obrigatório")
+    @Size(min = 3, message = "Nome deve ter no mínimo 3 caracteres")
     private String nome;
     @NotBlank(message = "Razão social é obrigatório")
     private String razaoSocial;

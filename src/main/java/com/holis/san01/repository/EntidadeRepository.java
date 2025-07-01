@@ -7,13 +7,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface EntidadeRepository extends JpaRepository<Entidade, Long> {
-    @Query("select e from Entidade e Where " +
-            "e.codEntd = ?1")
+    @Query("select e from Entidade e Where e.codEntd = ?1")
     Optional<Entidade> findEntidade(Long codEntd);
 
     @Query("select e from Entidade e Where " +

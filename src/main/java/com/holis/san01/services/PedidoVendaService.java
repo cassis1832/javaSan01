@@ -22,7 +22,6 @@ import java.util.Optional;
  * Service para tratamento de pedidos de vendas
  */
 @Service
-@Transactional
 public class PedidoVendaService {
     @Autowired
     private PedVendaRepository pedVendaRepository;
@@ -66,14 +65,17 @@ public class PedidoVendaService {
         }
     }
 
+    @Transactional
     public PedVenda incluirPedVenda(final PedVenda pedVenda) {
         return new PedVenda();
     }
 
+    @Transactional
     public PedVenda alterarPedVenda(final PedVenda pedVenda) {
         return new PedVenda();
     }
 
+    @Transactional
     public void excluirPedVenda(Long nrPedido) {
         pedVendaRepository.findPedVenda(nrPedido)
                 .orElseThrow(() -> new NotFoundRequestException("Pedido de venda não encontrado"));
@@ -101,14 +103,17 @@ public class PedidoVendaService {
         }
     }
 
+    @Transactional
     public PedVendaItem incluirPedVendaItem(final PedVendaItem pedVendaItem) {
         return new PedVendaItem();
     }
 
+    @Transactional
     public PedVendaItem alterarPedVendaItem(final PedVendaItem pedVendaItem) {
         return new PedVendaItem();
     }
 
+    @Transactional
     public void excluirPedVendaItem(Integer id) {
     }
 

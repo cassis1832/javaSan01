@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
  * Próximo numero automatico de item, emitente, pedidos, etc.
  */
 @Service
-@Transactional
 public class SequenciaService {
     @Autowired
     private SequenciaRepository sequenciaRepository;
@@ -34,6 +33,7 @@ public class SequenciaService {
         return seq.getNumeroAtual();
     }
 
+    @Transactional
     public void salvaSequencia(final String codSeq, final Long numero) {
         Sequencia seq = sequenciaRepository.findSequencia(codSeq)
                 .orElseThrow(() -> new NotFoundRequestException("Numeração não encontrada"));

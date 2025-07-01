@@ -17,12 +17,14 @@ import java.util.stream.Collectors;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
-    private final UsuarioRepository usuarioRepository;
 
     @Autowired
-    public CustomUserDetailsService(UsuarioRepository usuarioRepository) {
-        this.usuarioRepository = usuarioRepository;
-    }
+    private UsuarioRepository usuarioRepository;
+
+//    @Autowired
+//    public CustomUserDetailsService(UsuarioRepository usuarioRepository) {
+//        this.usuarioRepository = usuarioRepository;
+//    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -33,6 +35,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     /**
      * Todas as roles num mesmo campo string
+     *
      * @param roles
      * @return
      */

@@ -23,7 +23,6 @@ import java.util.Optional;
 import java.util.Random;
 
 @Service
-@Transactional
 public class LoginService {
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -33,6 +32,7 @@ public class LoginService {
     private JwtGenerator jwtGenerator;
 //    private final JavaMailSender mailSender;
 
+    @Transactional
     public TokenResponse login(final LoginDTO loginDTO) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword()));
@@ -57,6 +57,7 @@ public class LoginService {
      * O usuario esqueceu sua senha
      * Gerar um numero randomico e enviar por email
      */
+    @Transactional
     public void enviarNovaSenha(final String email) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 

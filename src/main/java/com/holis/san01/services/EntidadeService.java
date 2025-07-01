@@ -24,7 +24,6 @@ import java.util.Optional;
  * Service para tratamento de Entidade
  */
 @Service
-@Transactional
 public class EntidadeService {
     @Autowired
     private EntidadeRepository entidadeRepository;
@@ -35,11 +34,8 @@ public class EntidadeService {
 
     /**
      * Ler uma ENTIDADE pelo codEntd
-     *
-     * @param codEntd
-     * @return
      */
-    public EntidadeDTO lerEntidade(final Long codEntd) {
+    public EntidadeDTO ler(final Long codEntd) {
         Entidade entidade = entidadeRepository.findEntidade(codEntd)
                 .orElseThrow(() -> new NotFoundRequestException("Cliente/fornecedor não encontrado"));
         return entidadeMapper.toDto(entidade);
@@ -47,14 +43,8 @@ public class EntidadeService {
 
     /**
      * Listar Entidades
-     *
-     * @param tipo
-     * @param archive
-     * @param filterText
-     * @param pageable
-     * @return
      */
-    public Page<EntidadeDTO> listarEntidades(final String tipo, final String archive, final String filterText, final Pageable pageable) {
+    public Page<EntidadeDTO> listarPaging(final String tipo, final String archive, final String filterText, final Pageable pageable) {
         Page<Entidade> entidades = null;
 
         if (tipo.equalsIgnoreCase("todos")) {
@@ -96,11 +86,9 @@ public class EntidadeService {
 
     /**
      * Criar nova Entidade
-     *
-     * @param dto
-     * @return
      */
-    public EntidadeDTO incluirEntidade(final EntidadeDTO dto) {
+    @Transactional
+    public EntidadeDTO incluir(final EntidadeDTO dto) {
         Optional<Entidade> opt = entidadeRepository.findEntidade(dto.getCodEntd());
 
         if (opt.isPresent()) {
@@ -120,7 +108,11 @@ public class EntidadeService {
         return entidadeMapper.toDto(entidade);
     }
 
-    public EntidadeDTO alterarEntidade(final EntidadeDTO dto) {
+    /**
+     * Alterar Entidade
+     */
+    @Transactional
+    public EntidadeDTO alterar(final EntidadeDTO dto) {
         Entidade entidade = entidadeRepository.findEntidade(dto.getCodEntd())
                 .orElseThrow(() -> new NotFoundRequestException("Entidade não encontrado"));
 
@@ -161,10 +153,9 @@ public class EntidadeService {
 
     /**
      * Excluir um registro de Entidade
-     *
-     * @param codEntd
      */
-    public void excluirEntidade(final Long codEntd) {
+    @Transactional
+    public void excluir(final Long codEntd) {
         Entidade entidade = entidadeRepository.findEntidade(codEntd)
                 .orElseThrow(() -> new NotFoundRequestException(
                         "Cliente/fornecedor não encontrado para exclusão"));
@@ -178,6 +169,7 @@ public class EntidadeService {
             throw new ApiDeleteException("Não é possível excluir o cliente. Existem pedidos de vendas associados.");
         }
     }
+
 
 //    private EntidadeDTO toDto(final Entidade entidade) {
 //        return Mapper.mapTo(entidade, EntidadeDTO.class);
