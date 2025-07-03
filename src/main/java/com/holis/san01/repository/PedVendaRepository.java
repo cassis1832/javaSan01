@@ -23,5 +23,5 @@ public interface PedVendaRepository extends JpaRepository<PedVenda, Long> {
      * Listar os pedidos de um determinado cliente
      */
     @Query("select p from PedVenda p Where p.codEntd = ?1")
-    List<PedVenda> listPedVendas(Long codEntd);
+    List<PedVenda> listPedVendas(int codEntd);
 }

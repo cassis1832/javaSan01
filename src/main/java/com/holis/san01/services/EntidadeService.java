@@ -35,7 +35,7 @@ public class EntidadeService {
     /**
      * Ler uma ENTIDADE pelo codEntd
      */
-    public EntidadeDTO ler(final Long codEntd) {
+    public EntidadeDTO ler(final Integer codEntd) {
         Entidade entidade = entidadeRepository.findEntidade(codEntd)
                 .orElseThrow(() -> new NotFoundRequestException("Cliente/fornecedor não encontrado"));
         return entidadeMapper.toDto(entidade);
@@ -155,7 +155,7 @@ public class EntidadeService {
      * Excluir um registro de Entidade
      */
     @Transactional
-    public void excluir(final Long codEntd) {
+    public void excluir(final Integer codEntd) {
         Entidade entidade = entidadeRepository.findEntidade(codEntd)
                 .orElseThrow(() -> new NotFoundRequestException(
                         "Cliente/fornecedor não encontrado para exclusão"));

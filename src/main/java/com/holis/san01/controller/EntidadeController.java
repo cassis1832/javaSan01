@@ -1,6 +1,5 @@
 package com.holis.san01.controller;
 
-import com.holis.san01.exceptions.ApiDeleteException;
 import com.holis.san01.model.EntidadeDTO;
 import com.holis.san01.services.EntidadeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,7 @@ public class EntidadeController {
      */
     @GetMapping
     public ResponseEntity<EntidadeDTO> ler(
-            @RequestParam(name = "codEntd", defaultValue = "0") Long codEntd) {
+            @RequestParam(name = "codEntd", defaultValue = "0") Integer codEntd) {
         return ResponseEntity.status(HttpStatus.OK).body(entidadeService.ler(codEntd));
     }
 
@@ -102,13 +101,13 @@ public class EntidadeController {
      */
     @DeleteMapping
     public ResponseEntity<?> excluir(
-            @RequestParam(name = "codEntd") Long codEntd) {
+            @RequestParam(name = "codEntd") Integer codEntd) {
 
-        try {
-            entidadeService.excluir(codEntd);
-        } catch (Exception ex) {
-            throw new ApiDeleteException(ex.getMessage());
-        }
+//        try {
+        entidadeService.excluir(codEntd);
+//        } catch (Exception ex) {
+//            throw new ApiDeleteException(ex.getMessage());
+//        }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

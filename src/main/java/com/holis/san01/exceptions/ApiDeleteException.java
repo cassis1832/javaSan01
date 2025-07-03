@@ -1,5 +1,8 @@
 package com.holis.san01.exceptions;
 
+import org.springframework.beans.factory.config.RuntimeBeanNameReference;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
 import java.io.Serial;
 
 public class ApiDeleteException extends RuntimeException {

@@ -10,9 +10,9 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface EntidadeRepository extends JpaRepository<Entidade, Long> {
+public interface EntidadeRepository extends JpaRepository<Entidade, Integer> {
     @Query("select e from Entidade e Where e.codEntd = ?1")
-    Optional<Entidade> findEntidade(Long codEntd);
+    Optional<Entidade> findEntidade(Integer codEntd);
 
     @Query("select e from Entidade e Where " +
             "e.archive = ?1 " +
