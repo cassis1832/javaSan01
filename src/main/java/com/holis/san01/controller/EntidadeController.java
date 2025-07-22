@@ -33,44 +33,17 @@ public class EntidadeController {
     }
 
     /**
-     * Ler uma lista de clientes paginada com filtro
-     */
-    @GetMapping("/clientpages")
-    public ResponseEntity<Page<EntidadeDTO>> listarClientesPaging(
-            @RequestParam(name = "archive", defaultValue = "N") String archive,
-            @RequestParam(name = "filterText", defaultValue = "") String filterText,
-            @PageableDefault(page = 0, size = 40)
-            @SortDefault.SortDefaults({@SortDefault(sort = "codEntd")}) Pageable pageable) {
-
-        Page<EntidadeDTO> clientes = entidadeService.listarPaging("clientes", archive, filterText, pageable);
-        return new ResponseEntity<>(clientes, HttpStatus.OK);
-    }
-
-    /**
-     * Ler uma lista de fornecedores paginada com filtro
-     */
-    @GetMapping("/fornecpages")
-    public ResponseEntity<Page<EntidadeDTO>> listarFornecedoresPaging(
-            @RequestParam(name = "archive", defaultValue = "N") String archive,
-            @RequestParam(name = "filterText", defaultValue = "") String filterText,
-            @PageableDefault(page = 0, size = 40)
-            @SortDefault.SortDefaults({@SortDefault(sort = "codEntd")}) Pageable pageable) {
-
-        Page<EntidadeDTO> clientes = entidadeService.listarPaging("fornecedores", archive, filterText, pageable);
-        return new ResponseEntity<>(clientes, HttpStatus.OK);
-    }
-
-    /**
      * Ler uma lista de entidades paginada com filtro
      */
     @GetMapping("/pages")
     public ResponseEntity<Page<EntidadeDTO>> listarTodosPaging(
+            @RequestParam(name = "tipo", defaultValue = "") String tipoEntd,
             @RequestParam(name = "archive", defaultValue = "N") String archive,
             @RequestParam(name = "filterText", defaultValue = "") String filterText,
             @PageableDefault(page = 0, size = 40)
             @SortDefault.SortDefaults({@SortDefault(sort = "codEntd")}) Pageable pageable) {
 
-        Page<EntidadeDTO> clientes = entidadeService.listarPaging("todos", archive, filterText, pageable);
+        Page<EntidadeDTO> clientes = entidadeService.listarPaging(tipoEntd, archive, filterText, pageable);
         return new ResponseEntity<>(clientes, HttpStatus.OK);
     }
 

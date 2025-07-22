@@ -2,7 +2,6 @@ package com.holis.san01.controller.login;
 
 import com.holis.san01.model.LoginDTO;
 import com.holis.san01.model.TokenResponse;
-import com.holis.san01.repository.UsuarioRepository;
 import com.holis.san01.services.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

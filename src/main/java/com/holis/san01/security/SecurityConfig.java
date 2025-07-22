@@ -1,6 +1,5 @@
 package com.holis.san01.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
@@ -24,25 +23,10 @@ import java.util.Arrays;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private JwtAuthEntryPoint authEntryPoint;
+    private final JwtAuthEntryPoint authEntryPoint;
 
-    private CustomUserDetailsService userDetailsService;
+    private final CustomUserDetailsService userDetailsService;
 
-    @EnableSpringDataWebSupport(
-            pageSerializationMode = EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO
-    )
-    public class JacksonConfig {
-//        @Bean
-//        @Primary
-//        public ObjectMapper objectMapper(Jackson2ObjectMapperBuilder builder) {
-//            ObjectMapper mapper = new ObjectMapper();
-//            mapper.registerModule(new JSR310Module());
-//            mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-//            return mapper;
-//        }
-    }
-
-    @Autowired
     public SecurityConfig(CustomUserDetailsService userDetailsService, JwtAuthEntryPoint authEntryPoint) {
         this.userDetailsService = userDetailsService;
         this.authEntryPoint = authEntryPoint;
@@ -51,36 +35,37 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors(Customizer.withDefaults()) // by default, use a bean of the name corsConfigurationSource
-                .csrf().disable()
-                .exceptionHandling()
-                .authenticationEntryPoint(authEntryPoint)
-                .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeRequests()
-                .requestMatchers("/api/auth/**", "/api/login/**").permitAll()
-                .requestMatchers("/api/**").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .httpBasic();
-        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+                .cors(Customizer.withDefaults()) // Usa o bean corsConfigurationSource
+                .csrf(csrf -> csrf.disable())     // Desabilitado para uso com JWT
+                .exceptionHandling(exceptions -> exceptions
+                        .authenticationEntryPoint(authEntryPoint)
+                )
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/auth/**", "/api/login/**").permitAll()
+                        .requestMatchers("/api/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .httpBasic(Customizer.withDefaults())
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
     @Bean
-    PasswordEncoder passwordEncoder() {
+    public static PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
+    public static CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("*"));
         configuration.setAllowedMethods(Arrays.asList("*"));
@@ -93,5 +78,17 @@ public class SecurityConfig {
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
         return new JwtAuthenticationFilter();
+    }
+
+    @EnableSpringDataWebSupport(pageSerializationMode = EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO)
+    public class JacksonConfig {
+//        @Bean
+//        @Primary
+//        public ObjectMapper objectMapper(Jackson2ObjectMapperBuilder builder) {
+//            ObjectMapper mapper = new ObjectMapper();
+//            mapper.registerModule(new JSR310Module());
+//            mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+//            return mapper;
+//        }
     }
 }

@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -47,10 +48,21 @@ public class EntidadeService {
     public Page<EntidadeDTO> listarPaging(final String tipo, final String archive, final String filterText, final Pageable pageable) {
         Page<Entidade> entidades = null;
 
+        if (tipo.equalsIgnoreCase("")) {
+            if (StringUtils.isBlank(filterText)) {
+                entidades = entidadeRepository.listNenhumTipo(archive, pageable);
+            } else {
+                entidades = entidadeRepository.listNenhumTipo(archive, filterText, pageable);
+            }
+        }
+
         if (tipo.equalsIgnoreCase("todos")) {
             if (StringUtils.isBlank(filterText)) {
+                System.out.println(pageable);
                 entidades = entidadeRepository.listEntidades(archive, pageable);
+                System.out.println(entidades);
             } else {
+                List<String> campos = Arrays.asList("codEntd", "bairro");
                 entidades = entidadeRepository.listEntidades(archive, filterText, pageable);
             }
         }
@@ -117,6 +129,7 @@ public class EntidadeService {
                 .orElseThrow(() -> new NotFoundRequestException("Entidade não encontrado"));
 
         entidade.setNome(dto.getNome());
+        entidade.setRazaoSocial(dto.getRazaoSocial());
         entidade.setTpPessoa(dto.getTpPessoa());
         entidade.setCgc(dto.getCgc());
         entidade.setRg(dto.getRg());
