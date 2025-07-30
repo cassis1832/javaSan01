@@ -2,7 +2,10 @@ package com.holis.san01.controller;
 
 import com.holis.san01.exceptions.ApiDeleteException;
 import com.holis.san01.model.ItemDTO;
+import com.holis.san01.model.TipoItem;
+import com.holis.san01.model.VwItem;
 import com.holis.san01.services.ItemService;
+import com.holis.san01.services.TipoItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * Controller para tratamento de Itens
@@ -23,58 +27,73 @@ import javax.validation.Valid;
 public class ItemController {
     @Autowired
     private ItemService itemService;
+    @Autowired
+    private TipoItemService tipoItemService;
 
     /**
      * Ler um determinado registro pelo código
      */
-    @GetMapping("/ler")
-    public ResponseEntity<ItemDTO> lerItem(
+    @GetMapping
+    public ResponseEntity<ItemDTO> ler(
             @RequestParam(name = "codItem", defaultValue = "") String codItem) {
-        return ResponseEntity.status(HttpStatus.OK).body(itemService.lerItem(codItem));
+        return ResponseEntity.status(HttpStatus.OK).body(itemService.ler(codItem));
     }
 
     /**
      * Ler uma lista de itens filtrando pelo nome/codigo e situacao
      */
-    @GetMapping("/listarPag")
-    public ResponseEntity<Page<ItemDTO>> listarItens(
+    @GetMapping("/pages")
+    public ResponseEntity<Page<VwItem>> listarItens(
             @RequestParam(name = "tipoItem", defaultValue = "") String tipoItem,
             @RequestParam(name = "archive", defaultValue = "N") String archive,
             @RequestParam(name = "filterText", defaultValue = "") String filterText,
             @PageableDefault(page = 0, size = 40)
             @SortDefault.SortDefaults({@SortDefault(sort = "codItem")}) Pageable pageable) {
-        Page<ItemDTO> itens = itemService.listarItens(tipoItem, archive, filterText, pageable);
+
+        Page<VwItem> itens = itemService.listarPaging(tipoItem, archive, filterText, pageable);
         return new ResponseEntity<>(itens, HttpStatus.OK);
     }
 
     /**
      * Incluir um novo registro
      */
-    @PostMapping("/incluir")
-    public ResponseEntity<ItemDTO> incluirItem(@RequestBody @Valid ItemDTO itemDTO) {
-        itemDTO = itemService.incluirItem(itemDTO);
+    @PostMapping
+    public ResponseEntity<ItemDTO> incluir(
+            @RequestBody @Valid ItemDTO itemDTO) {
+
+        itemDTO = itemService.incluir(itemDTO);
         return new ResponseEntity<>(itemDTO, HttpStatus.CREATED);
     }
 
     /**
      * Alterar um registro existente
      */
-    @PutMapping("/alterar")
-    public ResponseEntity<ItemDTO> alterarItem(@RequestBody @Valid ItemDTO itemDTO) {
-        itemDTO = itemService.alterarItem(itemDTO);
+    @PutMapping
+    public ResponseEntity<ItemDTO> alterar(
+            @RequestBody @Valid ItemDTO itemDTO) {
+
+        itemDTO = itemService.alterar(itemDTO);
         return new ResponseEntity<>(itemDTO, HttpStatus.OK);
     }
 
     /**
      * Excluir um registro
      */
-    @DeleteMapping("/excluir")
-    public ResponseEntity<?> excluirItem(@RequestParam(name = "codItem") String codItem) {
+    @DeleteMapping
+    public ResponseEntity<?> excluir(
+            @RequestParam(name = "codItem") String codItem) {
+
         try {
-            itemService.excluirItem(codItem);
+            itemService.excluir(codItem);
         } catch (Exception ex) {
             throw new ApiDeleteException(ex.getMessage());
         }
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/tpItems")
+    public ResponseEntity<List<TipoItem>> listarTipoItem() {
+        List<TipoItem> tipos = tipoItemService.listar();
+        return new ResponseEntity<>(tipos, HttpStatus.OK);
     }
 }

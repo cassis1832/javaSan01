@@ -28,8 +28,10 @@ import java.util.Optional;
 public class EntidadeService {
     @Autowired
     private EntidadeRepository entidadeRepository;
+
     @Autowired
     private PedVendaRepository pedVendaRepository;
+
     @Autowired
     private EntidadeMapper entidadeMapper;
 

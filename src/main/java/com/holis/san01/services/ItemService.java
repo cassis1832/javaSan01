@@ -4,7 +4,11 @@ import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.exceptions.NotFoundRequestException;
 import com.holis.san01.model.Item;
 import com.holis.san01.model.ItemDTO;
+import com.holis.san01.model.TipoItem;
+import com.holis.san01.model.VwItem;
 import com.holis.san01.repository.ItemRepository;
+import com.holis.san01.repository.TipoItemRepository;
+import com.holis.san01.repository.VwItemRepository;
 import com.holis.san01.util.Mapper;
 import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
@@ -14,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -24,36 +29,42 @@ public class ItemService {
     @Autowired
     private ItemRepository itemRepository;
     @Autowired
+    private VwItemRepository vwItemRepository;
+
+    @Autowired
+    private TipoItemRepository tipoItemRepository;
+
+    @Autowired
     private ItemMapper itemMapper;
 
-    public ItemDTO lerItem(final String codItem) {
+    public ItemDTO ler(final String codItem) {
         Item item = itemRepository.findItem(codItem)
                 .orElseThrow(() -> new NotFoundRequestException("Item não encontrado"));
         return itemMapper.toDto(item);
     }
 
-    public Page<ItemDTO> listarItens(final String tipoItem, final String archive, final String filterText, final Pageable pageable) {
-        Page<Item> itens;
+    public Page<VwItem> listarPaging(final String tipoItem, final String archive, final String filterText, final Pageable pageable) {
+        Page<VwItem> itens;
 
-        if (tipoItem.equals("T")) {
+        if (tipoItem.equalsIgnoreCase("Todos")) {
             if (StringUtils.isBlank(filterText)) {
-                itens = itemRepository.listItens(archive, pageable);
+                itens = vwItemRepository.listItens(archive, pageable);
             } else {
-                itens = itemRepository.listItens(archive, filterText, pageable);
+                itens = vwItemRepository.listItens(archive, filterText, pageable);
             }
         } else {
             if (StringUtils.isBlank(filterText)) {
-                itens = itemRepository.listItensPorTipo(tipoItem, archive, pageable);
+                itens = vwItemRepository.listItensPorTipo(tipoItem, archive, pageable);
             } else {
-                itens = itemRepository.listItensPorTipo(tipoItem, archive, filterText, pageable);
+                itens = vwItemRepository.listItensPorTipo(tipoItem, archive, filterText, pageable);
             }
         }
 
-        return itens.map(itemMapper::toDto);
+        return itens;
     }
 
     @Transactional
-    public ItemDTO incluirItem(final ItemDTO dto) {
+    public ItemDTO incluir(final ItemDTO dto) {
         Optional<Item> opt = itemRepository.findItem(dto.getCodItem());
 
         if (opt.isPresent()) {
@@ -68,25 +79,26 @@ public class ItemService {
     }
 
     @Transactional
-    public ItemDTO alterarItem(final ItemDTO dto) {
+    public ItemDTO alterar(final ItemDTO dto) {
         Item item = itemRepository.findItem(dto.getCodItem())
                 .orElseThrow(() -> new NotFoundRequestException("Item não encontrado"));
 
         item.setCodItem(dto.getCodItem());
         item.setArchive(dto.getArchive());
-        item.setTipoItem(dto.getTipoItem());
+        item.setCodTipoItem(dto.getCodTipoItem());
         item.setAliquotaIpi(dto.getAliquotaIpi());
         item.setClassFiscal(dto.getClassFiscal());
         item.setCodLocaliz(dto.getCodLocaliz());
         item.setCodOrigem(dto.getCodOrigem());
         item.setComprFabric(dto.getComprFabric());
-        item.setCustoRep(dto.getCustoRep());
         item.setDescricao(dto.getDescricao());
-        item.setDtBase(dto.getDtBase());
+        item.setPrecoVenda(dto.getPrecoVenda());
+        item.setDtPrecoVenda(dto.getDtPrecoVenda());
+        item.setDtPrecoCompra(dto.getDtPrecoCompra());
+        item.setPrecoCompra(dto.getPrecoCompra());
         item.setDtObsol(dto.getDtObsol());
         item.setDtLiberac(dto.getDtLiberac());
         item.setDtUltEnt(dto.getDtUltEnt());
-        item.setDtUltRep(dto.getDtUltRep());
         item.setCodFamilia(dto.getCodFamilia());
         item.setFraciona(dto.getFraciona());
         item.setGtin(dto.getGtin());
@@ -101,14 +113,12 @@ public class ItemService {
         item.setPesoBruto(dto.getPesoBruto());
         item.setPesoLiquido(dto.getPesoLiquido());
         item.setPrazoEntrega(dto.getPrazoEntrega());
-        item.setPrecoBase(dto.getPrecoBase());
         item.setPrecoUltEnt(dto.getPrecoUltEnt());
         item.setQuantPacote(dto.getQuantPacote());
         item.setResCompra(dto.getResCompra());
         item.setResFabric(dto.getResFabric());
         item.setSituacao(dto.getSituacao());
         item.setTempoRessup(dto.getTempoRessup());
-        item.setCodTipoItem(dto.getCodTipoItem());
         item.setUnimed(dto.getUnimed());
         item.setUsuarioObsol(dto.getUsuarioObsol());
         item = itemRepository.saveAndFlush(item);
@@ -117,7 +127,7 @@ public class ItemService {
     }
 
     @Transactional
-    public void excluirItem(final String codItem) {
+    public void excluir(final String codItem) {
         Item item = itemRepository.findItem(codItem)
                 .orElseThrow(() -> new NotFoundRequestException("Item não encontrado"));
         itemRepository.deleteById(item.getCodItem());

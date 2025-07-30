@@ -19,19 +19,16 @@ public class ItemDTO {
     @NotBlank(message = "Unidade de medida é obrigatória")
     private String unimed;
 
-    @NotBlank(message = "Tipo de item é obrigatório")
-    private String tipoItem;
-
     @NotBlank(message = "Tipo fiscal de item é obrigatório")
     private String codTipoItem;
 
-    private BigDecimal precoBase;
+    private BigDecimal precoVenda;
 
-    private Date dtBase;
+    private Date dtPrecoVenda;
 
-    private BigDecimal custoRep;
+    private BigDecimal precoCompra;
 
-    private Date dtUltRep;
+    private Date dtPrecoCompra;
 
     private String codFamilia;
 

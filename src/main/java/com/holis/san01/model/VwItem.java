@@ -1,30 +1,24 @@
 package com.holis.san01.model;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
 
-import javax.validation.constraints.Pattern;
 import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
 @Entity
-@Table(name = "item")
-public class Item {
+@Table(name = "vw_item")
+public class VwItem {
     @Id
-    @Column(nullable = false)
     private String codItem;
 
-    @Column(nullable = false)
     private String descricao;
 
-    @Column(nullable = false)
     private String codTipoItem;
 
-    @Column(nullable = false)
     private String unimed;
 
     private BigDecimal precoVenda;
@@ -38,10 +32,6 @@ public class Item {
     private String codFamilia;
 
     private Boolean indItemFat;
-
-    private BigDecimal precoUltEnt;
-
-    private Date dtUltEnt;
 
     private String comprFabric;
 
@@ -121,7 +111,9 @@ public class Item {
 
     private Date dtCriacao;
 
-    @Column(nullable = false)
-    @Pattern(regexp = "[SN]", message = "O campo 'archive' deve ser 'S' ou 'N'.")
     private String archive;
+
+    private String descricaoTipoItem;
+
+    private String tpProd;
 }
