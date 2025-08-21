@@ -1,6 +1,5 @@
 package com.holis.san01.controller;
 
-import com.holis.san01.exceptions.ApiDeleteException;
 import com.holis.san01.model.ItemDTO;
 import com.holis.san01.model.TipoItem;
 import com.holis.san01.model.VwItem;
@@ -27,6 +26,7 @@ import java.util.List;
 public class ItemController {
     @Autowired
     private ItemService itemService;
+
     @Autowired
     private TipoItemService tipoItemService;
 
@@ -83,11 +83,7 @@ public class ItemController {
     public ResponseEntity<?> excluir(
             @RequestParam(name = "codItem") String codItem) {
 
-        try {
-            itemService.excluir(codItem);
-        } catch (Exception ex) {
-            throw new ApiDeleteException(ex.getMessage());
-        }
+        itemService.excluir(codItem);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -95,5 +91,25 @@ public class ItemController {
     public ResponseEntity<List<TipoItem>> listarTipoItem() {
         List<TipoItem> tipos = tipoItemService.listar();
         return new ResponseEntity<>(tipos, HttpStatus.OK);
+    }
+
+    /**
+     * Ler uma lista das familias dos itens
+     */
+    @GetMapping("/familias")
+    public ResponseEntity<List<String>> listarFamilias() {
+
+        List<String> familias = itemService.listarFamilias();
+        return new ResponseEntity<>(familias, HttpStatus.OK);
+    }
+
+    /**
+     * Ler uma lista de itens filtrando pelo nome/codigo e situacao
+     */
+    @GetMapping("/situacoes")
+    public ResponseEntity<List<String>> listarSituacoes() {
+
+        List<String> situacoes = itemService.listarSituacoes();
+        return new ResponseEntity<>(situacoes, HttpStatus.OK);
     }
 }

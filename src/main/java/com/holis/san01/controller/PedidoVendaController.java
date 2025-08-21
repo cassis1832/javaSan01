@@ -1,7 +1,6 @@
 package com.holis.san01.controller;
 
-import com.holis.san01.exceptions.ApiDeleteException;
-import com.holis.san01.exceptions.NotFoundRequestException;
+import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.model.PedVenda;
 import com.holis.san01.model.PedVendaItem;
 import com.holis.san01.model.VwPedVendaItem;
@@ -121,7 +120,7 @@ public class PedidoVendaController {
         try {
             pedidoVendaService.excluirPedVenda(nrPedido);
         } catch (Exception ex) {
-            throw new ApiDeleteException(ex.getMessage());
+            throw new ApiRequestException(ex.getMessage());
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -135,7 +134,7 @@ public class PedidoVendaController {
         try {
             pedidoVendaService.excluirPedVendaItem(id);
         } catch (Exception ex) {
-            throw new ApiDeleteException(ex.getMessage());
+            throw new ApiRequestException(ex.getMessage());
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -147,7 +146,7 @@ public class PedidoVendaController {
     public ResponseEntity<Integer> obterProximoCodigo() {
         Integer proximoCodigo = (Integer) pedidoVendaService.obterProximoCodigo();
         if (proximoCodigo == null) {
-            throw new NotFoundRequestException("Retornando null no proximo código");
+            throw new ApiRequestException("Retornando null no proximo código");
         }
         return new ResponseEntity<>(proximoCodigo, HttpStatus.OK);
     }

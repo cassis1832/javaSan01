@@ -1,6 +1,6 @@
 package com.holis.san01.controller;
 
-import com.holis.san01.exceptions.ApiDeleteException;
+import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.model.Unimed;
 import com.holis.san01.services.UnimedService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +56,7 @@ public class UnimedController {
         try {
             unimedService.excluir(codUnimed);
         } catch (Exception ex) {
-            throw new ApiDeleteException(ex.getMessage());
+            throw new ApiRequestException(ex.getMessage());
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }

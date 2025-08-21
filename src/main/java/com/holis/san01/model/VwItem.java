@@ -39,8 +39,6 @@ public class VwItem {
 
     private Integer resFabric;
 
-    private String classFiscal;
-
     private BigDecimal aliquotaIpi;
 
     private Integer codOrigem;
@@ -97,7 +95,7 @@ public class VwItem {
 
     private BigDecimal loteMinCpa;
 
-    private String ncm;
+    private String codNcm;
 
     private String origem;
 

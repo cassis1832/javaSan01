@@ -1,13 +1,12 @@
 package com.holis.san01.services;
 
 import com.holis.san01.exceptions.ApiRequestException;
-import com.holis.san01.exceptions.NotFoundRequestException;
 import com.holis.san01.model.Item;
 import com.holis.san01.model.ItemDTO;
-import com.holis.san01.model.TipoItem;
+import com.holis.san01.model.PedVendaItem;
 import com.holis.san01.model.VwItem;
 import com.holis.san01.repository.ItemRepository;
-import com.holis.san01.repository.TipoItemRepository;
+import com.holis.san01.repository.PedVendaItemRepository;
 import com.holis.san01.repository.VwItemRepository;
 import com.holis.san01.util.Mapper;
 import jakarta.transaction.Transactional;
@@ -29,17 +28,16 @@ public class ItemService {
     @Autowired
     private ItemRepository itemRepository;
     @Autowired
-    private VwItemRepository vwItemRepository;
-
+    private PedVendaItemRepository pedVendaItemRepository;
     @Autowired
-    private TipoItemRepository tipoItemRepository;
+    private VwItemRepository vwItemRepository;
 
     @Autowired
     private ItemMapper itemMapper;
 
     public ItemDTO ler(final String codItem) {
         Item item = itemRepository.findItem(codItem)
-                .orElseThrow(() -> new NotFoundRequestException("Item não encontrado"));
+                .orElseThrow(() -> new ApiRequestException("Item não encontrado"));
         return itemMapper.toDto(item);
     }
 
@@ -81,13 +79,12 @@ public class ItemService {
     @Transactional
     public ItemDTO alterar(final ItemDTO dto) {
         Item item = itemRepository.findItem(dto.getCodItem())
-                .orElseThrow(() -> new NotFoundRequestException("Item não encontrado"));
+                .orElseThrow(() -> new ApiRequestException("Item não encontrado"));
 
         item.setCodItem(dto.getCodItem());
         item.setArchive(dto.getArchive());
         item.setCodTipoItem(dto.getCodTipoItem());
         item.setAliquotaIpi(dto.getAliquotaIpi());
-        item.setClassFiscal(dto.getClassFiscal());
         item.setCodLocaliz(dto.getCodLocaliz());
         item.setCodOrigem(dto.getCodOrigem());
         item.setComprFabric(dto.getComprFabric());
@@ -108,7 +105,7 @@ public class ItemService {
         item.setLoteMinVda(dto.getLoteMinVda());
         item.setLoteMulven(dto.getLoteMulven());
         item.setNarrativa(dto.getNarrativa());
-        item.setNcm(dto.getNcm());
+        item.setCodNcm(dto.getCodNcm());
         item.setOrigem(dto.getOrigem());
         item.setPesoBruto(dto.getPesoBruto());
         item.setPesoLiquido(dto.getPesoLiquido());
@@ -129,11 +126,21 @@ public class ItemService {
     @Transactional
     public void excluir(final String codItem) {
         Item item = itemRepository.findItem(codItem)
-                .orElseThrow(() -> new NotFoundRequestException("Item não encontrado"));
+                .orElseThrow(() -> new ApiRequestException("Item não encontrado"));
+
+        List<PedVendaItem> pedVendaItems = pedVendaItemRepository.listPedVendaItemDoItem(item.getCodItem());
+        if (!pedVendaItems.isEmpty()){
+            throw new ApiRequestException("Exclusão inválida, existem pedidos para o item");
+        }
+
         itemRepository.deleteById(item.getCodItem());
     }
 
-//    private ItemDTO toDto(final Item item) {
-//        return Mapper.mapTo(item, ItemDTO.class);
-//    }
+    public List<String> listarFamilias() {
+        return itemRepository.listFamilias();
+    }
+
+    public List<String> listarSituacoes() {
+        return itemRepository.listSituacoes();
+    }
 }

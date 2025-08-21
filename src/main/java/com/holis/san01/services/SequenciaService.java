@@ -1,6 +1,6 @@
 package com.holis.san01.services;
 
-import com.holis.san01.exceptions.NotFoundRequestException;
+import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.model.Sequencia;
 import com.holis.san01.repository.SequenciaRepository;
 import jakarta.transaction.Transactional;
@@ -20,7 +20,7 @@ public class SequenciaService {
      */
     public Long proximoNumero(final String codSeq) {
         Sequencia seq = sequenciaRepository.findSequencia(codSeq)
-                .orElseThrow(() -> new NotFoundRequestException("Numeração não encontrada"));
+                .orElseThrow(() -> new ApiRequestException("Numeração não encontrada"));
         return seq.getNumeroSeguinte();
     }
 
@@ -29,14 +29,14 @@ public class SequenciaService {
      */
     public Long ultimoNumero(final String codSeq) {
         Sequencia seq = sequenciaRepository.findSequencia(codSeq)
-                .orElseThrow(() -> new NotFoundRequestException("Numeração não encontrada"));
+                .orElseThrow(() -> new ApiRequestException("Numeração não encontrada"));
         return seq.getNumeroAtual();
     }
 
     @Transactional
     public void salvaSequencia(final String codSeq, final Long numero) {
         Sequencia seq = sequenciaRepository.findSequencia(codSeq)
-                .orElseThrow(() -> new NotFoundRequestException("Numeração não encontrada"));
+                .orElseThrow(() -> new ApiRequestException("Numeração não encontrada"));
 
         if (numero > seq.getNumeroAtual()) {
             seq.setNumeroAtual(numero);

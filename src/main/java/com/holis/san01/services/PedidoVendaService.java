@@ -1,7 +1,6 @@
 package com.holis.san01.services;
 
-import com.holis.san01.exceptions.ApiDeleteException;
-import com.holis.san01.exceptions.NotFoundRequestException;
+import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.model.PedVenda;
 import com.holis.san01.model.PedVendaItem;
 import com.holis.san01.model.VwPedVendaItem;
@@ -38,7 +37,7 @@ public class PedidoVendaService {
      */
     public PedVenda lerPedVenda(final Long nrPedido) {
         return pedVendaRepository.findPedVenda(nrPedido)
-                .orElseThrow(() -> new NotFoundRequestException("Pedido de venda não encontrado"));
+                .orElseThrow(() -> new ApiRequestException("Pedido de venda não encontrado"));
     }
 
     /**
@@ -47,7 +46,7 @@ public class PedidoVendaService {
      */
     public PedVendaItem lerPedVendaItem(final Long id) {
         return pedVendaItemRepository.findPedVendaItem(id)
-                .orElseThrow(() -> new NotFoundRequestException("Item do pedido não encontrado"));
+                .orElseThrow(() -> new ApiRequestException("Item do pedido não encontrado"));
     }
 
     public List<PedVendaItem> listarPedVendaItem(final Long nrPedido) {
@@ -78,7 +77,7 @@ public class PedidoVendaService {
     @Transactional
     public void excluirPedVenda(Long nrPedido) {
         pedVendaRepository.findPedVenda(nrPedido)
-                .orElseThrow(() -> new NotFoundRequestException("Pedido de venda não encontrado"));
+                .orElseThrow(() -> new ApiRequestException("Pedido de venda não encontrado"));
 
         //  Verifica se o registro pode ser deletado
         boolean podeDeletar = true;
@@ -86,7 +85,7 @@ public class PedidoVendaService {
         if (podeDeletar) {
             pedVendaRepository.deleteById(nrPedido);
         } else {
-            throw new ApiDeleteException("Não é possível excluir o pedido. Existem coisas relacionadas.");
+            throw new ApiRequestException("Não é possível excluir o pedido. Existem coisas relacionadas.");
         }
     }
 

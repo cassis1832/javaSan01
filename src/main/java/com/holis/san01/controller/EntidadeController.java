@@ -76,11 +76,8 @@ public class EntidadeController {
     public ResponseEntity<?> excluir(
             @RequestParam(name = "codEntd") Integer codEntd) {
 
-//        try {
         entidadeService.excluir(codEntd);
-//        } catch (Exception ex) {
-//            throw new ApiDeleteException(ex.getMessage());
-//        }
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

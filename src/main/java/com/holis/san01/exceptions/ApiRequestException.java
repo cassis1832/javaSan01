@@ -9,10 +9,6 @@ public class ApiRequestException extends RuntimeException {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    public ApiRequestException() {
-        super();
-    }
-
     public ApiRequestException(String message) {
         super(message);
     }

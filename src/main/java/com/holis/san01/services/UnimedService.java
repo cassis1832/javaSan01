@@ -1,7 +1,6 @@
 package com.holis.san01.services;
 
 import com.holis.san01.exceptions.ApiRequestException;
-import com.holis.san01.exceptions.NotFoundRequestException;
 import com.holis.san01.model.Unimed;
 import com.holis.san01.repository.UnimedRepository;
 import jakarta.transaction.Transactional;
@@ -21,7 +20,7 @@ public class UnimedService {
 
     public Unimed ler(final String codUnimed) {
         return unimedRepository.findUnimed(codUnimed)
-                .orElseThrow(() -> new NotFoundRequestException("Unidade de medida não encontrada"));
+                .orElseThrow(() -> new ApiRequestException("Unidade de medida não encontrada"));
     }
 
     public List<Unimed> listar(final String archive) {
@@ -42,7 +41,7 @@ public class UnimedService {
     @Transactional
     public Unimed alterar(final Unimed dto) {
         Unimed unimed = unimedRepository.findUnimed(dto.getCodUnimed())
-                .orElseThrow(() -> new NotFoundRequestException("Unidade de medida não encontrada!"));
+                .orElseThrow(() -> new ApiRequestException("Unidade de medida não encontrada!"));
 
         unimed.setCodUnimed(dto.getCodUnimed());
         unimed.setDescricao(dto.getDescricao());
@@ -55,7 +54,7 @@ public class UnimedService {
     @Transactional
     public void excluir(final String codUnimed) {
         Unimed unimed = unimedRepository.findUnimed(codUnimed)
-                .orElseThrow(() -> new NotFoundRequestException("Unidade de medida não encontrada!"));
+                .orElseThrow(() -> new ApiRequestException("Unidade de medida não encontrada!"));
         unimedRepository.deleteById(unimed.getCodUnimed());
     }
 }

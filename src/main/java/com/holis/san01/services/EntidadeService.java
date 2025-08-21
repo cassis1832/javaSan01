@@ -1,8 +1,6 @@
 package com.holis.san01.services;
 
-import com.holis.san01.exceptions.ApiDeleteException;
 import com.holis.san01.exceptions.ApiRequestException;
-import com.holis.san01.exceptions.NotFoundRequestException;
 import com.holis.san01.model.Entidade;
 import com.holis.san01.model.EntidadeDTO;
 import com.holis.san01.model.PedVenda;
@@ -40,7 +38,7 @@ public class EntidadeService {
      */
     public EntidadeDTO ler(final Integer codEntd) {
         Entidade entidade = entidadeRepository.findEntidade(codEntd)
-                .orElseThrow(() -> new NotFoundRequestException("Cliente/fornecedor não encontrado"));
+                .orElseThrow(() -> new ApiRequestException("Cliente/fornecedor não encontrado"));
         return entidadeMapper.toDto(entidade);
     }
 
@@ -128,7 +126,7 @@ public class EntidadeService {
     @Transactional
     public EntidadeDTO alterar(final EntidadeDTO dto) {
         Entidade entidade = entidadeRepository.findEntidade(dto.getCodEntd())
-                .orElseThrow(() -> new NotFoundRequestException("Entidade não encontrado"));
+                .orElseThrow(() -> new ApiRequestException("Entidade não encontrado"));
 
         entidade.setNome(dto.getNome());
         entidade.setRazaoSocial(dto.getRazaoSocial());
@@ -172,7 +170,7 @@ public class EntidadeService {
     @Transactional
     public void excluir(final Integer codEntd) {
         Entidade entidade = entidadeRepository.findEntidade(codEntd)
-                .orElseThrow(() -> new NotFoundRequestException(
+                .orElseThrow(() -> new ApiRequestException(
                         "Cliente/fornecedor não encontrado para exclusão"));
 
         //  Verifica se há pedido de venda relacionado
@@ -181,7 +179,7 @@ public class EntidadeService {
         if (pedidos == null || pedidos.isEmpty()) {
             entidadeRepository.deleteById(entidade.getCodEntd());
         } else {
-            throw new ApiDeleteException("Não é possível excluir o cliente. Existem pedidos de vendas associados.");
+            throw new ApiRequestException("Não é possível excluir o cliente. Existem pedidos de vendas associados.");
         }
     }
 

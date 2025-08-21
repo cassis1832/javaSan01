@@ -11,9 +11,11 @@ import java.util.Date;
 @Data
 public class ItemDTO {
     @NotBlank(message = "Código do item é obrigatório")
+    @Size(max = 15, message = "O código deve ter entre 1 e 15 caracteres")
     private String codItem;
 
     @NotBlank(message = "Descrição do item é obrigatória")
+    @Size(max = 60, message = "A descrição deve ter entre 1 e 60 caracteres")
     private String descricao;
 
     @NotBlank(message = "Unidade de medida é obrigatória")
@@ -43,8 +45,6 @@ public class ItemDTO {
     private Integer resCompra;
 
     private Integer resFabric;
-
-    private String classFiscal;
 
     private BigDecimal aliquotaIpi;
 
@@ -102,7 +102,7 @@ public class ItemDTO {
 
     private BigDecimal loteMinCpa;
 
-    private String ncm;
+    private String codNcm;
 
     private String origem;
 

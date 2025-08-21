@@ -1,7 +1,6 @@
 package com.holis.san01.services;
 
 import com.holis.san01.exceptions.ApiRequestException;
-import com.holis.san01.exceptions.NotFoundRequestException;
 import com.holis.san01.model.LoginDTO;
 import com.holis.san01.model.TokenResponse;
 import com.holis.san01.model.Usuario;
@@ -39,7 +38,7 @@ public class LoginService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         Usuario usuario = usuarioRepository.findByEmail(loginDTO.getUsername())
-                .orElseThrow(() -> new NotFoundRequestException("Usuário não encontrado"));
+                .orElseThrow(() -> new ApiRequestException("Usuário não encontrado"));
 
         return jwtGenerator.generateToken(authentication, usuario);
     }
@@ -49,7 +48,7 @@ public class LoginService {
      */
     public UsuarioDTO lerUsuarioPorEmail(final String email) {
         Usuario usr = usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundRequestException("Usuário não encontrado"));
+                .orElseThrow(() -> new ApiRequestException("Usuário não encontrado"));
         return Mapper.mapTo(usr, UsuarioDTO.class);
     }
 
