@@ -1,6 +1,8 @@
 package com.holis.san01.services;
 
 import com.holis.san01.exceptions.ApiRequestException;
+import com.holis.san01.exceptions.NotFoundRequestException;
+import com.holis.san01.model.ApiResponse;
 import com.holis.san01.model.Entidade;
 import com.holis.san01.model.EntidadeDTO;
 import com.holis.san01.model.PedVenda;
@@ -36,16 +38,18 @@ public class EntidadeService {
     /**
      * Ler uma ENTIDADE pelo codEntd
      */
-    public EntidadeDTO ler(final Integer codEntd) {
+    public ApiResponse ler(final Integer codEntd) {
         Entidade entidade = entidadeRepository.findEntidade(codEntd)
-                .orElseThrow(() -> new ApiRequestException("Cliente/fornecedor não encontrado"));
-        return entidadeMapper.toDto(entidade);
+                .orElseThrow(() -> new NotFoundRequestException("Cliente/fornecedor não encontrado"));
+
+        EntidadeDTO entidadeDTO = entidadeMapper.toDto(entidade);
+        return new ApiResponse(true, entidadeDTO);
     }
 
     /**
      * Listar Entidades
      */
-    public Page<EntidadeDTO> listarPaging(final String tipo, final String archive, final String filterText, final Pageable pageable) {
+    public ApiResponse listarPaging(final String tipo, final String archive, final String filterText, final Pageable pageable) {
         Page<Entidade> entidades = null;
 
         if (tipo.equalsIgnoreCase("")) {
@@ -88,19 +92,16 @@ public class EntidadeService {
         }
 
         //return entidadeMapper.toDto(entidade);
-        return entidades.map(entidadeMapper::toDto);
+        Page<EntidadeDTO> entidadeDTO = entidades.map(entidadeMapper::toDto);
+        return new ApiResponse(true, entidadeDTO);
 
-        // é o mesmo que isso
-        //        return entidades.stream()
-        //                .map(entidade -> entidadeMapper.toDto(entidade))
-        //                .collect(Collectors.toList());
     }
 
     /**
      * Criar nova Entidade
      */
     @Transactional
-    public EntidadeDTO incluir(final EntidadeDTO dto) {
+    public ApiResponse incluir(final EntidadeDTO dto) {
         Optional<Entidade> opt = entidadeRepository.findEntidade(dto.getCodEntd());
 
         if (opt.isPresent()) {
@@ -117,14 +118,14 @@ public class EntidadeService {
         entidade.setDtCriacao(new Date());
         entidade.setArchive("N");
         entidade = entidadeRepository.saveAndFlush(entidade);
-        return entidadeMapper.toDto(entidade);
+        return new ApiResponse(true, entidadeMapper.toDto(entidade));
     }
 
     /**
      * Alterar Entidade
      */
     @Transactional
-    public EntidadeDTO alterar(final EntidadeDTO dto) {
+    public ApiResponse alterar(final EntidadeDTO dto) {
         Entidade entidade = entidadeRepository.findEntidade(dto.getCodEntd())
                 .orElseThrow(() -> new ApiRequestException("Entidade não encontrado"));
 
@@ -161,14 +162,23 @@ public class EntidadeService {
         }
 
         entidade = entidadeRepository.saveAndFlush(entidade);
-        return entidadeMapper.toDto(entidade);
+        return new ApiResponse(true, entidadeMapper.toDto(entidade));
     }
 
     /**
      * Excluir um registro de Entidade
      */
     @Transactional
-    public void excluir(final Integer codEntd) {
+    public ApiResponse excluir(final Integer codEntd) {
+        checkDelete(codEntd);
+        entidadeRepository.deleteById(codEntd);
+        return new ApiResponse(true, "Exclusão efetuada com sucesso");
+    }
+
+    /**
+     * Verificar se o cliente pode ser deletado
+     */
+    public ApiResponse checkDelete(Integer codEntd) {
         Entidade entidade = entidadeRepository.findEntidade(codEntd)
                 .orElseThrow(() -> new ApiRequestException(
                         "Cliente/fornecedor não encontrado para exclusão"));
@@ -176,13 +186,12 @@ public class EntidadeService {
         //  Verifica se há pedido de venda relacionado
         List<PedVenda> pedidos = pedVendaRepository.listPedVendas(entidade.getCodEntd());
 
-        if (pedidos == null || pedidos.isEmpty()) {
-            entidadeRepository.deleteById(entidade.getCodEntd());
-        } else {
+        if (!pedidos.isEmpty()) {
             throw new ApiRequestException("Não é possível excluir o cliente. Existem pedidos de vendas associados.");
         }
-    }
 
+        return new ApiResponse(true, "Exclusão pode ser efetuada");
+    }
 
 //    private EntidadeDTO toDto(final Entidade entidade) {
 //        return Mapper.mapTo(entidade, EntidadeDTO.class);

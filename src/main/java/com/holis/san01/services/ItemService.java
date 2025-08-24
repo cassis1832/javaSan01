@@ -1,6 +1,7 @@
 package com.holis.san01.services;
 
 import com.holis.san01.exceptions.ApiRequestException;
+import com.holis.san01.exceptions.NotFoundRequestException;
 import com.holis.san01.model.*;
 import com.holis.san01.repository.ItemRepository;
 import com.holis.san01.repository.PedVendaItemRepository;
@@ -39,7 +40,7 @@ public class ItemService {
      */
     public ApiResponse ler(final String codItem) {
         Item item = itemRepository.findItem(codItem)
-                .orElseThrow(() -> new ApiRequestException("Item não encontrado"));
+                .orElseThrow(() -> new NotFoundRequestException("Item não encontrado"));
 
         ItemDTO itemDTO = itemMapper.toDto(item);
         return new ApiResponse(true, itemDTO);
@@ -83,7 +84,7 @@ public class ItemService {
     @Transactional
     public ApiResponse alterar(final ItemDTO dto) {
         Item item = itemRepository.findItem(dto.getCodItem())
-                .orElseThrow(() -> new ApiRequestException("Item não encontrado"));
+                .orElseThrow(() -> new NotFoundRequestException("Item não encontrado"));
 
         item.setCodItem(dto.getCodItem());
         item.setArchive(dto.getArchive());
@@ -128,16 +129,25 @@ public class ItemService {
 
     @Transactional
     public ApiResponse excluir(final String codItem) {
+        checkDelete(codItem);
+
+        itemRepository.deleteById(codItem);
+        return new ApiResponse(true, "Exclusão efetuada com sucesso");
+    }
+
+    /**
+     * Verificar se o item pode ser deletado
+     */
+    public ApiResponse checkDelete(String codItem) {
         Item item = itemRepository.findItem(codItem)
-                .orElseThrow(() -> new ApiRequestException("Item não encontrado"));
+                .orElseThrow(() -> new NotFoundRequestException("Item não encontrado para exclusão"));
 
         List<PedVendaItem> pedVendaItems = pedVendaItemRepository.listPedVendaItemDoItem(item.getCodItem());
         if (!pedVendaItems.isEmpty()) {
             throw new ApiRequestException("Exclusão inválida, existem pedidos para o item");
         }
 
-        itemRepository.deleteById(item.getCodItem());
-        return new ApiResponse(true, "Exclusão efetuada com sucesso");
+        return new ApiResponse(true, "Exclusão pode ser efetuada");
     }
 
     public ApiResponse listarFamilias() {

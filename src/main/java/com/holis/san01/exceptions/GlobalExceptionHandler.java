@@ -52,4 +52,20 @@ public class GlobalExceptionHandler {
                         null
                 ));
     }
+
+    /**
+     * Not Found
+     * Devolve HTTPSTATUS.OK para não subir excessão nem dar erro na console do Angular
+     */
+    @ExceptionHandler(NotFoundRequestException.class)
+    public ResponseEntity<ApiResponse> NotFoundException(NotFoundRequestException ex) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ApiResponse(
+                        false,
+                        ex.getMessage(),
+                        null,
+                        null
+                ));
+    }
 }

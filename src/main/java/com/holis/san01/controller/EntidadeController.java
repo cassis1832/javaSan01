@@ -1,9 +1,9 @@
 package com.holis.san01.controller;
 
+import com.holis.san01.model.ApiResponse;
 import com.holis.san01.model.EntidadeDTO;
 import com.holis.san01.services.EntidadeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
@@ -27,57 +27,60 @@ public class EntidadeController {
      * Ler um determinado registro pelo código da entidade
      */
     @GetMapping
-    public ResponseEntity<EntidadeDTO> ler(
+    public ResponseEntity<ApiResponse> ler(
             @RequestParam(name = "codEntd", defaultValue = "0") Integer codEntd) {
-        return ResponseEntity.status(HttpStatus.OK).body(entidadeService.ler(codEntd));
+        ApiResponse apiResponse = entidadeService.ler(codEntd);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
     /**
      * Ler uma lista de entidades paginada com filtro
      */
     @GetMapping("/pages")
-    public ResponseEntity<Page<EntidadeDTO>> listarTodosPaging(
+    public ResponseEntity<ApiResponse> listarTodosPaging(
             @RequestParam(name = "tipo", defaultValue = "") String tipoEntd,
             @RequestParam(name = "archive", defaultValue = "N") String archive,
             @RequestParam(name = "filterText", defaultValue = "") String filterText,
             @PageableDefault(page = 0, size = 40)
             @SortDefault.SortDefaults({@SortDefault(sort = "codEntd")}) Pageable pageable) {
-
-        Page<EntidadeDTO> clientes = entidadeService.listarPaging(tipoEntd, archive, filterText, pageable);
-        return new ResponseEntity<>(clientes, HttpStatus.OK);
+        ApiResponse apiResponse = entidadeService.listarPaging(tipoEntd, archive, filterText, pageable);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
     /**
      * Incluir um novo registro de entidade
      */
     @PostMapping
-    public ResponseEntity<EntidadeDTO> incluir(
+    public ResponseEntity<ApiResponse> incluir(
             @RequestBody @Valid EntidadeDTO entidadeDTO) {
-
-        entidadeDTO = entidadeService.incluir(entidadeDTO);
-        return new ResponseEntity<>(entidadeDTO, HttpStatus.CREATED);
+        ApiResponse apiResponse = entidadeService.incluir(entidadeDTO);
+        return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
     }
 
     /**
      * Alterar um registro existente
      */
     @PutMapping
-    public ResponseEntity<EntidadeDTO> alterar(
+    public ResponseEntity<ApiResponse> alterar(
             @RequestBody @Valid EntidadeDTO entidadeDTO) {
+        ApiResponse apiResponse = entidadeService.alterar(entidadeDTO);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
 
-        entidadeDTO = entidadeService.alterar(entidadeDTO);
-        return new ResponseEntity<>(entidadeDTO, HttpStatus.OK);
+    @GetMapping("/checkDelete")
+    public ResponseEntity<ApiResponse> checkDelete(@RequestParam(name = "codEntd") Integer codEntd) {
+        ApiResponse apiResponse = entidadeService.checkDelete(codEntd);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
     /**
      * Excluir um registro
      */
     @DeleteMapping
-    public ResponseEntity<?> excluir(
+    public ResponseEntity<ApiResponse> excluir(
             @RequestParam(name = "codEntd") Integer codEntd) {
 
-        entidadeService.excluir(codEntd);
-
-        return new ResponseEntity<>(HttpStatus.OK);
+        ApiResponse apiResponse = entidadeService.excluir(codEntd);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 }

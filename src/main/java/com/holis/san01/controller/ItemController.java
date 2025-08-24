@@ -70,6 +70,15 @@ public class ItemController {
     }
 
     /**
+     * Verificar se o item pode ser deletado
+     */
+    @GetMapping("/checkDelete")
+    public ResponseEntity<ApiResponse> checkDelete(@RequestParam(name = "codItem") String codItem) {
+        ApiResponse apiResponse = itemService.checkDelete(codItem);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
+
+    /**
      * Excluir um registro
      */
     @DeleteMapping
