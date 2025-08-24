@@ -1,6 +1,7 @@
 package com.holis.san01.controller;
 
 import com.holis.san01.exceptions.ApiRequestException;
+import com.holis.san01.model.ApiResponse;
 import com.holis.san01.model.Unimed;
 import com.holis.san01.services.UnimedService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,9 +63,9 @@ public class UnimedController {
     }
 
     @GetMapping("/lista")
-    public ResponseEntity<List<Unimed>> listar(
+    public ResponseEntity<ApiResponse> listar(
             @RequestParam(name = "archive", defaultValue = "N") String archive) {
-        List<Unimed> unimeds = unimedService.listar(archive);
-        return new ResponseEntity<>(unimeds, HttpStatus.OK);
+        ApiResponse apiResponse = unimedService.listar(archive);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 }

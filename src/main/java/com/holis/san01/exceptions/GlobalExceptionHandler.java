@@ -1,5 +1,6 @@
 package com.holis.san01.exceptions;
 
+import com.holis.san01.model.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -12,10 +13,12 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // ------ Tratamento de Validação (@Valid) ------
+    /**
+     * Tratamento de Validação (@Valid)
+     * Devolve HTTPSTATUS.OK para não subir excessão nem dar erro na console do Angular
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        System.out.println("handleValidationExceptions");
+    public ResponseEntity<ApiResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> erros = new HashMap<>();
 
         ex.getBindingResult().getAllErrors().forEach(error -> {
@@ -25,21 +28,28 @@ public class GlobalExceptionHandler {
         });
 
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResponse(
-                        "Erros de Validação",
-                        ex.getMessage(),
+                .status(HttpStatus.OK)
+                .body(new ApiResponse(
+                        false,
+                        "Erros @Valid",
+                        "map",
                         erros
                 ));
     }
 
+    /**
+     * Mensagem informativa
+     * Devolve HTTPSTATUS.OK para não subir excessão nem dar erro na console do Angular
+     */
     @ExceptionHandler(ApiRequestException.class)
-    public ResponseEntity<ErrorResponse> ApiHandler(ApiRequestException ex) {
+    public ResponseEntity<ApiResponse> ApiHandler(ApiRequestException ex) {
         return ResponseEntity
-                .status(HttpStatus.NOT_ACCEPTABLE)
-                .body(new ErrorResponse(
-                        "Mensagem da Api",
-                        ex.getMessage()
+                .status(HttpStatus.OK)
+                .body(new ApiResponse(
+                        false,
+                        ex.getMessage(),
+                        null,
+                        null
                 ));
     }
 }

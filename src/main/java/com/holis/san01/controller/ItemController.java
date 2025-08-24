@@ -1,12 +1,10 @@
 package com.holis.san01.controller;
 
+import com.holis.san01.model.ApiResponse;
 import com.holis.san01.model.ItemDTO;
-import com.holis.san01.model.TipoItem;
-import com.holis.san01.model.VwItem;
 import com.holis.san01.services.ItemService;
 import com.holis.san01.services.TipoItemService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
@@ -16,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 /**
  * Controller para tratamento de Itens
@@ -34,82 +31,74 @@ public class ItemController {
      * Ler um determinado registro pelo código
      */
     @GetMapping
-    public ResponseEntity<ItemDTO> ler(
-            @RequestParam(name = "codItem", defaultValue = "") String codItem) {
-        return ResponseEntity.status(HttpStatus.OK).body(itemService.ler(codItem));
+    public ResponseEntity<ApiResponse> ler(@RequestParam(name = "codItem", defaultValue = "") String codItem) {
+        ApiResponse apiResponse = itemService.ler(codItem);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
     /**
      * Ler uma lista de itens filtrando pelo nome/codigo e situacao
      */
     @GetMapping("/pages")
-    public ResponseEntity<Page<VwItem>> listarItens(
+    public ResponseEntity<ApiResponse> listarItens(
             @RequestParam(name = "tipoItem", defaultValue = "") String tipoItem,
             @RequestParam(name = "archive", defaultValue = "N") String archive,
             @RequestParam(name = "filterText", defaultValue = "") String filterText,
             @PageableDefault(page = 0, size = 40)
             @SortDefault.SortDefaults({@SortDefault(sort = "codItem")}) Pageable pageable) {
 
-        Page<VwItem> itens = itemService.listarPaging(tipoItem, archive, filterText, pageable);
-        return new ResponseEntity<>(itens, HttpStatus.OK);
+        ApiResponse apiResponse = itemService.listarPaging(tipoItem, archive, filterText, pageable);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
     /**
      * Incluir um novo registro
      */
     @PostMapping
-    public ResponseEntity<ItemDTO> incluir(
-            @RequestBody @Valid ItemDTO itemDTO) {
-
-        itemDTO = itemService.incluir(itemDTO);
-        return new ResponseEntity<>(itemDTO, HttpStatus.CREATED);
+    public ResponseEntity<ApiResponse> incluir(@RequestBody @Valid ItemDTO itemDTO) {
+        ApiResponse apiResponse = itemService.incluir(itemDTO);
+        return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
     }
 
     /**
      * Alterar um registro existente
      */
     @PutMapping
-    public ResponseEntity<ItemDTO> alterar(
-            @RequestBody @Valid ItemDTO itemDTO) {
-
-        itemDTO = itemService.alterar(itemDTO);
-        return new ResponseEntity<>(itemDTO, HttpStatus.OK);
+    public ResponseEntity<ApiResponse> alterar(@RequestBody @Valid ItemDTO itemDTO) {
+        ApiResponse apiResponse = itemService.alterar(itemDTO);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
     /**
      * Excluir um registro
      */
     @DeleteMapping
-    public ResponseEntity<?> excluir(
-            @RequestParam(name = "codItem") String codItem) {
-
-        itemService.excluir(codItem);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<ApiResponse> excluir(@RequestParam(name = "codItem") String codItem) {
+        ApiResponse apiResponse = itemService.excluir(codItem);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
     @GetMapping("/tpItems")
-    public ResponseEntity<List<TipoItem>> listarTipoItem() {
-        List<TipoItem> tipos = tipoItemService.listar();
-        return new ResponseEntity<>(tipos, HttpStatus.OK);
+    public ResponseEntity<ApiResponse> listarTipoItem() {
+        ApiResponse apiResponse = tipoItemService.listar();
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
     /**
      * Ler uma lista das familias dos itens
      */
     @GetMapping("/familias")
-    public ResponseEntity<List<String>> listarFamilias() {
-
-        List<String> familias = itemService.listarFamilias();
-        return new ResponseEntity<>(familias, HttpStatus.OK);
+    public ResponseEntity<ApiResponse> listarFamilias() {
+        ApiResponse apiResponse = itemService.listarFamilias();
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
     /**
      * Ler uma lista de itens filtrando pelo nome/codigo e situacao
      */
     @GetMapping("/situacoes")
-    public ResponseEntity<List<String>> listarSituacoes() {
-
-        List<String> situacoes = itemService.listarSituacoes();
-        return new ResponseEntity<>(situacoes, HttpStatus.OK);
+    public ResponseEntity<ApiResponse> listarSituacoes() {
+        ApiResponse apiResponse = itemService.listarSituacoes();
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 }

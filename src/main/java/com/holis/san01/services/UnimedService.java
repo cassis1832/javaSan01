@@ -1,13 +1,13 @@
 package com.holis.san01.services;
 
 import com.holis.san01.exceptions.ApiRequestException;
+import com.holis.san01.model.ApiResponse;
 import com.holis.san01.model.Unimed;
 import com.holis.san01.repository.UnimedRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -23,8 +23,8 @@ public class UnimedService {
                 .orElseThrow(() -> new ApiRequestException("Unidade de medida não encontrada"));
     }
 
-    public List<Unimed> listar(final String archive) {
-        return unimedRepository.listUnimed(archive);
+    public ApiResponse listar(final String archive) {
+        return new ApiResponse(true, unimedRepository.listUnimed(archive));
     }
 
     @Transactional

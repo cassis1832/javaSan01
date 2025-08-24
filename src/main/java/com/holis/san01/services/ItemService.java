@@ -1,10 +1,7 @@
 package com.holis.san01.services;
 
 import com.holis.san01.exceptions.ApiRequestException;
-import com.holis.san01.model.Item;
-import com.holis.san01.model.ItemDTO;
-import com.holis.san01.model.PedVendaItem;
-import com.holis.san01.model.VwItem;
+import com.holis.san01.model.*;
 import com.holis.san01.repository.ItemRepository;
 import com.holis.san01.repository.PedVendaItemRepository;
 import com.holis.san01.repository.VwItemRepository;
@@ -27,21 +24,28 @@ import java.util.Optional;
 public class ItemService {
     @Autowired
     private ItemRepository itemRepository;
+
     @Autowired
     private PedVendaItemRepository pedVendaItemRepository;
+
     @Autowired
     private VwItemRepository vwItemRepository;
 
     @Autowired
     private ItemMapper itemMapper;
 
-    public ItemDTO ler(final String codItem) {
+    /**
+     * Ler Item por codigo de item
+     */
+    public ApiResponse ler(final String codItem) {
         Item item = itemRepository.findItem(codItem)
                 .orElseThrow(() -> new ApiRequestException("Item não encontrado"));
-        return itemMapper.toDto(item);
+
+        ItemDTO itemDTO = itemMapper.toDto(item);
+        return new ApiResponse(true, itemDTO);
     }
 
-    public Page<VwItem> listarPaging(final String tipoItem, final String archive, final String filterText, final Pageable pageable) {
+    public ApiResponse listarPaging(final String tipoItem, final String archive, final String filterText, final Pageable pageable) {
         Page<VwItem> itens;
 
         if (tipoItem.equalsIgnoreCase("Todos")) {
@@ -58,11 +62,11 @@ public class ItemService {
             }
         }
 
-        return itens;
+        return new ApiResponse(true, itens);
     }
 
     @Transactional
-    public ItemDTO incluir(final ItemDTO dto) {
+    public ApiResponse incluir(final ItemDTO dto) {
         Optional<Item> opt = itemRepository.findItem(dto.getCodItem());
 
         if (opt.isPresent()) {
@@ -73,11 +77,11 @@ public class ItemService {
         item.setArchive("N");
         item.setDtCriacao(new Date());
         item = itemRepository.saveAndFlush(item);
-        return itemMapper.toDto(item);
+        return new ApiResponse(true, itemMapper.toDto(item));
     }
 
     @Transactional
-    public ItemDTO alterar(final ItemDTO dto) {
+    public ApiResponse alterar(final ItemDTO dto) {
         Item item = itemRepository.findItem(dto.getCodItem())
                 .orElseThrow(() -> new ApiRequestException("Item não encontrado"));
 
@@ -119,28 +123,28 @@ public class ItemService {
         item.setUnimed(dto.getUnimed());
         item.setUsuarioObsol(dto.getUsuarioObsol());
         item = itemRepository.saveAndFlush(item);
-
-        return itemMapper.toDto(item);
+        return new ApiResponse(true, itemMapper.toDto(item));
     }
 
     @Transactional
-    public void excluir(final String codItem) {
+    public ApiResponse excluir(final String codItem) {
         Item item = itemRepository.findItem(codItem)
                 .orElseThrow(() -> new ApiRequestException("Item não encontrado"));
 
         List<PedVendaItem> pedVendaItems = pedVendaItemRepository.listPedVendaItemDoItem(item.getCodItem());
-        if (!pedVendaItems.isEmpty()){
+        if (!pedVendaItems.isEmpty()) {
             throw new ApiRequestException("Exclusão inválida, existem pedidos para o item");
         }
 
         itemRepository.deleteById(item.getCodItem());
+        return new ApiResponse(true, "Exclusão efetuada com sucesso");
     }
 
-    public List<String> listarFamilias() {
-        return itemRepository.listFamilias();
+    public ApiResponse listarFamilias() {
+        return new ApiResponse(true, itemRepository.listFamilias());
     }
 
-    public List<String> listarSituacoes() {
-        return itemRepository.listSituacoes();
+    public ApiResponse listarSituacoes() {
+        return new ApiResponse(true, itemRepository.listSituacoes());
     }
 }
