@@ -40,7 +40,7 @@ public class ItemService {
      * Ler Item por codigo de item
      */
     public ApiResponse getItem(final String codItem) {
-        Item item = itemRepository.findItem(codItem)
+        Item item = itemRepository.getItem(codItem)
                 .orElseThrow(() -> new NotFoundRequestException("Item não encontrado"));
 
         ItemDTO itemDTO = itemMapper.toDto(item);
@@ -69,7 +69,7 @@ public class ItemService {
 
     @Transactional
     public ApiResponse create(final ItemDTO dto) {
-        Optional<Item> opt = itemRepository.findItem(dto.getCodItem());
+        Optional<Item> opt = itemRepository.getItem(dto.getCodItem());
 
         if (opt.isPresent()) {
             throw new ApiRequestException("Este código de item já existe!");
@@ -84,7 +84,7 @@ public class ItemService {
 
     @Transactional
     public ApiResponse update(final ItemDTO dto) {
-        Item item = itemRepository.findItem(dto.getCodItem())
+        Item item = itemRepository.getItem(dto.getCodItem())
                 .orElseThrow(() -> new NotFoundRequestException("Item não encontrado"));
 
         item.setCodItem(dto.getCodItem());
