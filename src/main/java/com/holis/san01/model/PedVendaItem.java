@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @Entity
@@ -22,21 +22,21 @@ public class PedVendaItem {
     private String descricao;
     @Column(nullable = false)
     private String unimed;
-    private Date dtEntrega;
+    private LocalDate dtEntrega;
     private BigDecimal vlPretab;
     private BigDecimal vlPreuni;
     private BigDecimal qtPedida;
     private BigDecimal qtAtendida;
     private BigDecimal qtPendente;
     private String observacao;
-    private Date dtAprovacao;
+    private LocalDate dtAprovacao;
     private int nrOrdem;
-    private Date dtEntorig;
-    private Date dtCanseq;
-    private Date dtReativ;
-    private Date dtSuspensao;
+    private LocalDate dtEntorig;
+    private LocalDate dtCanseq;
+    private LocalDate dtReativ;
+    private LocalDate dtSuspensao;
     private BigDecimal qtDevolvida;
-    private Date dtDevolucao;
+    private LocalDate dtDevolucao;
     private String descDevol;
     private BigDecimal vlPreori;
     private BigDecimal perDesItem;
@@ -59,9 +59,9 @@ public class PedVendaItem {
     private String descTxt;
     private BigDecimal qtAlocada;
     private int codSitPre;
-    private Date dtMaxFat;
+    private LocalDate dtMaxFat;
     private int tpAlocLote;
-    private Date dtMinFat;
+    private LocalDate dtMinFat;
     private int espPed;
     private BigDecimal percFornec;
     private BigDecimal qtLoteMin;

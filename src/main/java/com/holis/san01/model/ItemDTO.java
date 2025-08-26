@@ -6,7 +6,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 public class ItemDTO {
@@ -26,11 +26,11 @@ public class ItemDTO {
 
     private BigDecimal precoVenda;
 
-    private Date dtPrecoVenda;
+    private LocalDate dtPrecoVenda;
 
     private BigDecimal precoCompra;
 
-    private Date dtPrecoCompra;
+    private LocalDate dtPrecoCompra;
 
     private String codFamilia;
 
@@ -38,7 +38,7 @@ public class ItemDTO {
 
     private BigDecimal precoUltEnt;
 
-    private Date dtUltEnt;
+    private LocalDate dtUltEnt;
 
     private String comprFabric;
 
@@ -84,9 +84,9 @@ public class ItemDTO {
 
     private String codLocaliz;
 
-    private Date dtLiberac;
+    private LocalDate dtLiberac;
 
-    private Date dtObsol;
+    private LocalDate dtObsol;
 
     private String usuarioObsol;
 
@@ -114,7 +114,7 @@ public class ItemDTO {
 
     private String situacao;
 
-    private Date dtCriacao;
+    private LocalDate dtCriacao;
 
     @NotBlank
     @Size(min = 1, max = 1)

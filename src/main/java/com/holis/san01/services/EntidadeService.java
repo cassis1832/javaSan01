@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -38,8 +39,8 @@ public class EntidadeService {
     /**
      * Ler uma ENTIDADE pelo codEntd
      */
-    public ApiResponse ler(final Integer codEntd) {
-        Entidade entidade = entidadeRepository.findEntidade(codEntd)
+    public ApiResponse getEntidade(final Integer codEntd) {
+        Entidade entidade = entidadeRepository.getEntidade(codEntd)
                 .orElseThrow(() -> new NotFoundRequestException("Cliente/fornecedor não encontrado"));
 
         EntidadeDTO entidadeDTO = entidadeMapper.toDto(entidade);
@@ -49,41 +50,41 @@ public class EntidadeService {
     /**
      * Listar Entidades
      */
-    public ApiResponse listarPaging(final String tipo, final String archive, final String filterText, final Pageable pageable) {
+    public ApiResponse pageEntidade(final String tipo, final String archive, final String filterText, final Pageable pageable) {
         Page<Entidade> entidades = null;
 
         if (tipo.equalsIgnoreCase("")) {
             if (StringUtils.isBlank(filterText)) {
-                entidades = entidadeRepository.listNenhumTipo(archive, pageable);
+                entidades = entidadeRepository.pageNenhumTipo(archive, pageable);
             } else {
-                entidades = entidadeRepository.listNenhumTipo(archive, filterText, pageable);
+                entidades = entidadeRepository.pageNenhumTipo(archive, filterText, pageable);
             }
         }
 
         if (tipo.equalsIgnoreCase("todos")) {
             if (StringUtils.isBlank(filterText)) {
                 System.out.println(pageable);
-                entidades = entidadeRepository.listEntidades(archive, pageable);
+                entidades = entidadeRepository.pageEntidades(archive, pageable);
                 System.out.println(entidades);
             } else {
                 List<String> campos = Arrays.asList("codEntd", "bairro");
-                entidades = entidadeRepository.listEntidades(archive, filterText, pageable);
+                entidades = entidadeRepository.pageEntidades(archive, filterText, pageable);
             }
         }
 
         if (tipo.equalsIgnoreCase("clientes")) {
             if (StringUtils.isBlank(filterText)) {
-                entidades = entidadeRepository.listClientes(archive, pageable);
+                entidades = entidadeRepository.pageClientes(archive, pageable);
             } else {
-                entidades = entidadeRepository.listClientes(archive, filterText, pageable);
+                entidades = entidadeRepository.pageClientes(archive, filterText, pageable);
             }
         }
 
         if (tipo.equalsIgnoreCase("fornecedores")) {
             if (StringUtils.isBlank(filterText)) {
-                entidades = entidadeRepository.listFornecedores(archive, pageable);
+                entidades = entidadeRepository.pageFornecedores(archive, pageable);
             } else {
-                entidades = entidadeRepository.listFornecedores(archive, filterText, pageable);
+                entidades = entidadeRepository.pageFornecedores(archive, filterText, pageable);
             }
         }
 
@@ -94,15 +95,14 @@ public class EntidadeService {
         //return entidadeMapper.toDto(entidade);
         Page<EntidadeDTO> entidadeDTO = entidades.map(entidadeMapper::toDto);
         return new ApiResponse(true, entidadeDTO);
-
     }
 
     /**
      * Criar nova Entidade
      */
     @Transactional
-    public ApiResponse incluir(final EntidadeDTO dto) {
-        Optional<Entidade> opt = entidadeRepository.findEntidade(dto.getCodEntd());
+    public ApiResponse create(final EntidadeDTO dto) {
+        Optional<Entidade> opt = entidadeRepository.getEntidade(dto.getCodEntd());
 
         if (opt.isPresent()) {
             throw new ApiRequestException("Este código de cliente/fornecedor já existe!");
@@ -115,7 +115,7 @@ public class EntidadeService {
             entidade.setCodCondPag(null);
         }
 
-        entidade.setDtCriacao(new Date());
+        entidade.setDtCriacao(LocalDate.now());
         entidade.setArchive("N");
         entidade = entidadeRepository.saveAndFlush(entidade);
         return new ApiResponse(true, entidadeMapper.toDto(entidade));
@@ -125,8 +125,8 @@ public class EntidadeService {
      * Alterar Entidade
      */
     @Transactional
-    public ApiResponse alterar(final EntidadeDTO dto) {
-        Entidade entidade = entidadeRepository.findEntidade(dto.getCodEntd())
+    public ApiResponse update(final EntidadeDTO dto) {
+        Entidade entidade = entidadeRepository.getEntidade(dto.getCodEntd())
                 .orElseThrow(() -> new ApiRequestException("Entidade não encontrado"));
 
         entidade.setNome(dto.getNome());
@@ -169,7 +169,7 @@ public class EntidadeService {
      * Excluir um registro de Entidade
      */
     @Transactional
-    public ApiResponse excluir(final Integer codEntd) {
+    public ApiResponse delete(final Integer codEntd) {
         checkDelete(codEntd);
         entidadeRepository.deleteById(codEntd);
         return new ApiResponse(true, "Exclusão efetuada com sucesso");
@@ -179,7 +179,7 @@ public class EntidadeService {
      * Verificar se o cliente pode ser deletado
      */
     public ApiResponse checkDelete(Integer codEntd) {
-        Entidade entidade = entidadeRepository.findEntidade(codEntd)
+        Entidade entidade = entidadeRepository.getEntidade(codEntd)
                 .orElseThrow(() -> new ApiRequestException(
                         "Cliente/fornecedor não encontrado para exclusão"));
 

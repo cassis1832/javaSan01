@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Optional;
 import java.util.Random;
@@ -69,7 +70,7 @@ public class LoginService {
 
         Usuario usr = opt.get();
         usr.setNovaSenha(encoder.encode(Long.toString(nova)));
-        usr.setDtRecuperacao(new Date());
+        usr.setDtRecuperacao(LocalDate.now());
 
         var conteudo = "Use a senha abaixo em seu próximo Login.<br/>";
         conteudo = conteudo + nova;

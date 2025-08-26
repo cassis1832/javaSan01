@@ -31,8 +31,8 @@ public class ItemController {
      * Ler um determinado registro pelo código
      */
     @GetMapping
-    public ResponseEntity<ApiResponse> ler(@RequestParam(name = "codItem", defaultValue = "") String codItem) {
-        ApiResponse apiResponse = itemService.ler(codItem);
+    public ResponseEntity<ApiResponse> getItem(@RequestParam(name = "codItem", defaultValue = "") String codItem) {
+        ApiResponse apiResponse = itemService.getItem(codItem);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
@@ -40,14 +40,14 @@ public class ItemController {
      * Ler uma lista de itens filtrando pelo nome/codigo e situacao
      */
     @GetMapping("/pages")
-    public ResponseEntity<ApiResponse> listarItens(
+    public ResponseEntity<ApiResponse> pageItem(
             @RequestParam(name = "tipoItem", defaultValue = "") String tipoItem,
             @RequestParam(name = "archive", defaultValue = "N") String archive,
             @RequestParam(name = "filterText", defaultValue = "") String filterText,
             @PageableDefault(page = 0, size = 40)
             @SortDefault.SortDefaults({@SortDefault(sort = "codItem")}) Pageable pageable) {
 
-        ApiResponse apiResponse = itemService.listarPaging(tipoItem, archive, filterText, pageable);
+        ApiResponse apiResponse = itemService.pageItem(tipoItem, archive, filterText, pageable);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
@@ -55,8 +55,8 @@ public class ItemController {
      * Incluir um novo registro
      */
     @PostMapping
-    public ResponseEntity<ApiResponse> incluir(@RequestBody @Valid ItemDTO itemDTO) {
-        ApiResponse apiResponse = itemService.incluir(itemDTO);
+    public ResponseEntity<ApiResponse> create(@RequestBody @Valid ItemDTO itemDTO) {
+        ApiResponse apiResponse = itemService.create(itemDTO);
         return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
     }
 
@@ -64,8 +64,8 @@ public class ItemController {
      * Alterar um registro existente
      */
     @PutMapping
-    public ResponseEntity<ApiResponse> alterar(@RequestBody @Valid ItemDTO itemDTO) {
-        ApiResponse apiResponse = itemService.alterar(itemDTO);
+    public ResponseEntity<ApiResponse> update(@RequestBody @Valid ItemDTO itemDTO) {
+        ApiResponse apiResponse = itemService.update(itemDTO);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
@@ -82,13 +82,13 @@ public class ItemController {
      * Excluir um registro
      */
     @DeleteMapping
-    public ResponseEntity<ApiResponse> excluir(@RequestParam(name = "codItem") String codItem) {
-        ApiResponse apiResponse = itemService.excluir(codItem);
+    public ResponseEntity<ApiResponse> delete(@RequestParam(name = "codItem") String codItem) {
+        ApiResponse apiResponse = itemService.delete(codItem);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
     @GetMapping("/tpItems")
-    public ResponseEntity<ApiResponse> listarTipoItem() {
+    public ResponseEntity<ApiResponse> listTipoItem() {
         ApiResponse apiResponse = tipoItemService.listar();
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
@@ -97,8 +97,8 @@ public class ItemController {
      * Ler uma lista das familias dos itens
      */
     @GetMapping("/familias")
-    public ResponseEntity<ApiResponse> listarFamilias() {
-        ApiResponse apiResponse = itemService.listarFamilias();
+    public ResponseEntity<ApiResponse> listFamilia() {
+        ApiResponse apiResponse = itemService.listFamilia();
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
@@ -106,8 +106,8 @@ public class ItemController {
      * Ler uma lista de itens filtrando pelo nome/codigo e situacao
      */
     @GetMapping("/situacoes")
-    public ResponseEntity<ApiResponse> listarSituacoes() {
-        ApiResponse apiResponse = itemService.listarSituacoes();
+    public ResponseEntity<ApiResponse> listSituacao() {
+        ApiResponse apiResponse = itemService.listSituacao();
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 }

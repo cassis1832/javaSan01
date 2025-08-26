@@ -1,12 +1,13 @@
 package com.holis.san01.model;
 
+import jakarta.persistence.Column;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 public class EntidadeDTO {
@@ -14,21 +15,26 @@ public class EntidadeDTO {
     private Integer codEntd;
 
     @NotBlank(message = "Nome abreviado/fantasia é obrigatório")
-    @Size(min = 3, message = "Nome deve ter no mínimo 3 caracteres")
+    @Size(min = 3, max = 20, message = "Nome deve ter no mínimo 3 e no máximo 20 caracteres ")
     private String nome;
 
     @NotBlank(message = "Razão social é obrigatório")
+    @Size(min = 3, max = 80, message = "Razão Social deve ter no mínimo 3 e no máximo 80 caracteres ")
     private String razaoSocial;
 
+    @Column(length = 1)
     private String indCliente;
 
+    @Column(length = 1)
     private String indFornec;
 
+    @Column(length = 1)
     private String indTransp;
 
     @NotNull(message = "Tipo de pessoa é obrigatório (física/jurídica/estrangeiro)")
     private String tpPessoa;
 
+    @Column(length = 19)
     private String cgc;
 
     private String rg;
@@ -119,7 +125,7 @@ public class EntidadeDTO {
 
     private String situacao;
 
-    private Date dtCriacao;
+    private LocalDate dtCriacao;
 
     @NotBlank
     @Size(min = 1, max = 1)

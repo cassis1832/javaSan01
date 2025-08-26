@@ -27,9 +27,9 @@ public class EntidadeController {
      * Ler um determinado registro pelo código da entidade
      */
     @GetMapping
-    public ResponseEntity<ApiResponse> ler(
+    public ResponseEntity<ApiResponse> getEntidade(
             @RequestParam(name = "codEntd", defaultValue = "0") Integer codEntd) {
-        ApiResponse apiResponse = entidadeService.ler(codEntd);
+        ApiResponse apiResponse = entidadeService.getEntidade(codEntd);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
@@ -37,13 +37,13 @@ public class EntidadeController {
      * Ler uma lista de entidades paginada com filtro
      */
     @GetMapping("/pages")
-    public ResponseEntity<ApiResponse> listarTodosPaging(
+    public ResponseEntity<ApiResponse> pageEntidade(
             @RequestParam(name = "tipo", defaultValue = "") String tipoEntd,
             @RequestParam(name = "archive", defaultValue = "N") String archive,
             @RequestParam(name = "filterText", defaultValue = "") String filterText,
             @PageableDefault(page = 0, size = 40)
             @SortDefault.SortDefaults({@SortDefault(sort = "codEntd")}) Pageable pageable) {
-        ApiResponse apiResponse = entidadeService.listarPaging(tipoEntd, archive, filterText, pageable);
+        ApiResponse apiResponse = entidadeService.pageEntidade(tipoEntd, archive, filterText, pageable);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
@@ -51,9 +51,9 @@ public class EntidadeController {
      * Incluir um novo registro de entidade
      */
     @PostMapping
-    public ResponseEntity<ApiResponse> incluir(
+    public ResponseEntity<ApiResponse> create(
             @RequestBody @Valid EntidadeDTO entidadeDTO) {
-        ApiResponse apiResponse = entidadeService.incluir(entidadeDTO);
+        ApiResponse apiResponse = entidadeService.create(entidadeDTO);
         return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
     }
 
@@ -61,9 +61,9 @@ public class EntidadeController {
      * Alterar um registro existente
      */
     @PutMapping
-    public ResponseEntity<ApiResponse> alterar(
+    public ResponseEntity<ApiResponse> update(
             @RequestBody @Valid EntidadeDTO entidadeDTO) {
-        ApiResponse apiResponse = entidadeService.alterar(entidadeDTO);
+        ApiResponse apiResponse = entidadeService.update(entidadeDTO);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
@@ -77,10 +77,10 @@ public class EntidadeController {
      * Excluir um registro
      */
     @DeleteMapping
-    public ResponseEntity<ApiResponse> excluir(
+    public ResponseEntity<ApiResponse> delete(
             @RequestParam(name = "codEntd") Integer codEntd) {
 
-        ApiResponse apiResponse = entidadeService.excluir(codEntd);
+        ApiResponse apiResponse = entidadeService.delete(codEntd);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 }

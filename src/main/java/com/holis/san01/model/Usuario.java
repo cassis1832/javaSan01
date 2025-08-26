@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import javax.validation.constraints.Pattern;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @Entity
@@ -23,17 +23,17 @@ public class Usuario {
     private String senha;
     private String roles;
     @Column(nullable = false)
-    private Date dtInicio;
-    private Date dtTermino;
-    private Date dtUltLogin;
+    private LocalDate dtInicio;
+    private LocalDate dtTermino;
+    private LocalDate dtUltLogin;
     private String novaSenha;
     private String codRecuperacao;
-    private Date dtRecuperacao;
-    private Date dtAltSenha;
+    private LocalDate dtRecuperacao;
+    private LocalDate dtAltSenha;
     private String tipoMenu;
 
     private String situacao;
-    private Date dtCriacao;
+    private LocalDate dtCriacao;
     @Column(nullable = false)
     @Pattern(regexp = "[SN]", message = "O campo 'archive' deve ser 'S' ou 'N'.")
     private String archive;

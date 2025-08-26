@@ -6,7 +6,7 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @Entity
@@ -23,11 +23,11 @@ public class VwItem {
 
     private BigDecimal precoVenda;
 
-    private Date dtPrecoVenda;
+    private LocalDate dtPrecoVenda;
 
     private BigDecimal precoCompra;
 
-    private Date dtPrecoCompra;
+    private LocalDate dtPrecoCompra;
 
     private String codFamilia;
 
@@ -77,9 +77,9 @@ public class VwItem {
 
     private String codLocaliz;
 
-    private Date dtLiberac;
+    private LocalDate dtLiberac;
 
-    private Date dtObsol;
+    private LocalDate dtObsol;
 
     private String usuarioObsol;
 
@@ -107,7 +107,7 @@ public class VwItem {
 
     private String situacao;
 
-    private Date dtCriacao;
+    private LocalDate dtCriacao;
 
     private String archive;
 

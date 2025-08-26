@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -38,7 +39,7 @@ public class ItemService {
     /**
      * Ler Item por codigo de item
      */
-    public ApiResponse ler(final String codItem) {
+    public ApiResponse getItem(final String codItem) {
         Item item = itemRepository.findItem(codItem)
                 .orElseThrow(() -> new NotFoundRequestException("Item não encontrado"));
 
@@ -46,20 +47,20 @@ public class ItemService {
         return new ApiResponse(true, itemDTO);
     }
 
-    public ApiResponse listarPaging(final String tipoItem, final String archive, final String filterText, final Pageable pageable) {
+    public ApiResponse pageItem(final String tipoItem, final String archive, final String filterText, final Pageable pageable) {
         Page<VwItem> itens;
 
         if (tipoItem.equalsIgnoreCase("Todos")) {
             if (StringUtils.isBlank(filterText)) {
-                itens = vwItemRepository.listItens(archive, pageable);
+                itens = vwItemRepository.pageItens(archive, pageable);
             } else {
-                itens = vwItemRepository.listItens(archive, filterText, pageable);
+                itens = vwItemRepository.pageItens(archive, filterText, pageable);
             }
         } else {
             if (StringUtils.isBlank(filterText)) {
-                itens = vwItemRepository.listItensPorTipo(tipoItem, archive, pageable);
+                itens = vwItemRepository.pageItensPorTipo(tipoItem, archive, pageable);
             } else {
-                itens = vwItemRepository.listItensPorTipo(tipoItem, archive, filterText, pageable);
+                itens = vwItemRepository.pageItensPorTipo(tipoItem, archive, filterText, pageable);
             }
         }
 
@@ -67,7 +68,7 @@ public class ItemService {
     }
 
     @Transactional
-    public ApiResponse incluir(final ItemDTO dto) {
+    public ApiResponse create(final ItemDTO dto) {
         Optional<Item> opt = itemRepository.findItem(dto.getCodItem());
 
         if (opt.isPresent()) {
@@ -76,13 +77,13 @@ public class ItemService {
 
         Item item = Mapper.mapTo(dto, Item.class);
         item.setArchive("N");
-        item.setDtCriacao(new Date());
+        item.setDtCriacao(LocalDate.now());
         item = itemRepository.saveAndFlush(item);
         return new ApiResponse(true, itemMapper.toDto(item));
     }
 
     @Transactional
-    public ApiResponse alterar(final ItemDTO dto) {
+    public ApiResponse update(final ItemDTO dto) {
         Item item = itemRepository.findItem(dto.getCodItem())
                 .orElseThrow(() -> new NotFoundRequestException("Item não encontrado"));
 
@@ -128,7 +129,7 @@ public class ItemService {
     }
 
     @Transactional
-    public ApiResponse excluir(final String codItem) {
+    public ApiResponse delete(final String codItem) {
         checkDelete(codItem);
 
         itemRepository.deleteById(codItem);
@@ -139,7 +140,7 @@ public class ItemService {
      * Verificar se o item pode ser deletado
      */
     public ApiResponse checkDelete(String codItem) {
-        Item item = itemRepository.findItem(codItem)
+        Item item = itemRepository.getItem(codItem)
                 .orElseThrow(() -> new NotFoundRequestException("Item não encontrado para exclusão"));
 
         List<PedVendaItem> pedVendaItems = pedVendaItemRepository.listPedVendaItemDoItem(item.getCodItem());
@@ -150,11 +151,11 @@ public class ItemService {
         return new ApiResponse(true, "Exclusão pode ser efetuada");
     }
 
-    public ApiResponse listarFamilias() {
+    public ApiResponse listFamilia() {
         return new ApiResponse(true, itemRepository.listFamilias());
     }
 
-    public ApiResponse listarSituacoes() {
+    public ApiResponse listSituacao() {
         return new ApiResponse(true, itemRepository.listSituacoes());
     }
 }

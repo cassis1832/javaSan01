@@ -3,7 +3,7 @@ package com.holis.san01.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @Entity
@@ -60,25 +60,25 @@ public class PedVenda {
 
     private String observacao;
 
-    private Date dtEmissao;
+    private LocalDate dtEmissao;
 
-    private Date dtEntrega;
+    private LocalDate dtEntrega;
 
     private Byte indAprov;
 
-    private Date dtAprovacao;
+    private LocalDate dtAprovacao;
 
-    private Date dtValCot;
+    private LocalDate dtValCot;
 
     private String prazoValCot;
 
-    private Date dtMinfat;
+    private LocalDate dtMinfat;
 
-    private Date dtLimFat;
+    private LocalDate dtLimFat;
 
-    private Date dtDevolucao;
+    private LocalDate dtDevolucao;
 
-    private Date dtSuspensao;
+    private LocalDate dtSuspensao;
 
     private Integer codPriori;
 
@@ -152,7 +152,7 @@ public class PedVenda {
 
     private Byte incDescTxt;
 
-    private Date dtBaseFt;
+    private LocalDate dtBaseFt;
 
     private Byte indEntCompleta;
 
@@ -168,7 +168,7 @@ public class PedVenda {
 
     private String situacao;
 
-    private Date dtSituacao;
+    private LocalDate dtSituacao;
 
     private String archive;
 }

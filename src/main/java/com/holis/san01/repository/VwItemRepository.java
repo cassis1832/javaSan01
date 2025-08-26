@@ -13,18 +13,18 @@ import org.springframework.data.jpa.repository.Query;
 @Immutable
 public interface VwItemRepository extends JpaRepository<VwItem, String> {
     @Query("select i from VwItem i Where i.archive  = ?1")
-    Page<VwItem> listItens(String archive, Pageable pageable);
+    Page<VwItem> pageItens(String archive, Pageable pageable);
 
     @Query("select i from VwItem i where i.archive = ?1 and " +
             "(concat(i.codItem, i.descricao) like concat('%',?2,'%')) ")
-    Page<VwItem> listItens(String archive, String filterText, Pageable pageable);
+    Page<VwItem> pageItens(String archive, String filterText, Pageable pageable);
 
     @Query("select i from VwItem i where i.archive = ?2 and " +
             "upper(i.tpProd) = upper(?1)")
-    Page<VwItem> listItensPorTipo(String tpProd, String archive, Pageable pageable);
+    Page<VwItem> pageItensPorTipo(String tpProd, String archive, Pageable pageable);
 
     @Query("select i from VwItem i where i.archive = ?2 and " +
             "upper(i.tpProd) = upper(?1) and " +
             "(i.codItem like concat('%',?3,'%') or i.descricao like concat('%',?3,'%')) ")
-    Page<VwItem> listItensPorTipo(String tipoItem, String archive, String filterText, Pageable pageable);
+    Page<VwItem> pageItensPorTipo(String tipoItem, String archive, String filterText, Pageable pageable);
 }

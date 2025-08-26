@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import javax.validation.constraints.Pattern;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data // @Getter, @Setter, @ToString, @EqualsAndHashCode e @RequiredArgsConstructor
@@ -119,7 +120,7 @@ public class Entidade {
 
     private String situacao;
 
-    private Date dtCriacao;
+    private LocalDate dtCriacao;
 
     @Column(nullable = false)
     @Pattern(regexp = "[SN]", message = "O campo 'archive' deve ser 'S' ou 'N'.")

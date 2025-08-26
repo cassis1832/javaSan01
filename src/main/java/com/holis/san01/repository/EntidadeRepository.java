@@ -13,39 +13,39 @@ import java.util.Optional;
 @Repository
 public interface EntidadeRepository extends JpaRepository<Entidade, Integer> {
     @Query("select e from Entidade e Where e.codEntd = ?1")
-    Optional<Entidade> findEntidade(Integer codEntd);
+    Optional<Entidade> getEntidade(Integer codEntd);
 
     @Query("select e from Entidade e Where e.archive = ?1 ")
-    Page<Entidade> listEntidades(String archive, Pageable pageable);
+    Page<Entidade> pageEntidades(String archive, Pageable pageable);
 
     @Query("select e from Entidade e Where e.archive = ?1 and " +
             "(concat(e.codEntd,e.nome,e.razaoSocial,e.cgc) like concat('%',?2,'%'))")
-    Page<Entidade> listEntidades(String archive, String filterText, Pageable pageable);
+    Page<Entidade> pageEntidades(String archive, String filterText, Pageable pageable);
 
     @Query("select e from Entidade e Where e.archive = ?1 and " +
             "e.indCliente = 'S'")
-    Page<Entidade> listClientes(String archive, Pageable pageable);
+    Page<Entidade> pageClientes(String archive, Pageable pageable);
 
     @Query("select e from Entidade e Where e.archive = ?1 and " +
             "e.indCliente = 'S' and " +
             "(e.razaoSocial like concat('%',?2,'%') or e.nome like concat('%',?2,'%'))")
-    Page<Entidade> listClientes(String archive, String filterText, Pageable pageable);
+    Page<Entidade> pageClientes(String archive, String filterText, Pageable pageable);
 
     @Query("select e from Entidade e Where e.archive = ?1 and " +
             "e.indFornec = 'S'")
-    Page<Entidade> listFornecedores(String archive, Pageable pageable);
+    Page<Entidade> pageFornecedores(String archive, Pageable pageable);
 
     @Query("select e from Entidade e Where e.archive = ?1 and " +
             "e.indFornec = 'S' and " +
             "(e.razaoSocial like concat('%',?2,'%') or e.nome like concat('%',?2,'%')) ")
-    Page<Entidade> listFornecedores(String archive, String filterText, Pageable pageable);
+    Page<Entidade> pageFornecedores(String archive, String filterText, Pageable pageable);
 
     @Query("select e from Entidade e Where e.archive = ?1 and " +
             "e.indFornec  = 'N' and e.indCliente = 'N'")
-    Page<Entidade> listNenhumTipo(String archive, Pageable pageable);
+    Page<Entidade> pageNenhumTipo(String archive, Pageable pageable);
 
     @Query("select e from Entidade e Where e.archive = ?1 and " +
             "e.indFornec  = 'N' and e.indCliente = 'N' and " +
             "(e.razaoSocial like concat('%',?2,'%') or e.nome like concat('%',?2,'%'))")
-    Page<Entidade> listNenhumTipo(String archive, String filterText, Pageable pageable);
+    Page<Entidade> pageNenhumTipo(String archive, String filterText, Pageable pageable);
 }
