@@ -50,7 +50,7 @@ public class EntidadeService {
     /**
      * Listar Entidades
      */
-    public ApiResponse pageEntidade(final String tipo, final String archive, final String filterText, final Pageable pageable) {
+    public ApiResponse pageEntidade(final String tipo, final boolean archive, final String filterText, final Pageable pageable) {
         Page<Entidade> entidades = null;
 
         if (tipo.equalsIgnoreCase("")) {
@@ -116,7 +116,7 @@ public class EntidadeService {
         }
 
         entidade.setDtCriacao(LocalDate.now());
-        entidade.setArchive("N");
+        entidade.setArchive(false);
         entidade = entidadeRepository.saveAndFlush(entidade);
         return new ApiResponse(true, entidadeMapper.toDto(entidade));
     }
@@ -154,7 +154,7 @@ public class EntidadeService {
         entidade.setObsEntrega(dto.getObsEntrega());
         entidade.setObservacoes(dto.getObservacoes());
         entidade.setSituacao(dto.getSituacao());
-        entidade.setArchive(dto.getArchive());
+        entidade.setArchive(dto.isArchive());
 
         // Campos chave estrangeira tem que ser convertidos para NULL
         if (StringUtils.isBlank(entidade.getCodCondPag())) {

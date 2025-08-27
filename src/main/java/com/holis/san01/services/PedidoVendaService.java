@@ -56,7 +56,7 @@ public class PedidoVendaService {
     /**
      * Listar as linhas dos pedidos por status e filtro no nome da entidade ou descrição do item
      */
-    public Page<VwPedVendaItem> listarVwPedVendaItem(final String archive, final String filterText, final Pageable pageable) {
+    public Page<VwPedVendaItem> listarVwPedVendaItem(final boolean archive, final String filterText, final Pageable pageable) {
         if (StringUtils.isBlank(filterText)) {
             return vwPedVendaItemRepository.listVwPedVendaItem(archive, pageable);
         } else {

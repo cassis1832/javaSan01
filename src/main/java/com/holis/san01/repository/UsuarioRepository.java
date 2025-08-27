@@ -11,6 +11,6 @@ import java.util.Optional;
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     @Query("select u from Usuario u where " +
             "upper(email) = upper(?1) and " +
-            "archive = 'N' ")
+            "archive = false ")
     Optional<Usuario> findByEmail(String email);
 }

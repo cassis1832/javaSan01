@@ -64,7 +64,7 @@ public class UnimedController {
 
     @GetMapping("/lista")
     public ResponseEntity<ApiResponse> listar(
-            @RequestParam(name = "archive", defaultValue = "N") String archive) {
+            @RequestParam(name = "archive", defaultValue = "0") boolean archive) {
         ApiResponse apiResponse = unimedService.listar(archive);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }

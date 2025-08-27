@@ -128,7 +128,5 @@ public class EntidadeDTO {
     private LocalDate dtCriacao;
 
     @NotBlank
-    @Size(min = 1, max = 1)
-    @Pattern(regexp = "[SN]", message = "O campo 'archive' deve ser 'S' ou 'N'.")
-    private String archive;
+    private boolean archive;
 }

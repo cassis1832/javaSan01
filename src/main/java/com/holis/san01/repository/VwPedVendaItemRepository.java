@@ -29,7 +29,7 @@ public interface VwPedVendaItemRepository extends JpaRepository<VwPedVendaItem, 
     @Query("select v from VwPedVendaItem v Where " +
             "v.archive = ?1 " +
             "order by nrPedido, nrSequencia, codItem")
-    Page<VwPedVendaItem> listVwPedVendaItem(String archive, Pageable pageable);
+    Page<VwPedVendaItem> listVwPedVendaItem(boolean archive, Pageable pageable);
 
     /**
      * Listar os itens dos pedidos por status e filtro
@@ -38,5 +38,5 @@ public interface VwPedVendaItemRepository extends JpaRepository<VwPedVendaItem, 
             "v.archive = ?1 and " +
             "(v.nome = ?2 or v.descricao = ?2) " +
             "order by codEntd, nrSequencia, codItem")
-    Page<VwPedVendaItem> listVwPedVendaItem(String archive, String filterText, Pageable pageable);
+    Page<VwPedVendaItem> listVwPedVendaItem(boolean archive, String filterText, Pageable pageable);
 }

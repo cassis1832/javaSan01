@@ -42,7 +42,7 @@ public class ItemController {
     @GetMapping("/pages")
     public ResponseEntity<ApiResponse> pageItem(
             @RequestParam(name = "tipoItem", defaultValue = "") String tipoItem,
-            @RequestParam(name = "archive", defaultValue = "N") String archive,
+            @RequestParam(name = "archive", defaultValue = "0") boolean archive,
             @RequestParam(name = "filterText", defaultValue = "") String filterText,
             @PageableDefault(page = 0, size = 40)
             @SortDefault.SortDefaults({@SortDefault(sort = "codItem")}) Pageable pageable) {

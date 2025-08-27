@@ -47,7 +47,7 @@ public class ItemService {
         return new ApiResponse(true, itemDTO);
     }
 
-    public ApiResponse pageItem(final String tipoItem, final String archive, final String filterText, final Pageable pageable) {
+    public ApiResponse pageItem(final String tipoItem, final boolean archive, final String filterText, final Pageable pageable) {
         Page<VwItem> itens;
 
         if (tipoItem.equalsIgnoreCase("Todos")) {
@@ -76,7 +76,7 @@ public class ItemService {
         }
 
         Item item = Mapper.mapTo(dto, Item.class);
-        item.setArchive("N");
+        item.setArchive(false);
         item.setDtCriacao(LocalDate.now());
         item = itemRepository.saveAndFlush(item);
         return new ApiResponse(true, itemMapper.toDto(item));
@@ -88,7 +88,7 @@ public class ItemService {
                 .orElseThrow(() -> new NotFoundRequestException("Item não encontrado"));
 
         item.setCodItem(dto.getCodItem());
-        item.setArchive(dto.getArchive());
+        item.setArchive(dto.isArchive());
         item.setCodTipoItem(dto.getCodTipoItem());
         item.setAliquotaIpi(dto.getAliquotaIpi());
         item.setCodLocaliz(dto.getCodLocaliz());

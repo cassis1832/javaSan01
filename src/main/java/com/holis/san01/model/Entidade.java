@@ -123,6 +123,5 @@ public class Entidade {
     private LocalDate dtCriacao;
 
     @Column(nullable = false)
-    @Pattern(regexp = "[SN]", message = "O campo 'archive' deve ser 'S' ou 'N'.")
-    private String archive;
+    private boolean archive;
 }

@@ -63,7 +63,7 @@ public class PedidoVendaController {
      */
     @GetMapping("/listarVwPedI")
     public ResponseEntity<Page<VwPedVendaItem>> listarVwPedI(
-            @RequestParam(name = "archive", defaultValue = "N") String archive,
+            @RequestParam(name = "archive", defaultValue = "0") boolean archive,
             @RequestParam(name = "filterText", defaultValue = "") String filterText,
             @PageableDefault(page = 0, size = 40)
             @SortDefault.SortDefaults({@SortDefault(sort = "codEntd, codItem")}) Pageable pageable) {

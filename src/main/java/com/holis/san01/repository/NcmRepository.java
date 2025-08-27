@@ -15,9 +15,9 @@ public interface NcmRepository extends JpaRepository<Ncm, String> {
     Optional<Ncm> findNcm(String codNcm);
 
     @Query("select i from Ncm i Where i.archive  = ?1")
-    Page<Ncm> listNcm(String archive, Pageable pageable);
+    Page<Ncm> listNcm(boolean archive, Pageable pageable);
 
     @Query("select i from Ncm i where i.archive = ?1 and " +
             "(concat(i.codNcm, i.descricao) like concat('%',?2,'%')) ")
-    Page<Ncm> listNcm(String archive, String filterText, Pageable pageable);
+    Page<Ncm> listNcm(boolean archive, String filterText, Pageable pageable);
 }

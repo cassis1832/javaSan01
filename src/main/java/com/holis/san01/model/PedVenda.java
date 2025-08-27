@@ -170,5 +170,5 @@ public class PedVenda {
 
     private LocalDate dtSituacao;
 
-    private String archive;
+    private boolean archive;
 }

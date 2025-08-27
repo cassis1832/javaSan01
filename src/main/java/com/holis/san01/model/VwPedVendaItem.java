@@ -108,5 +108,5 @@ public class VwPedVendaItem {
     private BigDecimal valPrecoSuger;
     private String codOrdCompra;
     private Integer tpPreco;
-    private String archive;
+    private boolean archive;
 }

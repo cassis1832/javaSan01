@@ -14,5 +14,5 @@ public interface UnimedRepository extends JpaRepository<Unimed, String> {
     Optional<Unimed> findUnimed(String codUnimed);
 
     @Query("select u from Unimed u Where u.archive =  ?1 order by u.sequencia, u.codUnimed")
-    List<Unimed> listUnimed(String archive);
+    List<Unimed> listUnimed(boolean archive);
 }

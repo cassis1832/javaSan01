@@ -23,7 +23,7 @@ public class UnimedService {
                 .orElseThrow(() -> new ApiRequestException("Unidade de medida não encontrada"));
     }
 
-    public ApiResponse listar(final String archive) {
+    public ApiResponse listar(final boolean archive) {
         return new ApiResponse(true, unimedRepository.listUnimed(archive));
     }
 
@@ -47,7 +47,7 @@ public class UnimedService {
         unimed.setDescricao(dto.getDescricao());
         unimed.setSequencia(dto.getSequencia());
         unimed.setFraciona(dto.getFraciona());
-        unimed.setArchive(dto.getArchive());
+        unimed.setArchive(dto.isArchive());
         return unimedRepository.saveAndFlush(unimed);
     }
 

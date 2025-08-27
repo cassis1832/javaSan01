@@ -39,7 +39,7 @@ public class EntidadeController {
     @GetMapping("/pages")
     public ResponseEntity<ApiResponse> pageEntidade(
             @RequestParam(name = "tipo", defaultValue = "") String tipoEntd,
-            @RequestParam(name = "archive", defaultValue = "N") String archive,
+            @RequestParam(name = "archive", defaultValue = "N") boolean archive,
             @RequestParam(name = "filterText", defaultValue = "") String filterText,
             @PageableDefault(page = 0, size = 40)
             @SortDefault.SortDefaults({@SortDefault(sort = "codEntd")}) Pageable pageable) {

@@ -3,6 +3,7 @@ package com.holis.san01.model;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
@@ -116,8 +117,6 @@ public class ItemDTO {
 
     private LocalDate dtCriacao;
 
-    @NotBlank
-    @Size(min = 1, max = 1)
-    @Pattern(regexp = "[SN]", message = "O campo 'archive' deve ser 'S' ou 'N'.")
-    private String archive;
+    @NotNull
+    private boolean archive;
 }

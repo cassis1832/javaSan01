@@ -26,6 +26,5 @@ public class Unimed {
     private String fraciona;
 
     @Column(nullable = false)
-    @Pattern(regexp = "[SN]", message = "O campo 'archive' deve ser 'S' ou 'N'.")
-    private String archive;
+    private boolean archive;
 }

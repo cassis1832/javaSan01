@@ -109,7 +109,7 @@ public class VwItem {
 
     private LocalDate dtCriacao;
 
-    private String archive;
+    private boolean archive;
 
     private String descricaoTipoItem;
 

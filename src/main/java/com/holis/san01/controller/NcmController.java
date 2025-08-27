@@ -39,7 +39,7 @@ public class NcmController {
      */
     @GetMapping("/pages")
     public ResponseEntity<Page<Ncm>> listarNcm(
-            @RequestParam(name = "archive", defaultValue = "N") String archive,
+            @RequestParam(name = "archive", defaultValue = "0") boolean archive,
             @RequestParam(name = "filterText", defaultValue = "") String filterText,
             @PageableDefault(page = 0, size = 40)
             @SortDefault.SortDefaults({@SortDefault(sort = "codNcm")}) Pageable pageable) {
