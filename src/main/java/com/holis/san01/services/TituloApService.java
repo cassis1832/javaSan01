@@ -2,15 +2,12 @@ package com.holis.san01.services;
 
 import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.exceptions.NotFoundRequestException;
-import com.holis.san01.model.ApiResponse;
-import com.holis.san01.model.TituloAp;
-import com.holis.san01.model.VwTituloAp;
-import com.holis.san01.repository.EntidadeRepository;
-import com.holis.san01.repository.TituloApRepository;
-import com.holis.san01.repository.VwTituloApRepository;
+import com.holis.san01.model.*;
+import com.holis.san01.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -23,11 +20,20 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class TituloApService {
+    @Autowired
     private final TituloApRepository tituloApRepository;
 
+    @Autowired
     private final VwTituloApRepository vwTituloApRepository;
 
+    @Autowired
     private final EntidadeRepository entidadeRepository;
+
+    @Autowired
+    private final ParamRepository paramRepository;
+
+    @Autowired
+    private final EspDocRepository espDocRepository;
 
     public ApiResponse getTituloAp(Integer id) {
         TituloAp tituloAp = tituloApRepository.getTituloAp(id)
@@ -50,13 +56,33 @@ public class TituloApService {
         return new ApiResponse(true, vwTituloAp);
     }
 
-    public ApiResponse pageVwTituloAp(boolean archive, Pageable pageable, String filterText) {
+    public ApiResponse pageVwTituloAp(final String criteria, final boolean archive, final String filterText, final Pageable pageable) {
         Page<VwTituloAp> vwTituloAp = null;
 
-        if (StringUtils.isBlank(filterText)) {
-            vwTituloAp = vwTituloApRepository.PageVwTituloAp(archive, pageable);
-        } else {
-            vwTituloAp = vwTituloApRepository.PageVwTituloAp(archive, filterText, pageable);
+        if (criteria.equalsIgnoreCase("Todos")) {
+            if (StringUtils.isBlank(filterText)) {
+                vwTituloAp = vwTituloApRepository.PageVwTituloAp(archive, pageable);
+            } else {
+                vwTituloAp = vwTituloApRepository.PageVwTituloAp(archive, filterText, pageable);
+            }
+        }
+
+        LocalDate hoje = LocalDate.now();
+
+        if (criteria.equalsIgnoreCase("Vencidos")) {
+            if (StringUtils.isBlank(filterText)) {
+                vwTituloAp = vwTituloApRepository.PageVwTituloApVencidos(archive, hoje, pageable);
+            } else {
+                vwTituloAp = vwTituloApRepository.PageVwTituloApVencidos(archive, hoje, filterText, pageable);
+            }
+        }
+
+        if (criteria.equalsIgnoreCase("A Vencer")) {
+            if (StringUtils.isBlank(filterText)) {
+                vwTituloAp = vwTituloApRepository.PageVwTituloApVencer(archive, hoje, pageable);
+            } else {
+                vwTituloAp = vwTituloApRepository.PageVwTituloApVencer(archive, hoje, filterText, pageable);
+            }
         }
 
         return new ApiResponse(true, vwTituloAp);
@@ -68,6 +94,15 @@ public class TituloApService {
     public ApiResponse create(TituloAp tituloAp) {
         entidadeRepository.getEntidade(tituloAp.getCodEntd())
                 .orElseThrow(() -> new NotFoundRequestException("Fornecedor não encontrado"));
+
+        Param param = paramRepository.getParam("seq_titulo_ap")
+                .orElseThrow(() -> new NotFoundRequestException("Parametro de numeração de titulo não foi encontrado"));
+
+        if (Integer.valueOf(tituloAp.getNumDoc()).equals(param.getCpoInteiro())) {
+
+        }
+
+        checkEspDoc(tituloAp.getCodEspDoc());
 
         tituloAp.setId(null);
         tituloAp.setDeleted(false);
@@ -97,7 +132,9 @@ public class TituloApService {
             tituloAp.setVlOriginal(tituloApDto.getVlTitulo());
         }
 
-        tituloAp.setCodTitulo(tituloApDto.getCodTitulo());
+        checkEspDoc(tituloAp.getCodEspDoc());
+
+        tituloAp.setNumDoc(tituloApDto.getNumDoc());
         tituloAp.setVlTitulo(tituloApDto.getVlTitulo());
         tituloAp.setDescricao(tituloApDto.getDescricao());
         tituloAp.setArchive(tituloApDto.isArchive());
@@ -107,7 +144,6 @@ public class TituloApService {
         tituloAp.setCodEntd(tituloApDto.getCodEntd());
         tituloAp.setDtVenctoOrigin(tituloApDto.getDtVenctoOrigin());
         tituloAp.setCodEspDoc(tituloApDto.getCodEspDoc());
-        tituloAp.setNumDocto(tituloApDto.getNumDocto());
         tituloAp.setObservacao(tituloApDto.getObservacao());
         tituloAp.setParcelas(tituloApDto.getParcelas());
         tituloAp.setParcela(tituloApDto.getParcela());
@@ -127,6 +163,11 @@ public class TituloApService {
         tituloAp = tituloApRepository.saveAndFlush(tituloAp);
 
         return new ApiResponse(true, tituloAp);
+    }
+
+    private void checkEspDoc(String codEspDoc) {
+        EspDoc espDoc = espDocRepository.getEspDoc(codEspDoc)
+                .orElseThrow(() -> new NotFoundRequestException("Espécie de documento não encontrada"));
     }
 
     /**
@@ -149,6 +190,12 @@ public class TituloApService {
         tituloApRepository.saveAndFlush(tituloAp);
 
         return new ApiResponse(true, "Exclusão efetuada com sucesso");
+    }
+
+    public ApiResponse getNextNumDoc(String codParam) {
+        Param param = paramRepository.getParam(codParam)
+                .orElseThrow(() -> new NotFoundRequestException("Parametro de numeração de titulo não foi encontrado"));
+        return new ApiResponse(true, param.getCpoInteiro() + 1);
     }
 
     /**

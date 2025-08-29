@@ -1,0 +1,23 @@
+package com.holis.san01.services;
+
+import com.holis.san01.model.ApiResponse;
+import com.holis.san01.model.EspDoc;
+import com.holis.san01.repository.EspDocRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+/**
+ * Service para tratamento da tabela de especie de documento
+ */
+@Service
+public class EspDocService {
+    @Autowired
+    private EspDocRepository espDocRepository;
+
+    public ApiResponse pageEspDoc(final boolean tipoMovto, final Pageable pageable) {
+        Page<EspDoc> espDocs = espDocRepository.pageEspDoc(tipoMovto, pageable);
+        return new ApiResponse(true, espDocs);
+    }
+}

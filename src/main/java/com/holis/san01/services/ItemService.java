@@ -47,10 +47,10 @@ public class ItemService {
         return new ApiResponse(true, itemDTO);
     }
 
-    public ApiResponse pageItem(final String tipoItem, final boolean archive, final String filterText, final Pageable pageable) {
+    public ApiResponse pageItem(final String criteria, final boolean archive, final String filterText, final Pageable pageable) {
         Page<VwItem> itens;
 
-        if (tipoItem.equalsIgnoreCase("Todos")) {
+        if (criteria.equalsIgnoreCase("Todos")) {
             if (StringUtils.isBlank(filterText)) {
                 itens = vwItemRepository.pageItens(archive, pageable);
             } else {
@@ -58,9 +58,9 @@ public class ItemService {
             }
         } else {
             if (StringUtils.isBlank(filterText)) {
-                itens = vwItemRepository.pageItensPorTipo(tipoItem, archive, pageable);
+                itens = vwItemRepository.pageItensPorTipo(criteria, archive, pageable);
             } else {
-                itens = vwItemRepository.pageItensPorTipo(tipoItem, archive, filterText, pageable);
+                itens = vwItemRepository.pageItensPorTipo(criteria, archive, filterText, pageable);
             }
         }
 

@@ -50,10 +50,10 @@ public class EntidadeService {
     /**
      * Listar Entidades
      */
-    public ApiResponse pageEntidade(final String tipo, final boolean archive, final String filterText, final Pageable pageable) {
+    public ApiResponse pageEntidade(final String criteria, final boolean archive, final String filterText, final Pageable pageable) {
         Page<Entidade> entidades = null;
 
-        if (tipo.equalsIgnoreCase("")) {
+        if (criteria.equalsIgnoreCase("")) {
             if (StringUtils.isBlank(filterText)) {
                 entidades = entidadeRepository.pageNenhumTipo(archive, pageable);
             } else {
@@ -61,7 +61,7 @@ public class EntidadeService {
             }
         }
 
-        if (tipo.equalsIgnoreCase("todos")) {
+        if (criteria.equalsIgnoreCase("todos")) {
             if (StringUtils.isBlank(filterText)) {
                 System.out.println(pageable);
                 entidades = entidadeRepository.pageEntidades(archive, pageable);
@@ -72,7 +72,7 @@ public class EntidadeService {
             }
         }
 
-        if (tipo.equalsIgnoreCase("clientes")) {
+        if (criteria.equalsIgnoreCase("clientes")) {
             if (StringUtils.isBlank(filterText)) {
                 entidades = entidadeRepository.pageClientes(archive, pageable);
             } else {
@@ -80,7 +80,7 @@ public class EntidadeService {
             }
         }
 
-        if (tipo.equalsIgnoreCase("fornecedores")) {
+        if (criteria.equalsIgnoreCase("fornecedores")) {
             if (StringUtils.isBlank(filterText)) {
                 entidades = entidadeRepository.pageFornecedores(archive, pageable);
             } else {

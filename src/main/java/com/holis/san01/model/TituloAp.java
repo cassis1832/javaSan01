@@ -28,7 +28,7 @@ public class TituloAp {
     private String codEspDoc;
 
     @Column(length = 10)
-    private String codTitulo;
+    private String numDoc;
 
     private Integer parcela = 1;
 
@@ -83,9 +83,6 @@ public class TituloAp {
 
     @Column(length = 200)
     private String obsPagto;
-
-    @Column(length = 10)
-    private String numDocto;
 
     @Column(precision = 11, scale = 2)
     private BigDecimal vlBaixaAntec = BigDecimal.ZERO;

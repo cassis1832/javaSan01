@@ -23,11 +23,11 @@ public class VwTituloAp {
 
     private Integer tituloId;
 
+    private String numDoc;
+
     private String codEspDoc;
 
     private Long docId;
-
-    private String codTitulo;
 
     private boolean parcela;
 

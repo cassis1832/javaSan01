@@ -36,13 +36,14 @@ public class TituloApController {
     @GetMapping("/pages")
     public ResponseEntity<ApiResponse> pageVwTituloAp(
             @RequestParam(name = "archive", defaultValue = "0") Boolean archive,
+            @RequestParam(name = "criteria", defaultValue = "") String criteria,
             @RequestParam(name = "filterText", defaultValue = "") String filterText,
             @PageableDefault(size = 20) @SortDefault.SortDefaults({
                     @SortDefault(sort = "dtVencto", direction = Sort.Direction.ASC),
                     @SortDefault(sort = "codEntd", direction = Sort.Direction.ASC)
             }) Pageable pageable) {
 
-        ApiResponse apiResponse = servico.pageVwTituloAp(archive, pageable, filterText);
+        ApiResponse apiResponse = servico.pageVwTituloAp(criteria,archive, filterText, pageable);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
@@ -77,6 +78,10 @@ public class TituloApController {
             @RequestBody @Valid TituloAp tituloApDto) {
 
         ApiResponse apiResponse = servico.update(tituloApDto);
+
+        System.out.println(apiResponse.getMessage());
+        System.out.println(apiResponse.isSuccess());
+
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
