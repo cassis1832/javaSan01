@@ -41,7 +41,7 @@ public class ItemDTO {
 
     private LocalDate dtUltEnt;
 
-    private String comprFabric;
+    private boolean indComprado;
 
     private Integer resCompra;
 

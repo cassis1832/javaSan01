@@ -33,7 +33,7 @@ public class VwItem {
 
     private Boolean indItemFat;
 
-    private String comprFabric;
+    private boolean indComprado;
 
     private Integer resCompra;
 

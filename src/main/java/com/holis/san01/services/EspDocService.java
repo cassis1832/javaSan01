@@ -1,5 +1,6 @@
 package com.holis.san01.services;
 
+import com.holis.san01.exceptions.NotFoundRequestException;
 import com.holis.san01.model.ApiResponse;
 import com.holis.san01.model.EspDoc;
 import com.holis.san01.repository.EspDocRepository;
@@ -20,4 +21,11 @@ public class EspDocService {
         Page<EspDoc> espDocs = espDocRepository.pageEspDoc(tipoMovto, pageable);
         return new ApiResponse(true, espDocs);
     }
+
+    public ApiResponse getEspDoc(final String codEspDoc) {
+        EspDoc espDoc = espDocRepository.getEspDoc(codEspDoc)
+                .orElseThrow(() -> new NotFoundRequestException("Espécie de documento não encontrada"));
+        return new ApiResponse(true, espDoc);
+    }
 }
+

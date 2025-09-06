@@ -3,7 +3,10 @@ package com.holis.san01.services;
 import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.exceptions.NotFoundRequestException;
 import com.holis.san01.model.*;
-import com.holis.san01.repository.*;
+import com.holis.san01.repository.EntidadeRepository;
+import com.holis.san01.repository.EspDocRepository;
+import com.holis.san01.repository.TituloApRepository;
+import com.holis.san01.repository.VwTituloApRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -30,7 +33,7 @@ public class TituloApService {
     private final EntidadeRepository entidadeRepository;
 
     @Autowired
-    private final ParamRepository paramRepository;
+    private final ParamService paramService;
 
     @Autowired
     private final EspDocRepository espDocRepository;
@@ -95,11 +98,9 @@ public class TituloApService {
         entidadeRepository.getEntidade(tituloAp.getCodEntd())
                 .orElseThrow(() -> new NotFoundRequestException("Fornecedor não encontrado"));
 
-        Param param = paramRepository.getParam("seq_titulo_ap")
-                .orElseThrow(() -> new NotFoundRequestException("Parametro de numeração de titulo não foi encontrado"));
-
-        if (Integer.valueOf(tituloAp.getNumDoc()).equals(param.getCpoInteiro())) {
-
+        if (tituloAp.getNumDoc() == null || tituloAp.getNumDoc().equals(0)) {
+            Param param = paramService.getNextParam("seq_titulo_ap");
+            tituloAp.setNumDoc(param.getCpoInteiro());
         }
 
         checkEspDoc(tituloAp.getCodEspDoc());
@@ -107,10 +108,7 @@ public class TituloApService {
         tituloAp.setId(null);
         tituloAp.setDeleted(false);
         tituloAp.setDtCriacao(LocalDate.now());
-        //tituloAp.setUsrCriacao(tokenUtil.getNomeUsuario());
         TituloAp tituloAp1 = tituloApRepository.saveAndFlush(tituloAp);
-
-        //atualizaFornecedorPadrao(tituloAp1);
         return new ApiResponse(true, tituloAp1);
     }
 
@@ -152,7 +150,6 @@ public class TituloApService {
         tituloAp.setTipoFinId(tituloApDto.getTipoFinId());
         tituloAp.setVlPago(tituloApDto.getVlPago());
         tituloAp.setDtAlteracao(LocalDate.now());
-        //tituloAp.setUsrAlteracao(tokenUtil.getNomeUsuario());
 
         if (tituloAp.getVlTitulo().compareTo(tituloAp.getVlPago()) >= 0) {
             tituloAp.setVlSaldo(tituloAp.getVlTitulo().subtract(tituloAp.getVlPago()));
@@ -191,18 +188,4 @@ public class TituloApService {
 
         return new ApiResponse(true, "Exclusão efetuada com sucesso");
     }
-
-    public ApiResponse getNextNumDoc(String codParam) {
-        Param param = paramRepository.getParam(codParam)
-                .orElseThrow(() -> new NotFoundRequestException("Parametro de numeração de titulo não foi encontrado"));
-        return new ApiResponse(true, param.getCpoInteiro() + 1);
-    }
-
-    /**
-     * Listar as antecipações do emitente que estejam em aberto.
-     */
-//    public List<TituloAp> listAntecipacao(Long codEntd) {
-//        List<TituloAp> tituloAps = tituloApRepository.findAntecipacaoAberta(codEntd);
-//        return Converter.mapList(tituloAps, TituloAp.class);
-//    }
 }

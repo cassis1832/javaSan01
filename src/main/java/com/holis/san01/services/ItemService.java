@@ -93,7 +93,7 @@ public class ItemService {
         item.setAliquotaIpi(dto.getAliquotaIpi());
         item.setCodLocaliz(dto.getCodLocaliz());
         item.setCodOrigem(dto.getCodOrigem());
-        item.setComprFabric(dto.getComprFabric());
+        item.setIndComprado((dto.isIndComprado()));
         item.setDescricao(dto.getDescricao());
         item.setPrecoVenda(dto.getPrecoVenda());
         item.setDtPrecoVenda(dto.getDtPrecoVenda());

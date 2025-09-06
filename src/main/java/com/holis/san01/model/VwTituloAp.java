@@ -3,6 +3,7 @@ package com.holis.san01.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -23,7 +24,7 @@ public class VwTituloAp {
 
     private Integer tituloId;
 
-    private String numDoc;
+    private Integer numDoc;
 
     private String codEspDoc;
 

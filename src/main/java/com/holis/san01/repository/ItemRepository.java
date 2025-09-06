@@ -13,9 +13,9 @@ public interface ItemRepository extends JpaRepository<Item, String> {
     @Query("select i from Item i Where upper(i.codItem) =  upper(?1)")
     Optional<Item> getItem(String codItem);
 
-    @Query("select distinct codFamilia from Item i order by codFamilia")
+    @Query("select distinct codFamilia from Item i where codFamilia <> '' order by codFamilia")
     List<String> listFamilias();
 
-    @Query("select distinct situacao from Item i order by situacao")
+    @Query("select distinct situacao from Item i where situacao <> '' order by situacao")
     List<String> listSituacoes();
 }

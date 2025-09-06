@@ -27,8 +27,7 @@ public class TituloAp {
     @Column(nullable = false, length = 3)
     private String codEspDoc;
 
-    @Column(length = 10)
-    private String numDoc;
+    private Integer numDoc;
 
     private Integer parcela = 1;
 

@@ -44,7 +44,7 @@ public class Item {
 
     private LocalDate dtUltEnt;
 
-    private String comprFabric;
+    private boolean indComprado;
 
     private Integer resCompra;
 

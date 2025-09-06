@@ -23,6 +23,13 @@ public class EspDocController {
     @Autowired
     private EspDocService espDocService;
 
+    @GetMapping
+    public ResponseEntity<ApiResponse> getEspDoc(
+            @RequestParam(name = "codEspDoc", defaultValue = "") String codEspDoc) {
+        ApiResponse apiResponse = espDocService.getEspDoc(codEspDoc);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
+
     @GetMapping("/pages")
     public ResponseEntity<ApiResponse> pageEspDoc(
             @RequestParam(name = "tipo", defaultValue = "0") boolean tipo,
