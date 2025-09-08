@@ -33,7 +33,7 @@ public class VwItem {
 
     private Boolean indItemFat;
 
-    private boolean indComprado;
+    private Boolean indComprado;
 
     private Integer resCompra;
 
@@ -109,7 +109,7 @@ public class VwItem {
 
     private LocalDate dtCriacao;
 
-    private boolean archive;
+    private Boolean archive;
 
     private String descricaoTipoItem;
 

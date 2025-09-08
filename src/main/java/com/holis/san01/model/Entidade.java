@@ -22,11 +22,11 @@ public class Entidade {
     @Column(nullable = false)
     private String razaoSocial;
 
-    private String indCliente;
+    private boolean indCliente;
 
-    private String indFornec;
+    private boolean indFornec;
 
-    private String indTransp;
+    private boolean indTransp;
 
     private String tpPessoa;
 

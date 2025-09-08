@@ -10,15 +10,14 @@ import java.time.LocalDate;
 @Table(name = "ped_venda")
 public class PedVenda {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
-    private Long nrPedido;
+    private Integer nrPedido;
 
     @Column(nullable = false)
-    private Long codEntd;
+    private Integer codEntd;
 
     @Column(nullable = false)
-    private Long codFilial;
+    private Integer codFilial;
 
     private String descricao;
 

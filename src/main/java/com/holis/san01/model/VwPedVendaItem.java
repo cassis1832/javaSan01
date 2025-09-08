@@ -1,6 +1,8 @@
 package com.holis.san01.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -13,100 +15,196 @@ import java.time.LocalDate;
 public class VwPedVendaItem {
     @Id
     private BigInteger id;
-    private Long nrPedido;
+
+    private Integer nrPedido;
+
     private int codEntd;
+
     private String nome;
+
     private Integer nrSequencia;
+
     private String codItem;
+
     private String descricao;
+
     private String unimed;
+
     private LocalDate dtEntrega;
+
     private BigDecimal vlPretab;
+
     private BigDecimal vlPreuni;
+
     private BigDecimal qtPedida;
+
     private BigDecimal qtAtendida;
+
     private BigDecimal qtPendente;
+
     private String observacao;
+
     private LocalDate dtAprovacao;
+
     private Integer nrOrdem;
+
     private LocalDate dtEntorig;
+
     private LocalDate dtCanseq;
+
     private LocalDate dtReativ;
+
     private LocalDate dtSuspensao;
+
     private BigDecimal qtDevolvida;
+
     private LocalDate dtDevolucao;
+
     private String descDevol;
+
     private BigDecimal vlPreori;
+
     private BigDecimal perDesItem;
+
     private BigDecimal perMinfat;
+
     private Integer codSitItem;
+
     private BigDecimal aliquotaIpi;
+
     private Boolean indIcmRet;
+
     private BigDecimal vlMercAbe;
+
     private BigDecimal vlLiqIt;
+
     private BigDecimal vlLiqAbe;
+
     private BigDecimal vlTotitem;
+
     private String nrTabpre;
+
     private BigDecimal perDesIcms;
+
     private String natOperacao;
+
     private Integer tipoAtend;
+
     private Integer indComponen;
+
     private BigDecimal qtFatenf;
+
     private String codRefer;
+
     private BigDecimal qtTransfer;
+
     private String descTxt;
+
     private BigDecimal qtAlocada;
+
     private Integer codSitPre;
+
     private LocalDate dtMaxFat;
+
     private Integer tpAlocLote;
+
     private LocalDate dtMinFat;
+
     private Integer espPed;
+
     private BigDecimal percFornec;
+
     private BigDecimal qtLoteMin;
+
     private String codEntrega;
+
     private Integer cdOrigem;
+
     private Integer nrOrdProdu;
+
     private Integer nrPrograma;
+
     private BigDecimal qtTransMp;
+
     private Integer codIsencao;
+
     private BigDecimal qtOrdens;
+
     private BigDecimal vlDesconto;
+
     private Integer codCondEsp;
+
     private Integer codSitCom;
+
     private String motivoAltSitQuota;
+
     private Boolean logUsaTabelaDesconto;
+
     private BigDecimal valPctDescontoTabPreco;
+
     private String desPctDescontoInform;
+
     private BigDecimal valDescontoInform;
+
     private BigDecimal valPctDescontoTotal;
+
     private Boolean logConcedeBonifQtd;
+
     private BigDecimal valPctBonif;
+
     private BigDecimal valPctDescontoPeriodo;
+
     private BigDecimal valPctDescontoPrazo;
+
     private BigDecimal valDescontoTotal;
+
     private BigDecimal valDescontoBonif;
+
     private Integer numSequenciaBonif;
+
     private BigDecimal qtUnFat;
+
     private BigDecimal vlPreoriUnFat;
+
     private Integer codMotCancCot;
+
     private String userAprovCot;
+
     private String descLibPreco;
+
     private String enderecoText;
+
     private String desUnMedida;
+
     private BigDecimal decFtconvUnest;
+
     private String codClassFis;
+
     private String codUn;
+
     private Boolean logCancSaldo;
+
     private BigDecimal valAliqIss;
+
     private BigDecimal valIpi;
+
     private BigDecimal valFrete;
+
     private BigDecimal valSeguro;
+
     private BigDecimal valEmbal;
+
     private String codUnidNegoc;
+
     private BigDecimal valTaxPtlidad;
+
     private BigDecimal valTaxApldo;
+
     private BigDecimal valPrecoSuger;
+
     private String codOrdCompra;
+
     private Integer tpPreco;
+
     private boolean archive;
 }

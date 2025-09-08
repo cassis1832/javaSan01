@@ -3,7 +3,6 @@ package com.holis.san01.services;
 import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.model.Ncm;
 import com.holis.san01.repository.NcmRepository;
-import com.holis.san01.util.Mapper;
 import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,9 +45,7 @@ public class NcmService {
             throw new ApiRequestException("Este código de ncm já existe!");
         }
 
-        Ncm ncm = Mapper.mapTo(dto, Ncm.class);
-        ncm = ncmRepository.saveAndFlush(ncm);
-        return ncm;
+        return ncmRepository.saveAndFlush(dto);
     }
 
     @Transactional

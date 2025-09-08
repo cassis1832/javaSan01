@@ -4,11 +4,9 @@ import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.exceptions.NotFoundRequestException;
 import com.holis.san01.model.ApiResponse;
 import com.holis.san01.model.Entidade;
-import com.holis.san01.model.EntidadeDTO;
 import com.holis.san01.model.PedVenda;
 import com.holis.san01.repository.EntidadeRepository;
 import com.holis.san01.repository.PedVendaRepository;
-import com.holis.san01.util.Mapper;
 import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,18 +29,13 @@ public class EntidadeService {
     @Autowired
     private PedVendaRepository pedVendaRepository;
 
-    @Autowired
-    private EntidadeMapper entidadeMapper;
-
     /**
      * Ler uma ENTIDADE pelo codEntd
      */
     public ApiResponse getEntidade(final Integer codEntd) {
         Entidade entidade = entidadeRepository.getEntidade(codEntd)
                 .orElseThrow(() -> new NotFoundRequestException("Cliente/fornecedor não encontrado"));
-
-        EntidadeDTO entidadeDTO = entidadeMapper.toDto(entidade);
-        return new ApiResponse(true, entidadeDTO);
+        return new ApiResponse(true, entidade);
     }
 
     /**
@@ -63,11 +54,8 @@ public class EntidadeService {
 
         if (criteria.equalsIgnoreCase("todos")) {
             if (StringUtils.isBlank(filterText)) {
-                System.out.println(pageable);
                 entidades = entidadeRepository.pageEntidades(archive, pageable);
-                System.out.println(entidades);
             } else {
-                List<String> campos = Arrays.asList("codEntd", "bairro");
                 entidades = entidadeRepository.pageEntidades(archive, filterText, pageable);
             }
         }
@@ -92,40 +80,36 @@ public class EntidadeService {
             throw new ApiRequestException("Parametros invalidos no HTTP!");
         }
 
-        //return entidadeMapper.toDto(entidade);
-        Page<EntidadeDTO> entidadeDTO = entidades.map(entidadeMapper::toDto);
-        return new ApiResponse(true, entidadeDTO);
+        return new ApiResponse(true, entidades);
     }
 
     /**
      * Criar nova Entidade
      */
     @Transactional
-    public ApiResponse create(final EntidadeDTO dto) {
+    public ApiResponse create(final Entidade dto) {
         Optional<Entidade> opt = entidadeRepository.getEntidade(dto.getCodEntd());
 
         if (opt.isPresent()) {
             throw new ApiRequestException("Este código de cliente/fornecedor já existe!");
         }
 
-        Entidade entidade = Mapper.mapTo(dto, Entidade.class);
-
         // Campos chave estrangeira tem que ser convertidos para NULL
-        if (StringUtils.isBlank(entidade.getCodCondPag())) {
-            entidade.setCodCondPag(null);
+        if (StringUtils.isBlank(dto.getCodCondPag())) {
+            dto.setCodCondPag(null);
         }
 
-        entidade.setDtCriacao(LocalDate.now());
-        entidade.setArchive(false);
-        entidade = entidadeRepository.saveAndFlush(entidade);
-        return new ApiResponse(true, entidadeMapper.toDto(entidade));
+        dto.setDtCriacao(LocalDate.now());
+        dto.setArchive(false);
+        Entidade entidade = entidadeRepository.saveAndFlush(dto);
+        return new ApiResponse(true, entidade);
     }
 
     /**
      * Alterar Entidade
      */
     @Transactional
-    public ApiResponse update(final EntidadeDTO dto) {
+    public ApiResponse update(final Entidade dto) {
         Entidade entidade = entidadeRepository.getEntidade(dto.getCodEntd())
                 .orElseThrow(() -> new ApiRequestException("Entidade não encontrado"));
 
@@ -134,9 +118,9 @@ public class EntidadeService {
         entidade.setTpPessoa(dto.getTpPessoa());
         entidade.setCgc(dto.getCgc());
         entidade.setRg(dto.getRg());
-        entidade.setIndCliente(dto.getIndCliente());
-        entidade.setIndFornec(dto.getIndFornec());
-        entidade.setIndTransp(dto.getIndTransp());
+        entidade.setIndCliente(dto.isIndCliente());
+        entidade.setIndFornec(dto.isIndFornec());
+        entidade.setIndTransp(dto.isIndTransp());
         entidade.setCep(dto.getCep());
         entidade.setLocalidade(dto.getLocalidade());
         entidade.setLogradouro(dto.getLogradouro());
@@ -162,7 +146,7 @@ public class EntidadeService {
         }
 
         entidade = entidadeRepository.saveAndFlush(entidade);
-        return new ApiResponse(true, entidadeMapper.toDto(entidade));
+        return new ApiResponse(true, entidade);
     }
 
     /**

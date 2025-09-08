@@ -1,15 +1,15 @@
 package com.holis.san01.services;
 
 import com.holis.san01.exceptions.ApiRequestException;
+import com.holis.san01.mapper.UsuarioMapper;
 import com.holis.san01.model.LoginDTO;
 import com.holis.san01.model.TokenResponse;
 import com.holis.san01.model.Usuario;
 import com.holis.san01.model.UsuarioDTO;
 import com.holis.san01.repository.UsuarioRepository;
 import com.holis.san01.security.JwtGenerator;
-import com.holis.san01.util.Mapper;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,18 +18,20 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.Optional;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
+@RequiredArgsConstructor
 public class LoginService {
-    @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
-    private UsuarioRepository usuarioRepository;
-    @Autowired
-    private JwtGenerator jwtGenerator;
+    private final AuthenticationManager authenticationManager;
+
+    private final UsuarioRepository usuarioRepository;
+
+    private final JwtGenerator jwtGenerator;
+
+    private final UsuarioMapper usuarioMapper;
+
 //    private final JavaMailSender mailSender;
 
     @Transactional
@@ -48,9 +50,9 @@ public class LoginService {
      * Ler o usuario ativo por email
      */
     public UsuarioDTO lerUsuarioPorEmail(final String email) {
-        Usuario usr = usuarioRepository.findByEmail(email)
+        Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new ApiRequestException("Usuário não encontrado"));
-        return Mapper.mapTo(usr, UsuarioDTO.class);
+        return usuarioMapper.toDTO(usuario);
     }
 
     /**
@@ -59,21 +61,23 @@ public class LoginService {
      */
     @Transactional
     public void enviarNovaSenha(final String email) {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-
-        Random r = new Random();
-        long nova = (long) (r.nextDouble() * 1000000);
         Optional<Usuario> opt = usuarioRepository.findByEmail(email);
 
         if (opt.isEmpty())
             throw new ApiRequestException("Email não encontrado no sistema!");
 
         Usuario usr = opt.get();
-        usr.setNovaSenha(encoder.encode(Long.toString(nova)));
+
+        int numero = ThreadLocalRandom.current().nextInt(0, 1000000); // 0 a 999999
+        String numeroStr = String.format("%06d", numero); // Preenche com zeros à esquerda
+        System.out.println("Número formatado: " + numeroStr); // Ex: "001234", "999999"
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        usr.setNovaSenha(encoder.encode(numeroStr));
         usr.setDtRecuperacao(LocalDate.now());
 
         var conteudo = "Use a senha abaixo em seu próximo Login.<br/>";
-        conteudo = conteudo + nova;
+        conteudo = conteudo + numeroStr;
         conteudo = conteudo
                 + "<br/><br/>Desconsidere este email caso você não tenha solicitado a alteração da senha.";
 

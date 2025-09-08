@@ -24,33 +24,31 @@ import java.util.Optional;
 public class PedidoVendaService {
     @Autowired
     private PedVendaRepository pedVendaRepository;
+
     @Autowired
     private PedVendaItemRepository pedVendaItemRepository;
+
     @Autowired
     private VwPedVendaItemRepository vwPedVendaItemRepository;
-    @Autowired
-    private SequenciaService sequenciaService;
 
     /**
      * Ler o pedido de venda pelo numero do pedido
-     * Usado para manutenção do registro
      */
-    public PedVenda lerPedVenda(final Long nrPedido) {
-        return pedVendaRepository.findPedVenda(nrPedido)
+    public PedVenda lerPedVenda(final Integer nrPedido) {
+        return pedVendaRepository.getPedVenda(nrPedido)
                 .orElseThrow(() -> new ApiRequestException("Pedido de venda não encontrado"));
     }
 
     /**
      * Ler um item do pedido de venda por ID
-     * Usado para manutenção do item do pedido
      */
-    public PedVendaItem lerPedVendaItem(final Long id) {
-        return pedVendaItemRepository.findPedVendaItem(id)
+    public PedVendaItem lerPedVendaItem(final Integer id) {
+        return pedVendaItemRepository.getPedVendaItem(id)
                 .orElseThrow(() -> new ApiRequestException("Item do pedido não encontrado"));
     }
 
-    public List<PedVendaItem> listarPedVendaItem(final Long nrPedido) {
-        return pedVendaItemRepository.listPedVendaItem(nrPedido);
+    public List<PedVendaItem> listarPedVendaItemByPedido(final Integer nrPedido) {
+        return pedVendaItemRepository.listPedVendaItemByPedido(nrPedido);
     }
 
     /**
@@ -58,9 +56,9 @@ public class PedidoVendaService {
      */
     public Page<VwPedVendaItem> listarVwPedVendaItem(final boolean archive, final String filterText, final Pageable pageable) {
         if (StringUtils.isBlank(filterText)) {
-            return vwPedVendaItemRepository.listVwPedVendaItem(archive, pageable);
+            return vwPedVendaItemRepository.pageVwPedVendaItem(archive, pageable);
         } else {
-            return vwPedVendaItemRepository.listVwPedVendaItem(archive, filterText, pageable);
+            return vwPedVendaItemRepository.pageVwPedVendaItemByFilter(archive, filterText, pageable);
         }
     }
 
@@ -75,8 +73,8 @@ public class PedidoVendaService {
     }
 
     @Transactional
-    public void excluirPedVenda(Long nrPedido) {
-        pedVendaRepository.findPedVenda(nrPedido)
+    public void excluirPedVenda(Integer nrPedido) {
+        pedVendaRepository.getPedVenda(nrPedido)
                 .orElseThrow(() -> new ApiRequestException("Pedido de venda não encontrado"));
 
         //  Verifica se o registro pode ser deletado
@@ -86,19 +84,6 @@ public class PedidoVendaService {
             pedVendaRepository.deleteById(nrPedido);
         } else {
             throw new ApiRequestException("Não é possível excluir o pedido. Existem coisas relacionadas.");
-        }
-    }
-
-    public Object obterProximoCodigo() {
-        Long codigo = sequenciaService.proximoNumero("nr_pedido_venda");
-
-        while (true) {
-            Optional<PedVenda> opt = pedVendaRepository.findPedVenda(codigo);
-
-            if (opt.isEmpty()) {
-                return codigo;
-            }
-            codigo++;
         }
     }
 
@@ -115,22 +100,4 @@ public class PedidoVendaService {
     @Transactional
     public void excluirPedVendaItem(Integer id) {
     }
-
-
-    //---------------------------------------------------------
-// por status/tipo (abertos,fechados,todos)/ codEntd / codItem
-//
-//    public Page<VwPedVendaItem> ListarVwPedVendaItem(
-//            Integer codEntd,
-//            String codItem,
-//            String status,
-//            String tipo,
-//            Pageable pageable,
-//            String filterText) {
-//        if (StringUtils.isBlank(filterText)) {
-//            return vwPedvRepository.findPedVendas(tokenUtil.getEmpresaId(), tpPedido, arquivado, pageable);
-//        } else {
-//            return vwPedvRepository.findPedVendas(tokenUtil.getEmpresaId(), tpPedido, arquivado, filterText, pageable);
-//        }
-//    }
 }

@@ -13,30 +13,27 @@ import java.util.List;
  * View das linhas do pedido de venda
  */
 @Immutable
-public interface VwPedVendaItemRepository extends JpaRepository<VwPedVendaItem, Long> {
+public interface VwPedVendaItemRepository extends JpaRepository<VwPedVendaItem, Integer> {
 
     /**
      * Listar os itens de um determinado pedido
      */
-    @Query("select v from VwPedVendaItem v where  "
-            + "nrPedido = ?1 " +
+    @Query("select v from VwPedVendaItem v where nrPedido = ?1 " +
             "order by nrSequencia, codItem")
-    List<VwPedVendaItem> listVwPedVendaItem(Integer nrPedido);
+    List<VwPedVendaItem> listVwPedVendaItemByPedido(Integer nrPedido);
 
     /**
-     * Listar os itens dos pedidos por status
+     * Listar os itens dos pedidos por archived
      */
-    @Query("select v from VwPedVendaItem v Where " +
-            "v.archive = ?1 " +
+    @Query("select v from VwPedVendaItem v Where v.archive = ?1 " +
             "order by nrPedido, nrSequencia, codItem")
-    Page<VwPedVendaItem> listVwPedVendaItem(boolean archive, Pageable pageable);
+    Page<VwPedVendaItem> pageVwPedVendaItem(boolean archive, Pageable pageable);
 
     /**
      * Listar os itens dos pedidos por status e filtro
      */
-    @Query("select v from VwPedVendaItem v Where " +
-            "v.archive = ?1 and " +
+    @Query("select v from VwPedVendaItem v Where v.archive = ?1 and " +
             "(v.nome = ?2 or v.descricao = ?2) " +
             "order by codEntd, nrSequencia, codItem")
-    Page<VwPedVendaItem> listVwPedVendaItem(boolean archive, String filterText, Pageable pageable);
+    Page<VwPedVendaItem> pageVwPedVendaItemByFilter(boolean archive, String filterText, Pageable pageable);
 }

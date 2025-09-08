@@ -1,7 +1,7 @@
 package com.holis.san01.controller;
 
 import com.holis.san01.model.ApiResponse;
-import com.holis.san01.model.EntidadeDTO;
+import com.holis.san01.model.Entidade;
 import com.holis.san01.services.EntidadeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -52,7 +52,7 @@ public class EntidadeController {
      */
     @PostMapping
     public ResponseEntity<ApiResponse> create(
-            @RequestBody @Valid EntidadeDTO entidadeDTO) {
+            @RequestBody @Valid Entidade entidadeDTO) {
         ApiResponse apiResponse = entidadeService.create(entidadeDTO);
         return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
     }
@@ -62,7 +62,7 @@ public class EntidadeController {
      */
     @PutMapping
     public ResponseEntity<ApiResponse> update(
-            @RequestBody @Valid EntidadeDTO entidadeDTO) {
+            @RequestBody @Valid Entidade entidadeDTO) {
         ApiResponse apiResponse = entidadeService.update(entidadeDTO);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }

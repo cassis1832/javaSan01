@@ -15,21 +15,19 @@ public interface PedVendaItemRepository extends JpaRepository<PedVendaItem, Inte
      * Ler ped_venda_item pelo ID
      */
     @Query("select pi from PedVendaItem pi Where pi.id = ?1")
-    Optional<PedVendaItem> findPedVendaItem(Long id);
+    Optional<PedVendaItem> getPedVendaItem(Integer id);
 
     /**
      * Ler ped_venda_item pelo nr_pedido
      */
-    @Query("select pi from PedVendaItem pi Where " +
-            "pi.nrPedido = ?1 " +
+    @Query("select pi from PedVendaItem pi Where pi.nrPedido = ?1 " +
             "order by nrSequencia, codItem")
-    List<PedVendaItem> listPedVendaItem(Long nrPedido);
+    List<PedVendaItem> listPedVendaItemByPedido(Integer nrPedido);
 
     /**
      * Ler ped_venda_item por item
      */
-    @Query("select pi from PedVendaItem pi Where " +
-            "pi.codItem = ?1 " +
+    @Query("select pi from PedVendaItem pi Where pi.codItem = ?1 " +
             "order by pi.nrPedido, pi.codItem")
-    List<PedVendaItem> listPedVendaItemDoItem(String codItem);
+    List<PedVendaItem> listPedVendaItemByItemByItem(String codItem);
 }

@@ -12,12 +12,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface PedVendaRepository extends JpaRepository<PedVenda, Long> {
+public interface PedVendaRepository extends JpaRepository<PedVenda, Integer> {
     /**
      * Ler um registro de pedido de venda por nr_pedido
      */
     @Query("select p from PedVenda p Where p.nrPedido = ?1")
-    Optional<PedVenda> findPedVenda(Long nrPedido);
+    Optional<PedVenda> getPedVenda(Integer nrPedido);
 
     /**
      * Listar os pedidos de um determinado cliente

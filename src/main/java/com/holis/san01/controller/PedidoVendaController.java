@@ -30,21 +30,17 @@ public class PedidoVendaController {
 
     /**
      * Ler um determinado pedido de venda pelo nr_pedido
-     * Usado para manutenção do registro
      */
     @GetMapping(value = "/lerPedV")
-    public ResponseEntity<PedVenda> lerPedV(
-            @RequestParam(name = "nrPedido", defaultValue = "") Long nrPedido) {
+    public ResponseEntity<PedVenda> lerPedV(@RequestParam(name = "nrPedido", defaultValue = "") Integer nrPedido) {
         return ResponseEntity.status(HttpStatus.OK).body(pedidoVendaService.lerPedVenda(nrPedido));
     }
 
     /**
      * Ler um determinado item do pedido de venda pelo id
-     * Usado para manutenção do registro
      */
     @GetMapping("/lerPedI")
-    public ResponseEntity<PedVendaItem> lerPedI(
-            @RequestParam(name = "id", defaultValue = "") Long id) {
+    public ResponseEntity<PedVendaItem> lerPedI(@RequestParam(name = "id", defaultValue = "") Integer id) {
         return ResponseEntity.status(HttpStatus.OK).body(pedidoVendaService.lerPedVendaItem(id));
     }
 
@@ -52,9 +48,8 @@ public class PedidoVendaController {
      * Listar as linhas do pedido de vendas
      */
     @GetMapping("/listarPedI")
-    public ResponseEntity<List<PedVendaItem>> listarPedI(
-            @RequestParam(name = "nrPedido", defaultValue = "0") Long nrPedido) {
-        List<PedVendaItem> pedVendaItem = pedidoVendaService.listarPedVendaItem(nrPedido);
+    public ResponseEntity<List<PedVendaItem>> listarPedI(@RequestParam(name = "nrPedido", defaultValue = "0") Integer nrPedido) {
+        List<PedVendaItem> pedVendaItem = pedidoVendaService.listarPedVendaItemByPedido(nrPedido);
         return new ResponseEntity<>(pedVendaItem, HttpStatus.OK);
     }
 
@@ -75,8 +70,7 @@ public class PedidoVendaController {
      * Incluir um novo registro PEDVENDA
      */
     @PostMapping("/incluirPedV")
-    public ResponseEntity<PedVenda> incluirPedV(
-            @RequestBody @Valid PedVenda pedVenda) {
+    public ResponseEntity<PedVenda> incluirPedV(@RequestBody @Valid PedVenda pedVenda) {
         pedVenda = pedidoVendaService.incluirPedVenda(pedVenda);
         return new ResponseEntity<>(pedVenda, HttpStatus.CREATED);
     }
@@ -85,8 +79,7 @@ public class PedidoVendaController {
      * Incluir um novo registro PEDVENDAITEM
      */
     @PostMapping("/incluirPedI")
-    public ResponseEntity<PedVendaItem> incluirPedI(
-            @RequestBody @Valid PedVendaItem pedVendaItem) {
+    public ResponseEntity<PedVendaItem> incluirPedI(@RequestBody @Valid PedVendaItem pedVendaItem) {
         pedVendaItem = pedidoVendaService.incluirPedVendaItem(pedVendaItem);
         return new ResponseEntity<>(pedVendaItem, HttpStatus.CREATED);
     }
@@ -95,8 +88,7 @@ public class PedidoVendaController {
      * Alterar um registro existente PEDVENDA
      */
     @PutMapping("/alterarPedV")
-    public ResponseEntity<PedVenda> alterarPedV(
-            @RequestBody @Valid PedVenda pedVenda) {
+    public ResponseEntity<PedVenda> alterarPedV(@RequestBody @Valid PedVenda pedVenda) {
         pedVenda = pedidoVendaService.alterarPedVenda(pedVenda);
         return new ResponseEntity<>(pedVenda, HttpStatus.OK);
     }
@@ -105,8 +97,7 @@ public class PedidoVendaController {
      * Alterar um registro existente PEDVENDAITEM
      */
     @PutMapping("/alterarPedI")
-    public ResponseEntity<PedVendaItem> alterarPedI(
-            @RequestBody @Valid PedVendaItem pedVendaItem) {
+    public ResponseEntity<PedVendaItem> alterarPedI(@RequestBody @Valid PedVendaItem pedVendaItem) {
         pedVendaItem = pedidoVendaService.alterarPedVendaItem(pedVendaItem);
         return new ResponseEntity<>(pedVendaItem, HttpStatus.OK);
     }
@@ -115,8 +106,7 @@ public class PedidoVendaController {
      * Excluir um pedido de venda
      */
     @DeleteMapping("/excluirPedV")
-    public ResponseEntity<?> excluirPedV(
-            @RequestParam(name = "nrPedido") Long nrPedido) {
+    public ResponseEntity<?> excluirPedV(@RequestParam(name = "nrPedido") Integer nrPedido) {
         try {
             pedidoVendaService.excluirPedVenda(nrPedido);
         } catch (Exception ex) {
@@ -126,28 +116,15 @@ public class PedidoVendaController {
     }
 
     /**
-     * Excluir um pedido de venda
+     * Excluir uma linha do pedido de venda
      */
     @DeleteMapping("/excluirPedI")
-    public ResponseEntity<?> excluirPedI(
-            @RequestParam(name = "id") Integer id) {
+    public ResponseEntity<?> excluirPedI(@RequestParam(name = "id") Integer id) {
         try {
             pedidoVendaService.excluirPedVendaItem(id);
         } catch (Exception ex) {
             throw new ApiRequestException(ex.getMessage());
         }
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    /**
-     * Obter o próximo numero de pedido de venda - nr_pedido
-     */
-    @GetMapping("/proximocodigo")
-    public ResponseEntity<Integer> obterProximoCodigo() {
-        Integer proximoCodigo = (Integer) pedidoVendaService.obterProximoCodigo();
-        if (proximoCodigo == null) {
-            throw new ApiRequestException("Retornando null no proximo código");
-        }
-        return new ResponseEntity<>(proximoCodigo, HttpStatus.OK);
     }
 }

@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Table(name = "vw_titulo_ap")
 public class VwTituloAp {
     @Id
-    private Long id;
+    private Integer id;
 
     private Integer codFilial;
 
@@ -28,7 +28,7 @@ public class VwTituloAp {
 
     private String codEspDoc;
 
-    private Long docId;
+    private Integer docId;
 
     private boolean parcela;
 

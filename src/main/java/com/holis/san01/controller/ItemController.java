@@ -1,7 +1,7 @@
 package com.holis.san01.controller;
 
 import com.holis.san01.model.ApiResponse;
-import com.holis.san01.model.ItemDTO;
+import com.holis.san01.model.Item;
 import com.holis.san01.services.ItemService;
 import com.holis.san01.services.TipoItemService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,8 +55,8 @@ public class ItemController {
      * Incluir um novo registro
      */
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@RequestBody @Valid ItemDTO itemDTO) {
-        ApiResponse apiResponse = itemService.create(itemDTO);
+    public ResponseEntity<ApiResponse> create(@RequestBody @Valid Item dto) {
+        ApiResponse apiResponse = itemService.create(dto);
         return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
     }
 
@@ -64,8 +64,8 @@ public class ItemController {
      * Alterar um registro existente
      */
     @PutMapping
-    public ResponseEntity<ApiResponse> update(@RequestBody @Valid ItemDTO itemDTO) {
-        ApiResponse apiResponse = itemService.update(itemDTO);
+    public ResponseEntity<ApiResponse> update(@RequestBody @Valid Item dto) {
+        ApiResponse apiResponse = itemService.update(dto);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 

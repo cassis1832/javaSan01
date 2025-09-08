@@ -13,9 +13,9 @@ public class PedVendaItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
-    private Long id;
+    private Integer id;
     @Column(nullable = false)
-    private Long nrPedido;
+    private Integer nrPedido;
     private int nrSequencia;
     @Column(nullable = false)
     private String codItem;
