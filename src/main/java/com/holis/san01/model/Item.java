@@ -1,15 +1,9 @@
 package com.holis.san01.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -17,23 +11,18 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "item")
 public class Item {
+
     @Id
     @Column(length = 15, nullable = false)
-    @NotBlank(message = "Código do item é obrigatório")
-    @Size(max = 15, message = "O código deve ter até 15 caracteres")
     private String codItem;
 
     @Column(length = 60, nullable = false)
-    @NotBlank(message = "Descrição do item é obrigatória")
-    @Size(max = 60, message = "A descrição deve ter até 60 caracteres")
     private String descricao;
 
-    @Column(length = 1, nullable = false)
-    @NotBlank(message = "Tipo fiscal de item é obrigatório")
+    @Column(length = 2, nullable = false)
     private String codTipoItem;
 
     @Column(length = 6, nullable = false)
-    @NotBlank(message = "Unidade de medida é obrigatória")
     private String unimed;
 
     private BigDecimal precoVenda;
@@ -44,6 +33,7 @@ public class Item {
 
     private LocalDate dtPrecoCompra;
 
+    @Column(length = 15)
     private String codFamilia;
 
     private Boolean indItemFat;
@@ -114,22 +104,27 @@ public class Item {
 
     private BigDecimal loteMinCpa;
 
+    @Column(length = 10)
     private String codNcm;
 
     private String origem;
 
     private Integer tempoRessup;
 
+    @Column(length = 14)
     private String gtin;
 
     private Integer prazoEntrega;
 
+    @Column(length = 20)
     private String situacao;
 
     @CreatedDate
     private LocalDate dtCriacao;
 
     @Column(nullable = false)
-    @NotNull(message = "O archived é obrigatório")
     private boolean archive;
+
+    @Column(nullable = false)
+    private int status;
 }

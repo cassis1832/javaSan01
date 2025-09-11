@@ -19,6 +19,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+
         Map<String, String> erros = new HashMap<>();
 
         ex.getBindingResult().getAllErrors().forEach(error -> {
@@ -43,6 +44,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(ApiRequestException.class)
     public ResponseEntity<ApiResponse> ApiHandler(ApiRequestException ex) {
+
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new ApiResponse(
@@ -59,6 +61,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(NotFoundRequestException.class)
     public ResponseEntity<ApiResponse> NotFoundException(NotFoundRequestException ex) {
+
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new ApiResponse(

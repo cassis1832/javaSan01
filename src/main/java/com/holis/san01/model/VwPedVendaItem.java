@@ -207,4 +207,6 @@ public class VwPedVendaItem {
     private Integer tpPreco;
 
     private boolean archive;
+
+    private Integer status;
 }

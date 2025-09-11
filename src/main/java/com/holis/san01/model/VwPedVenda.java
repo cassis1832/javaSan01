@@ -1,22 +1,21 @@
 package com.holis.san01.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Data;
 
 import java.time.LocalDate;
 
 @Data
 @Entity
-@Table(name = "ped_venda")
-public class PedVenda {
+@Table(name = "vw_ped_venda")
+public class VwPedVenda {
     @Id
-    @Column(nullable = false)
     private Integer nrPedido;
 
-    @Column(nullable = false)
     private Integer codEntd;
 
-    @Column(nullable = false)
     private Integer codFilial;
 
     private String descricao;
@@ -170,4 +169,6 @@ public class PedVenda {
     private LocalDate dtSituacao;
 
     private Integer status;
+
+    private  String nome;
 }
