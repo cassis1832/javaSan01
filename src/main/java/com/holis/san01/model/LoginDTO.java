@@ -2,7 +2,7 @@ package com.holis.san01.model;
 
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 
 /**
  * Informações para o login

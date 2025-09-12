@@ -10,18 +10,25 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "ped_venda_item")
 public class PedVendaItem {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Integer id;
+
     @Column(nullable = false)
     private Integer nrPedido;
+
     private int nrSequencia;
+
     @Column(nullable = false)
     private String codItem;
+
     private String descricao;
+
     @Column(nullable = false)
     private String unimed;
+
     private LocalDate dtEntrega;
     private BigDecimal vlPretab;
     private BigDecimal vlPreuni;
@@ -110,4 +117,5 @@ public class PedVendaItem {
     private BigDecimal valPrecoSuger;
     private String codOrdCompra;
     private int tpPreco;
+    private int status;
 }

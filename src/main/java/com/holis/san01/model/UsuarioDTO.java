@@ -2,7 +2,7 @@ package com.holis.san01.model;
 
 import lombok.Data;
 
-import javax.validation.constraints.*;
+import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 
 @Data
@@ -45,6 +45,6 @@ public class UsuarioDTO {
 
     private LocalDate dtCriacao;
 
-    @NotNull(message = "O archived é obrigatório")
-    private boolean archive;
+    @NotNull(message = "O status é obrigatório")
+    private int status;
 }

@@ -14,10 +14,10 @@ public interface NcmRepository extends JpaRepository<Ncm, String> {
     @Query("select t from Ncm t Where upper(t.codNcm) =  upper(?1)")
     Optional<Ncm> findNcm(String codNcm);
 
-    @Query("select i from Ncm i Where i.archive  = ?1")
-    Page<Ncm> listNcm(boolean archive, Pageable pageable);
+    @Query("select i from Ncm i Where i.status  = ?1")
+    Page<Ncm> listNcm(int status, Pageable pageable);
 
-    @Query("select i from Ncm i where i.archive = ?1 and " +
+    @Query("select i from Ncm i where i.status = ?1 and " +
             "(concat(i.codNcm, i.descricao) like concat('%',?2,'%')) ")
-    Page<Ncm> listNcm(boolean archive, String filterText, Pageable pageable);
+    Page<Ncm> listNcm(int status, String filterText, Pageable pageable);
 }

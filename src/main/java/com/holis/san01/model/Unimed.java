@@ -6,7 +6,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
 
-import javax.validation.constraints.Pattern;
+import jakarta.validation.constraints.Pattern;
 
 @Data // @Getter, @Setter, @ToString, @EqualsAndHashCode e @RequiredArgsConstructor
 @Entity
@@ -26,5 +26,5 @@ public class Unimed {
     private String fraciona;
 
     @Column(nullable = false)
-    private boolean archive;
+    private int status;
 }

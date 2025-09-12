@@ -2,9 +2,7 @@ package com.holis.san01.services;
 
 import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.exceptions.NotFoundRequestException;
-import com.holis.san01.mapper.ItemMapper;
 import com.holis.san01.model.Item;
-import com.holis.san01.model.ItemDTO;
 import com.holis.san01.model.PedVendaItem;
 import com.holis.san01.model.VwItem;
 import com.holis.san01.repository.ItemRepository;
@@ -33,16 +31,14 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final VwItemRepository vwItemRepository;
     private final PedVendaItemRepository pedVendaItemRepository;
-    private final ItemMapper itemMapper;
 
     /**
      * Ler Item por codigo de item
      */
-    public ItemDTO findItemByCodItem(final String codItem) {
+    public Item findItemByCodItem(final String codItem) {
 
-        Item item = itemRepository.findItemByCodItem(codItem)
+        return itemRepository.findItemByCodItem(codItem)
                 .orElseThrow(() -> new NotFoundRequestException("Item não encontrado"));
-        return itemMapper.toDTO(item);
     }
 
     public Page<VwItem> pageVwItem(
@@ -63,9 +59,7 @@ public class ItemService {
     }
 
     @Transactional
-    public ItemDTO create(final ItemDTO dto) {
-
-        Item item = itemMapper.toEntity(dto);
+    public Item create(final Item item) {
 
         Optional<Item> opt = itemRepository.findItemByCodItem(item.getCodItem());
 
@@ -73,58 +67,56 @@ public class ItemService {
             throw new ApiRequestException("Este código de item já existe!");
         }
 
-        item.setArchive(false);
+        item.setStatus(0);
         item.setDtCriacao(LocalDate.now());
-        item = itemRepository.saveAndFlush(item);
-        return itemMapper.toDTO(item);
+        return itemRepository.saveAndFlush(item);
     }
 
     @Transactional
-    public ItemDTO update(final ItemDTO dto) {
+    public Item update(final Item itemInput) {
 
-        Item item = itemRepository.findItemByCodItem(dto.getCodItem())
+        Item item = itemRepository.findItemByCodItem(itemInput.getCodItem())
                 .orElseThrow(() -> new NotFoundRequestException("Item não encontrado"));
 
-        item.setCodItem(dto.getCodItem());
-        item.setArchive(dto.isArchive());
-        item.setCodTipoItem(dto.getCodTipoItem());
-        item.setAliquotaIpi(dto.getAliquotaIpi());
-        item.setCodLocaliz(dto.getCodLocaliz());
-        item.setCodOrigem(dto.getCodOrigem());
-        item.setIndComprado((dto.isIndComprado()));
-        item.setDescricao(dto.getDescricao());
-        item.setPrecoVenda(dto.getPrecoVenda());
-        item.setDtPrecoVenda(dto.getDtPrecoVenda());
-        item.setDtPrecoCompra(dto.getDtPrecoCompra());
-        item.setPrecoCompra(dto.getPrecoCompra());
-        item.setDtObsol(dto.getDtObsol());
-        item.setDtLiberac(dto.getDtLiberac());
-        item.setDtUltEnt(dto.getDtUltEnt());
-        item.setCodFamilia(dto.getCodFamilia());
-        item.setFraciona(dto.getFraciona());
-        item.setGtin(dto.getGtin());
-        item.setIndItemFat(dto.getIndItemFat());
-        item.setLoteEcon(dto.getLoteEcon());
-        item.setLoteMinCpa(dto.getLoteMinCpa());
-        item.setLoteMinVda(dto.getLoteMinVda());
-        item.setLoteMulven(dto.getLoteMulven());
-        item.setNarrativa(dto.getNarrativa());
-        item.setCodNcm(dto.getCodNcm());
-        item.setOrigem(dto.getOrigem());
-        item.setPesoBruto(dto.getPesoBruto());
-        item.setPesoLiquido(dto.getPesoLiquido());
-        item.setPrazoEntrega(dto.getPrazoEntrega());
-        item.setPrecoUltEnt(dto.getPrecoUltEnt());
-        item.setQuantPacote(dto.getQuantPacote());
-        item.setResCompra(dto.getResCompra());
-        item.setResFabric(dto.getResFabric());
-        item.setSituacao(dto.getSituacao());
-        item.setTempoRessup(dto.getTempoRessup());
-        item.setUnimed(dto.getUnimed());
-        item.setUsuarioObsol(dto.getUsuarioObsol());
-        item = itemRepository.saveAndFlush(item);
+        item.setCodItem(itemInput.getCodItem());
+        item.setStatus(itemInput.getStatus());
+        item.setCodTipoItem(itemInput.getCodTipoItem());
+        item.setAliquotaIpi(itemInput.getAliquotaIpi());
+        item.setCodLocaliz(itemInput.getCodLocaliz());
+        item.setCodOrigem(itemInput.getCodOrigem());
+        item.setIndComprado((itemInput.isIndComprado()));
+        item.setDescricao(itemInput.getDescricao());
+        item.setPrecoVenda(itemInput.getPrecoVenda());
+        item.setDtPrecoVenda(itemInput.getDtPrecoVenda());
+        item.setDtPrecoCompra(itemInput.getDtPrecoCompra());
+        item.setPrecoCompra(itemInput.getPrecoCompra());
+        item.setDtObsol(itemInput.getDtObsol());
+        item.setDtLiberac(itemInput.getDtLiberac());
+        item.setDtUltEnt(itemInput.getDtUltEnt());
+        item.setCodFamilia(itemInput.getCodFamilia());
+        item.setFraciona(itemInput.getFraciona());
+        item.setGtin(itemInput.getGtin());
+        item.setIndItemFat(itemInput.getIndItemFat());
+        item.setLoteEcon(itemInput.getLoteEcon());
+        item.setLoteMinCpa(itemInput.getLoteMinCpa());
+        item.setLoteMinVda(itemInput.getLoteMinVda());
+        item.setLoteMulven(itemInput.getLoteMulven());
+        item.setNarrativa(itemInput.getNarrativa());
+        item.setCodNcm(itemInput.getCodNcm());
+        item.setOrigem(itemInput.getOrigem());
+        item.setPesoBruto(itemInput.getPesoBruto());
+        item.setPesoLiquido(itemInput.getPesoLiquido());
+        item.setPrazoEntrega(itemInput.getPrazoEntrega());
+        item.setPrecoUltEnt(itemInput.getPrecoUltEnt());
+        item.setQuantPacote(itemInput.getQuantPacote());
+        item.setResCompra(itemInput.getResCompra());
+        item.setResFabric(itemInput.getResFabric());
+        item.setSituacao(itemInput.getSituacao());
+        item.setTempoRessup(itemInput.getTempoRessup());
+        item.setUnimed(itemInput.getUnimed());
+        item.setUsuarioObsol(itemInput.getUsuarioObsol());
 
-        return itemMapper.toDTO(item);
+        return itemRepository.saveAndFlush(item);
     }
 
     @Transactional

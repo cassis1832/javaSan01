@@ -13,7 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.List;
 
 /**
@@ -39,12 +39,12 @@ public class NcmController {
      */
     @GetMapping("/pages")
     public ResponseEntity<Page<Ncm>> listarNcm(
-            @RequestParam(name = "archive", defaultValue = "0") boolean archive,
+            @RequestParam(name = "status", defaultValue = "0") int status,
             @RequestParam(name = "filterText", defaultValue = "") String filterText,
             @PageableDefault(page = 0, size = 40)
             @SortDefault.SortDefaults({@SortDefault(sort = "codNcm")}) Pageable pageable) {
 
-        Page<Ncm> ncms = ncmService.listarPaging(archive, filterText, pageable);
+        Page<Ncm> ncms = ncmService.listarPaging(status, filterText, pageable);
         return new ResponseEntity<>(ncms, HttpStatus.OK);
     }
 

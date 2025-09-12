@@ -12,7 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,14 +28,14 @@ public class TituloApController {
 
     @GetMapping("/lists")
     public ResponseEntity<ApiResponse> listVwTituloAp(
-            @RequestParam(name = "archive", defaultValue = "0") Boolean archive) {
-        ApiResponse apiResponse = servico.listVwTituloAp(archive);
+            @RequestParam(name = "status", defaultValue = "0") int status) {
+        ApiResponse apiResponse = servico.listVwTituloAp(status);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
     @GetMapping("/pages")
     public ResponseEntity<ApiResponse> pageVwTituloAp(
-            @RequestParam(name = "archive", defaultValue = "0") Boolean archive,
+            @RequestParam(name = "status", defaultValue = "0") int status,
             @RequestParam(name = "criteria", defaultValue = "") String criteria,
             @RequestParam(name = "filterText", defaultValue = "") String filterText,
             @PageableDefault(size = 20) @SortDefault.SortDefaults({
@@ -43,16 +43,16 @@ public class TituloApController {
                     @SortDefault(sort = "codEntd", direction = Sort.Direction.ASC)
             }) Pageable pageable) {
 
-        ApiResponse apiResponse = servico.pageVwTituloAp(criteria,archive, filterText, pageable);
+        ApiResponse apiResponse = servico.pageVwTituloAp(criteria,status, filterText, pageable);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
     @GetMapping("/listCodEspDoc")
     public ResponseEntity<ApiResponse> listVwTituloApPorTipoRef(
             @RequestParam(name = "codEspDoc", defaultValue = "") String codEspDoc,
-            @RequestParam(name = "archive", defaultValue = "0") Boolean archive) {
+            @RequestParam(name = "status", defaultValue = "0") int status) {
 
-        ApiResponse apiResponse = servico.listVwTituloAp(archive, codEspDoc);
+        ApiResponse apiResponse = servico.listVwTituloAp(status, codEspDoc);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 

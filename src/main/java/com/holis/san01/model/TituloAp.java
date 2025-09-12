@@ -98,9 +98,7 @@ public class TituloAp {
 
     private String usrAlteracao;
 
-    private boolean archive = false;
-
-    private boolean deleted = false;
+    private int status ;
 
     private LocalDate dtDeleted;
 

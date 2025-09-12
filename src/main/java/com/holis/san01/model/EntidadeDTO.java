@@ -1,25 +1,20 @@
 package com.holis.san01.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.Data;
 
-import jakarta.validation.constraints.Pattern;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Data // @Getter, @Setter, @ToString, @EqualsAndHashCode e @RequiredArgsConstructor
-@Entity
-@Table(name = "entidade")
-public class Entidade {
-    @Id
-    @Column(nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class EntidadeDTO {
+
     private int codEntd;
 
-    @Column(nullable = false)
     private String nome;
 
-    @Column(nullable = false)
     private String razaoSocial;
 
     private boolean indCliente;
@@ -122,6 +117,5 @@ public class Entidade {
 
     private LocalDate dtCriacao;
 
-    @Column(nullable = false)
     private int status;
 }

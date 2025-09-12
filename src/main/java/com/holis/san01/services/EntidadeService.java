@@ -8,6 +8,7 @@ import com.holis.san01.model.PedVenda;
 import com.holis.san01.repository.EntidadeRepository;
 import com.holis.san01.repository.PedVendaRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,57 +23,55 @@ import java.util.Optional;
  * Service para tratamento de Entidade
  */
 @Service
+@RequiredArgsConstructor
 public class EntidadeService {
-    @Autowired
-    private EntidadeRepository entidadeRepository;
-
-    @Autowired
-    private PedVendaRepository pedVendaRepository;
+    private final EntidadeRepository entidadeRepository;
+    private final PedVendaRepository pedVendaRepository;
+    private int status;
 
     /**
      * Ler uma ENTIDADE pelo codEntd
      */
-    public ApiResponse getEntidade(final Integer codEntd) {
-        Entidade entidade = entidadeRepository.getEntidade(codEntd)
+    public Entidade getEntidade(final Integer codEntd) {
+        return entidadeRepository.getEntidade(codEntd)
                 .orElseThrow(() -> new NotFoundRequestException("Cliente/fornecedor não encontrado"));
-        return new ApiResponse(true, entidade);
     }
 
     /**
      * Listar Entidades
      */
-    public ApiResponse pageEntidade(final String criteria, final boolean archive, final String filterText, final Pageable pageable) {
+    public Page<Entidade> pageEntidade(final String criteria, final int status, final String filterText, final Pageable pageable) {
         Page<Entidade> entidades = null;
 
         if (criteria.equalsIgnoreCase("")) {
             if (StringUtils.isBlank(filterText)) {
-                entidades = entidadeRepository.pageNenhumTipo(archive, pageable);
+                entidades = entidadeRepository.pageNenhumTipo(status, pageable);
             } else {
-                entidades = entidadeRepository.pageNenhumTipo(archive, filterText, pageable);
+                entidades = entidadeRepository.pageNenhumTipo(status, filterText, pageable);
             }
         }
 
         if (criteria.equalsIgnoreCase("todos")) {
             if (StringUtils.isBlank(filterText)) {
-                entidades = entidadeRepository.pageEntidades(archive, pageable);
+                entidades = entidadeRepository.pageEntidades(status, pageable);
             } else {
-                entidades = entidadeRepository.pageEntidades(archive, filterText, pageable);
+                entidades = entidadeRepository.pageEntidades(status, filterText, pageable);
             }
         }
 
         if (criteria.equalsIgnoreCase("clientes")) {
             if (StringUtils.isBlank(filterText)) {
-                entidades = entidadeRepository.pageClientes(archive, pageable);
+                entidades = entidadeRepository.pageClientes(status, pageable);
             } else {
-                entidades = entidadeRepository.pageClientes(archive, filterText, pageable);
+                entidades = entidadeRepository.pageClientes(status, filterText, pageable);
             }
         }
 
         if (criteria.equalsIgnoreCase("fornecedores")) {
             if (StringUtils.isBlank(filterText)) {
-                entidades = entidadeRepository.pageFornecedores(archive, pageable);
+                entidades = entidadeRepository.pageFornecedores(status, pageable);
             } else {
-                entidades = entidadeRepository.pageFornecedores(archive, filterText, pageable);
+                entidades = entidadeRepository.pageFornecedores(status, filterText, pageable);
             }
         }
 
@@ -80,89 +79,86 @@ public class EntidadeService {
             throw new ApiRequestException("Parametros invalidos no HTTP!");
         }
 
-        return new ApiResponse(true, entidades);
+        return  entidades;
     }
 
     /**
      * Criar nova Entidade
      */
     @Transactional
-    public ApiResponse create(final Entidade dto) {
-        Optional<Entidade> opt = entidadeRepository.getEntidade(dto.getCodEntd());
+    public Entidade create(final Entidade entidadeInput ) {
+        Optional<Entidade> opt = entidadeRepository.getEntidade(entidadeInput.getCodEntd());
 
         if (opt.isPresent()) {
             throw new ApiRequestException("Este código de cliente/fornecedor já existe!");
         }
 
         // Campos chave estrangeira tem que ser convertidos para NULL
-        if (StringUtils.isBlank(dto.getCodCondPag())) {
-            dto.setCodCondPag(null);
+        if (StringUtils.isBlank(entidadeInput.getCodCondPag())) {
+            entidadeInput.setCodCondPag(null);
         }
 
-        dto.setDtCriacao(LocalDate.now());
-        dto.setArchive(false);
-        Entidade entidade = entidadeRepository.saveAndFlush(dto);
-        return new ApiResponse(true, entidade);
+        entidadeInput.setDtCriacao(LocalDate.now());
+        entidadeInput.setStatus(0);
+        return entidadeRepository.saveAndFlush(entidadeInput);
     }
 
     /**
      * Alterar Entidade
      */
     @Transactional
-    public ApiResponse update(final Entidade dto) {
-        Entidade entidade = entidadeRepository.getEntidade(dto.getCodEntd())
+    public Entidade update(final Entidade entidadeInput) {
+        Entidade entidade = entidadeRepository.getEntidade(entidadeInput.getCodEntd())
                 .orElseThrow(() -> new ApiRequestException("Entidade não encontrado"));
 
-        entidade.setNome(dto.getNome());
-        entidade.setRazaoSocial(dto.getRazaoSocial());
-        entidade.setTpPessoa(dto.getTpPessoa());
-        entidade.setCgc(dto.getCgc());
-        entidade.setRg(dto.getRg());
-        entidade.setIndCliente(dto.isIndCliente());
-        entidade.setIndFornec(dto.isIndFornec());
-        entidade.setIndTransp(dto.isIndTransp());
-        entidade.setCep(dto.getCep());
-        entidade.setLocalidade(dto.getLocalidade());
-        entidade.setLogradouro(dto.getLogradouro());
-        entidade.setNumero(dto.getNumero());
-        entidade.setComplemento(dto.getComplemento());
-        entidade.setBairro(dto.getBairro());
-        entidade.setEstado(dto.getEstado());
-        entidade.setPais(dto.getPais());
-        entidade.setContato(dto.getContato());
-        entidade.setEmail(dto.getEmail());
-        entidade.setTelefone(dto.getTelefone());
-        entidade.setCodCondPag(dto.getCodCondPag());
-        entidade.setTipoFinIdEnt(dto.getTipoFinIdEnt());
-        entidade.setTipoFinIdSai(dto.getTipoFinIdSai());
-        entidade.setObsEntrega(dto.getObsEntrega());
-        entidade.setObservacoes(dto.getObservacoes());
-        entidade.setSituacao(dto.getSituacao());
-        entidade.setArchive(dto.isArchive());
+        entidade.setNome(entidadeInput.getNome());
+        entidade.setRazaoSocial(entidadeInput.getRazaoSocial());
+        entidade.setTpPessoa(entidadeInput.getTpPessoa());
+        entidade.setCgc(entidadeInput.getCgc());
+        entidade.setRg(entidadeInput.getRg());
+        entidade.setIndCliente(entidadeInput.isIndCliente());
+        entidade.setIndFornec(entidadeInput.isIndFornec());
+        entidade.setIndTransp(entidadeInput.isIndTransp());
+        entidade.setCep(entidadeInput.getCep());
+        entidade.setLocalidade(entidadeInput.getLocalidade());
+        entidade.setLogradouro(entidadeInput.getLogradouro());
+        entidade.setNumero(entidadeInput.getNumero());
+        entidade.setComplemento(entidadeInput.getComplemento());
+        entidade.setBairro(entidadeInput.getBairro());
+        entidade.setEstado(entidadeInput.getEstado());
+        entidade.setPais(entidadeInput.getPais());
+        entidade.setContato(entidadeInput.getContato());
+        entidade.setEmail(entidadeInput.getEmail());
+        entidade.setTelefone(entidadeInput.getTelefone());
+        entidade.setCodCondPag(entidadeInput.getCodCondPag());
+        entidade.setTipoFinIdEnt(entidadeInput.getTipoFinIdEnt());
+        entidade.setTipoFinIdSai(entidadeInput.getTipoFinIdSai());
+        entidade.setObsEntrega(entidadeInput.getObsEntrega());
+        entidade.setObservacoes(entidadeInput.getObservacoes());
+        entidade.setSituacao(entidadeInput.getSituacao());
+        entidade.setStatus(entidadeInput.getStatus());
 
         // Campos chave estrangeira tem que ser convertidos para NULL
         if (StringUtils.isBlank(entidade.getCodCondPag())) {
             entidade.setCodCondPag(null);
         }
 
-        entidade = entidadeRepository.saveAndFlush(entidade);
-        return new ApiResponse(true, entidade);
+        return entidadeRepository.saveAndFlush(entidade);
     }
 
     /**
      * Excluir um registro de Entidade
      */
     @Transactional
-    public ApiResponse delete(final Integer codEntd) {
+    public void delete(final Integer codEntd) {
         checkDelete(codEntd);
         entidadeRepository.deleteById(codEntd);
-        return new ApiResponse(true, "Exclusão efetuada com sucesso");
     }
 
     /**
      * Verificar se o cliente pode ser deletado
      */
-    public ApiResponse checkDelete(Integer codEntd) {
+    public void checkDelete(Integer codEntd) {
         Entidade entidade = entidadeRepository.getEntidade(codEntd)
                 .orElseThrow(() -> new ApiRequestException(
                         "Cliente/fornecedor não encontrado para exclusão"));
@@ -173,11 +169,5 @@ public class EntidadeService {
         if (!pedidos.isEmpty()) {
             throw new ApiRequestException("Não é possível excluir o cliente. Existem pedidos de vendas associados.");
         }
-
-        return new ApiResponse(true, "Exclusão pode ser efetuada");
     }
-
-//    private EntidadeDTO toDto(final Entidade entidade) {
-//        return Mapper.mapTo(entidade, EntidadeDTO.class);
-//    }
 }

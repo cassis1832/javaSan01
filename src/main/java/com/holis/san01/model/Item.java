@@ -1,6 +1,9 @@
 package com.holis.san01.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 
@@ -121,9 +124,6 @@ public class Item {
 
     @CreatedDate
     private LocalDate dtCriacao;
-
-    @Column(nullable = false)
-    private boolean archive;
 
     @Column(nullable = false)
     private int status;

@@ -21,5 +21,5 @@ public class Ncm {
 
     private BigDecimal aliquota;
 
-    private boolean archive;
+    private int status;
 }

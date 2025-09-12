@@ -25,13 +25,13 @@ public class NcmService {
                 .orElseThrow(() -> new ApiRequestException("NCM não encontrada"));
     }
 
-    public Page<Ncm> listarPaging(final boolean archive, final String filterText, final Pageable pageable) {
+    public Page<Ncm> listarPaging(final int status, final String filterText, final Pageable pageable) {
         Page<Ncm> ncms;
 
         if (StringUtils.isBlank(filterText)) {
-            ncms = ncmRepository.listNcm(archive, pageable);
+            ncms = ncmRepository.listNcm(status, pageable);
         } else {
-            ncms = ncmRepository.listNcm(archive, filterText, pageable);
+            ncms = ncmRepository.listNcm(status, filterText, pageable);
         }
 
         return ncms;
@@ -55,7 +55,7 @@ public class NcmService {
 
         ncm.setCodNcm(dto.getCodNcm());
         ncm.setDescricao(dto.getDescricao());
-        ncm.setArchive(dto.isArchive());
+        ncm.setStatus(dto.getStatus());
         ncm = ncmRepository.saveAndFlush(ncm);
         return ncm;
     }

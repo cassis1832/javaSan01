@@ -72,5 +72,5 @@ public class VwTituloAp {
 
     private String situacao;
 
-    private boolean archive;
+    private int status;
 }

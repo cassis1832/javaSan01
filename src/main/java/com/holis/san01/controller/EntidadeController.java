@@ -1,9 +1,12 @@
 package com.holis.san01.controller;
 
+import com.holis.san01.mapper.EntidadeMapper;
 import com.holis.san01.model.ApiResponse;
 import com.holis.san01.model.Entidade;
+import com.holis.san01.model.EntidadeDTO;
 import com.holis.san01.services.EntidadeService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
@@ -12,16 +15,16 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-
 /**
  * Controller para tratamento de Entidades
  */
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(value = "/api/entds", produces = MediaType.APPLICATION_JSON_VALUE)
 public class EntidadeController {
-    @Autowired
-    private EntidadeService entidadeService;
+
+    private final EntidadeService entidadeService;
+    private final EntidadeMapper entidadeMapper;
 
     /**
      * Ler um determinado registro pelo código da entidade
@@ -29,8 +32,9 @@ public class EntidadeController {
     @GetMapping
     public ResponseEntity<ApiResponse> getEntidade(
             @RequestParam(name = "codEntd", defaultValue = "0") Integer codEntd) {
-        ApiResponse apiResponse = entidadeService.getEntidade(codEntd);
-        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+
+        Entidade entidade = entidadeService.getEntidade(codEntd);
+        return new ResponseEntity<>(new ApiResponse(true, entidadeMapper.toDTO(entidade)), HttpStatus.OK);
     }
 
     /**
@@ -39,12 +43,13 @@ public class EntidadeController {
     @GetMapping("/pages")
     public ResponseEntity<ApiResponse> pageEntidade(
             @RequestParam(name = "tipo", defaultValue = "") String tipoEntd,
-            @RequestParam(name = "archive", defaultValue = "0") boolean archive,
+            @RequestParam(name = "status", defaultValue = "0") int status,
             @RequestParam(name = "filterText", defaultValue = "") String filterText,
             @PageableDefault(page = 0, size = 40)
             @SortDefault.SortDefaults({@SortDefault(sort = "codEntd")}) Pageable pageable) {
-        ApiResponse apiResponse = entidadeService.pageEntidade(tipoEntd, archive, filterText, pageable);
-        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+
+        var pages = entidadeService.pageEntidade(tipoEntd, status, filterText, pageable);
+        return new ResponseEntity<>(new ApiResponse(true, pages), HttpStatus.OK);
     }
 
     /**
@@ -52,9 +57,10 @@ public class EntidadeController {
      */
     @PostMapping
     public ResponseEntity<ApiResponse> create(
-            @RequestBody @Valid Entidade entidadeDTO) {
-        ApiResponse apiResponse = entidadeService.create(entidadeDTO);
-        return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
+            @RequestBody @Valid EntidadeDTO entidadeDTO) {
+
+        Entidade entidade = entidadeService.create(entidadeMapper.toEntity(entidadeDTO));
+        return new ResponseEntity<>(new ApiResponse(true, entidadeMapper.toDTO(entidade)), HttpStatus.CREATED);
     }
 
     /**
@@ -62,15 +68,18 @@ public class EntidadeController {
      */
     @PutMapping
     public ResponseEntity<ApiResponse> update(
-            @RequestBody @Valid Entidade entidadeDTO) {
-        ApiResponse apiResponse = entidadeService.update(entidadeDTO);
-        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+            @RequestBody @Valid EntidadeDTO entidadeDTO) {
+
+        Entidade entidade = entidadeService.update(entidadeMapper.toEntity(entidadeDTO));
+        return new ResponseEntity<>(new ApiResponse(true, entidadeMapper.toDTO(entidade)), HttpStatus.OK);
     }
 
     @GetMapping("/checkDelete")
-    public ResponseEntity<ApiResponse> checkDelete(@RequestParam(name = "codEntd") Integer codEntd) {
-        ApiResponse apiResponse = entidadeService.checkDelete(codEntd);
-        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    public ResponseEntity<ApiResponse> checkDelete(
+            @RequestParam(name = "codEntd") Integer codEntd) {
+
+        entidadeService.checkDelete(codEntd);
+        return new ResponseEntity<>(new ApiResponse(true, "Entidade pode ser excluído"), HttpStatus.OK);
     }
 
     /**
@@ -80,7 +89,7 @@ public class EntidadeController {
     public ResponseEntity<ApiResponse> delete(
             @RequestParam(name = "codEntd") Integer codEntd) {
 
-        ApiResponse apiResponse = entidadeService.delete(codEntd);
-        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+        entidadeService.delete(codEntd);
+        return new ResponseEntity<>(new ApiResponse(true, "Entidade excluído com sucesso"), HttpStatus.OK);
     }
 }

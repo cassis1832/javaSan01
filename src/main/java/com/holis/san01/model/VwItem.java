@@ -12,6 +12,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "vw_item")
 public class VwItem {
+
     @Id
     private String codItem;
 
@@ -109,11 +110,9 @@ public class VwItem {
 
     private LocalDate dtCriacao;
 
-    private Boolean archive;
-
-    private int status;
-
     private String descricaoTipoItem;
 
     private String tpProd;
+
+    private int status;
 }

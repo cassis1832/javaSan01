@@ -44,13 +44,13 @@ public class TituloApService {
         return new ApiResponse(true, tituloAp);
     }
 
-    public ApiResponse listVwTituloAp(boolean archive) {
-        List<VwTituloAp> vwTituloAp = vwTituloApRepository.ListVwTituloAp(archive);
+    public ApiResponse listVwTituloAp(int status) {
+        List<VwTituloAp> vwTituloAp = vwTituloApRepository.ListVwTituloAp(status);
         return new ApiResponse(true, vwTituloAp);
     }
 
-    public ApiResponse listVwTituloAp(boolean archive, String codEspDoc) {
-        List<VwTituloAp> vwTituloAp = vwTituloApRepository.ListVwTituloAp(archive, codEspDoc);
+    public ApiResponse listVwTituloAp(int status, String codEspDoc) {
+        List<VwTituloAp> vwTituloAp = vwTituloApRepository.ListVwTituloAp(status, codEspDoc);
         return new ApiResponse(true, vwTituloAp);
     }
 
@@ -59,14 +59,14 @@ public class TituloApService {
         return new ApiResponse(true, vwTituloAp);
     }
 
-    public ApiResponse pageVwTituloAp(final String criteria, final boolean archive, final String filterText, final Pageable pageable) {
+    public ApiResponse pageVwTituloAp(final String criteria, final int status, final String filterText, final Pageable pageable) {
         Page<VwTituloAp> vwTituloAp = null;
 
         if (criteria.equalsIgnoreCase("Todos")) {
             if (StringUtils.isBlank(filterText)) {
-                vwTituloAp = vwTituloApRepository.PageVwTituloAp(archive, pageable);
+                vwTituloAp = vwTituloApRepository.PageVwTituloAp(status, pageable);
             } else {
-                vwTituloAp = vwTituloApRepository.PageVwTituloAp(archive, filterText, pageable);
+                vwTituloAp = vwTituloApRepository.PageVwTituloAp(status, filterText, pageable);
             }
         }
 
@@ -74,17 +74,17 @@ public class TituloApService {
 
         if (criteria.equalsIgnoreCase("Vencidos")) {
             if (StringUtils.isBlank(filterText)) {
-                vwTituloAp = vwTituloApRepository.PageVwTituloApVencidos(archive, hoje, pageable);
+                vwTituloAp = vwTituloApRepository.PageVwTituloApVencidos(status, hoje, pageable);
             } else {
-                vwTituloAp = vwTituloApRepository.PageVwTituloApVencidos(archive, hoje, filterText, pageable);
+                vwTituloAp = vwTituloApRepository.PageVwTituloApVencidos(status, hoje, filterText, pageable);
             }
         }
 
         if (criteria.equalsIgnoreCase("A Vencer")) {
             if (StringUtils.isBlank(filterText)) {
-                vwTituloAp = vwTituloApRepository.PageVwTituloApVencer(archive, hoje, pageable);
+                vwTituloAp = vwTituloApRepository.PageVwTituloApVencer(status, hoje, pageable);
             } else {
-                vwTituloAp = vwTituloApRepository.PageVwTituloApVencer(archive, hoje, filterText, pageable);
+                vwTituloAp = vwTituloApRepository.PageVwTituloApVencer(status, hoje, filterText, pageable);
             }
         }
 
@@ -99,14 +99,14 @@ public class TituloApService {
                 .orElseThrow(() -> new NotFoundRequestException("Fornecedor não encontrado"));
 
         if (tituloAp.getNumDoc() == null || tituloAp.getNumDoc().equals(0)) {
-            Param param = paramService.getNextParam("seq_titulo_ap");
+            Param param = paramService.getNextSequence("seq_titulo_ap");
             tituloAp.setNumDoc(param.getCpoInteiro());
         }
 
         checkEspDoc(tituloAp.getCodEspDoc());
 
         tituloAp.setId(null);
-        tituloAp.setDeleted(false);
+        tituloAp.setStatus(0);
         tituloAp.setDtCriacao(LocalDate.now());
         TituloAp tituloAp1 = tituloApRepository.saveAndFlush(tituloAp);
         return new ApiResponse(true, tituloAp1);
@@ -135,7 +135,7 @@ public class TituloApService {
         tituloAp.setNumDoc(tituloApDto.getNumDoc());
         tituloAp.setVlTitulo(tituloApDto.getVlTitulo());
         tituloAp.setDescricao(tituloApDto.getDescricao());
-        tituloAp.setArchive(tituloApDto.isArchive());
+        tituloAp.setStatus(tituloApDto.getStatus());
         tituloAp.setDtLiquidac(tituloApDto.getDtLiquidac());
         tituloAp.setDtPrevPag(tituloApDto.getDtPrevPag());
         tituloAp.setDtVencto(tituloApDto.getDtVencto());
@@ -181,7 +181,7 @@ public class TituloApService {
                 throw new ApiRequestException("Título possui pagamento, exclusão não permitida!");
         }
 
-        tituloAp.setDeleted(true);
+        tituloAp.setStatus(9);
         tituloAp.setDtAlteracao(LocalDate.now());
         //tituloAp.setUsrAlteracao(tokenUtil.getNomeUsuario());
         tituloApRepository.saveAndFlush(tituloAp);

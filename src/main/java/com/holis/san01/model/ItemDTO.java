@@ -1,10 +1,10 @@
 package com.holis.san01.model;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -122,9 +122,6 @@ public class ItemDTO {
     private String situacao;
 
     private LocalDate dtCriacao;
-
-    @NotNull(message = "O archived é obrigatório")
-    private boolean archive;
 
     @NotNull(message = "O status é obrigatório")
     private int status;

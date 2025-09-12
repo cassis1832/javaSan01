@@ -21,7 +21,7 @@ public class ParamService {
     }
 
     @Transactional
-    public Param getNextParam(final String codParam) {
+    public Param getNextSequence(final String codParam) {
         Param param = getParam((codParam));
         param.setCpoInteiro(param.getCpoInteiro() + 1);
         param = paramRepository.saveAndFlush(param);

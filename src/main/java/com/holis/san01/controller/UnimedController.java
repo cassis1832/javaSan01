@@ -10,7 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.List;
 
 /**
@@ -64,8 +64,8 @@ public class UnimedController {
 
     @GetMapping("/lista")
     public ResponseEntity<ApiResponse> listar(
-            @RequestParam(name = "archive", defaultValue = "0") boolean archive) {
-        ApiResponse apiResponse = unimedService.listar(archive);
+            @RequestParam(name = "status", defaultValue = "0") int status) {
+        ApiResponse apiResponse = unimedService.listar(status);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 }

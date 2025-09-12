@@ -57,7 +57,7 @@ public class Usuario {
     private LocalDate dtCriacao;
 
     @Column(nullable = false)
-    private boolean archive;
+    private int status;
 
     @Column(nullable = false)
     private boolean deleted;

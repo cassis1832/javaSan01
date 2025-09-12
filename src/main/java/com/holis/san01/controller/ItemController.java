@@ -1,13 +1,14 @@
 package com.holis.san01.controller;
 
+import com.holis.san01.mapper.ItemMapper;
 import com.holis.san01.model.ApiResponse;
+import com.holis.san01.model.Item;
 import com.holis.san01.model.ItemDTO;
 import com.holis.san01.model.TipoItem;
-import com.holis.san01.model.VwItem;
 import com.holis.san01.services.ItemService;
 import com.holis.san01.services.TipoItemService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
@@ -16,7 +17,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -29,6 +29,7 @@ public class ItemController {
 
     private final ItemService itemService;
     private final TipoItemService tipoItemService;
+    private final ItemMapper itemMapper;
 
     /**
      * Ler um determinado registro pelo código
@@ -37,8 +38,8 @@ public class ItemController {
     public ResponseEntity<ApiResponse> getItem(
             @RequestParam(name = "codItem", defaultValue = "") String codItem) {
 
-        ItemDTO itemDTO = itemService.findItemByCodItem(codItem);
-        return new ResponseEntity<>(new ApiResponse(true, itemDTO), HttpStatus.OK);
+        Item item = itemService.findItemByCodItem(codItem);
+        return new ResponseEntity<>(new ApiResponse(true, itemMapper.toDTO(item)), HttpStatus.OK);
     }
 
     /**
@@ -52,8 +53,8 @@ public class ItemController {
             @PageableDefault(page = 0, size = 40)
             @SortDefault.SortDefaults({@SortDefault(sort = "codItem")}) Pageable pageable) {
 
-        Page<VwItem> vwItems = itemService.pageVwItem(tipoItem, status, filterText, pageable);
-        return new ResponseEntity<>(new ApiResponse(true, vwItems), HttpStatus.OK);
+        var pages = itemService.pageVwItem(tipoItem, status, filterText, pageable);
+        return new ResponseEntity<>(new ApiResponse(true, pages), HttpStatus.OK);
     }
 
     /**
@@ -63,8 +64,8 @@ public class ItemController {
     public ResponseEntity<ApiResponse> create(
             @RequestBody @Valid ItemDTO dto) {
 
-        ItemDTO itemDTO = itemService.create(dto);
-        return new ResponseEntity<>(new ApiResponse(true, itemDTO), HttpStatus.CREATED);
+        Item item = itemService.create(itemMapper.toEntity(dto));
+        return new ResponseEntity<>(new ApiResponse(true, itemMapper.toDTO(item)), HttpStatus.CREATED);
     }
 
     /**
@@ -74,8 +75,8 @@ public class ItemController {
     public ResponseEntity<ApiResponse> update(
             @RequestBody @Valid ItemDTO dto) {
 
-        ItemDTO itemDTO = itemService.update(dto);
-        return new ResponseEntity<>(new ApiResponse(true, itemDTO), HttpStatus.OK);
+        Item item = itemService.update(itemMapper.toEntity(dto));
+        return new ResponseEntity<>(new ApiResponse(true, itemMapper.toDTO(item)), HttpStatus.OK);
     }
 
     /**
