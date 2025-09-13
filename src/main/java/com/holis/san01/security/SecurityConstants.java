@@ -1,6 +1,7 @@
 package com.holis.san01.security;
 
 public class SecurityConstants {
+
     public static final long JWT_EXPIRATION = 70000;
 
     /* cada byte = 6 bits */

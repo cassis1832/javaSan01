@@ -24,23 +24,22 @@ import java.util.concurrent.ThreadLocalRandom;
 @Service
 @RequiredArgsConstructor
 public class LoginService {
+
     private final AuthenticationManager authenticationManager;
-
     private final UsuarioRepository usuarioRepository;
-
     private final JwtGenerator jwtGenerator;
-
     private final UsuarioMapper usuarioMapper;
 
 //    private final JavaMailSender mailSender;
 
     @Transactional
     public TokenResponse login(final LoginDTO loginDTO) {
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        Usuario usuario = usuarioRepository.findByEmail(loginDTO.getUsername())
+        Usuario usuario = usuarioRepository.findUsuarioByEmail(loginDTO.getUsername())
                 .orElseThrow(() -> new ApiRequestException("Usuário não encontrado"));
 
         return jwtGenerator.generateToken(authentication, usuario);
@@ -50,7 +49,8 @@ public class LoginService {
      * Ler o usuario ativo por email
      */
     public UsuarioDTO lerUsuarioPorEmail(final String email) {
-        Usuario usuario = usuarioRepository.findByEmail(email)
+
+        Usuario usuario = usuarioRepository.findUsuarioByEmail(email)
                 .orElseThrow(() -> new ApiRequestException("Usuário não encontrado"));
         return usuarioMapper.toDTO(usuario);
     }
@@ -61,7 +61,8 @@ public class LoginService {
      */
     @Transactional
     public void enviarNovaSenha(final String email) {
-        Optional<Usuario> opt = usuarioRepository.findByEmail(email);
+
+        Optional<Usuario> opt = usuarioRepository.findUsuarioByEmail(email);
 
         if (opt.isEmpty())
             throw new ApiRequestException("Email não encontrado no sistema!");

@@ -23,7 +23,6 @@ public class PedVendaItemService {
 
     private final PedVendaItemRepository pedIRepository;
     private final VwPedVendaItemRepository vwPedIRepository;
-
     private final ItemService itemService;
 
     /**
@@ -31,7 +30,7 @@ public class PedVendaItemService {
      */
     public PedVendaItem getPedVendaItem(final Integer id) {
 
-        return pedIRepository.getPedVendaItem(id)
+        return pedIRepository.findPedVendaItemById(id)
                 .orElseThrow(() -> new ApiRequestException("Item do pedido não encontrado"));
     }
 

@@ -4,8 +4,8 @@ import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.model.Ncm;
 import com.holis.san01.repository.NcmRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,16 +16,19 @@ import java.util.Optional;
  * Service para tratamento da tabela de NCM
  */
 @Service
+@RequiredArgsConstructor
 public class NcmService {
-    @Autowired
-    private NcmRepository ncmRepository;
+
+    private final NcmRepository ncmRepository;
 
     public Ncm ler(final String codNcm) {
-        return ncmRepository.findNcm(codNcm)
+
+        return ncmRepository.findNcmByCodNcm(codNcm)
                 .orElseThrow(() -> new ApiRequestException("NCM não encontrada"));
     }
 
     public Page<Ncm> listarPaging(final int status, final String filterText, final Pageable pageable) {
+
         Page<Ncm> ncms;
 
         if (StringUtils.isBlank(filterText)) {
@@ -39,7 +42,8 @@ public class NcmService {
 
     @Transactional
     public Ncm incluir(final Ncm dto) {
-        Optional<Ncm> opt = ncmRepository.findNcm(dto.getCodNcm());
+
+        Optional<Ncm> opt = ncmRepository.findNcmByCodNcm(dto.getCodNcm());
 
         if (opt.isPresent()) {
             throw new ApiRequestException("Este código de ncm já existe!");
@@ -50,7 +54,8 @@ public class NcmService {
 
     @Transactional
     public Ncm alterar(final Ncm dto) {
-        Ncm ncm = ncmRepository.findNcm(dto.getCodNcm())
+
+        Ncm ncm = ncmRepository.findNcmByCodNcm(dto.getCodNcm())
                 .orElseThrow(() -> new ApiRequestException("Ncm não encontrado"));
 
         ncm.setCodNcm(dto.getCodNcm());
@@ -62,7 +67,8 @@ public class NcmService {
 
     @Transactional
     public void excluir(final String codNcm) {
-        Ncm ncm = ncmRepository.findNcm(codNcm)
+
+        Ncm ncm = ncmRepository.findNcmByCodNcm(codNcm)
                 .orElseThrow(() -> new ApiRequestException("Ncm não encontrado"));
         ncmRepository.deleteById(ncm.getCodNcm());
     }

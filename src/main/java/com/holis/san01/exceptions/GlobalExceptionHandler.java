@@ -49,9 +49,7 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.OK)
                 .body(new ApiResponse(
                         false,
-                        ex.getMessage(),
-                        null,
-                        null
+                        ex.getMessage()
                 ));
     }
 
@@ -66,9 +64,7 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.OK)
                 .body(new ApiResponse(
                         false,
-                        ex.getMessage(),
-                        null,
-                        null
+                        ex.getMessage()
                 ));
     }
 }

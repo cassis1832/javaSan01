@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface PedVendaRepository extends JpaRepository<PedVenda, Integer> {
 
     @Query("select p from PedVenda p Where p.nrPedido = ?1")
-    Optional<PedVenda> getPedVenda(Integer nrPedido);
+    Optional<PedVenda> findPedVendaByNrPedido(Integer nrPedido);
 
     @Query("select p from PedVenda p Where p.codEntd = ?1")
     List<PedVenda> listPedVendas(int codEntd);

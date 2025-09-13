@@ -13,6 +13,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "parametro")
 public class Param {
+
     @Id
     @Column(nullable = false)
     private String codParam;
@@ -20,10 +21,15 @@ public class Param {
     @Column(nullable = false)
     private String descricao;
 
+    @Column(nullable = false)
+    private int sequencia;
+
     private String cpoTexto;
 
-    private Integer cpoInteiro;
+    @Column(nullable = false)
+    private int cpoInteiro;
 
+    @Column(nullable = false)
     private BigDecimal cpoDecimal;
 
     private LocalDate data;

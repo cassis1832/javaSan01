@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface EntidadeRepository extends JpaRepository<Entidade, Integer> {
     @Query("select e from Entidade e Where e.codEntd = ?1")
-    Optional<Entidade> getEntidade(Integer codEntd);
+    Optional<Entidade> findEntidadeByCodEntd(Integer codEntd);
 
     @Query("select e from Entidade e Where e.status = ?1 ")
     Page<Entidade> pageEntidades(int status, Pageable pageable);

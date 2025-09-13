@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface NcmRepository extends JpaRepository<Ncm, String> {
     @Query("select t from Ncm t Where upper(t.codNcm) =  upper(?1)")
-    Optional<Ncm> findNcm(String codNcm);
+    Optional<Ncm> findNcmByCodNcm(String codNcm);
 
     @Query("select i from Ncm i Where i.status  = ?1")
     Page<Ncm> listNcm(int status, Pageable pageable);

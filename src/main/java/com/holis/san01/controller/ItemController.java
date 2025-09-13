@@ -35,7 +35,7 @@ public class ItemController {
      * Ler um determinado registro pelo código
      */
     @GetMapping
-    public ResponseEntity<ApiResponse> getItem(
+    public ResponseEntity<ApiResponse> findItem(
             @RequestParam(name = "codItem", defaultValue = "") String codItem) {
 
         Item item = itemService.findItemByCodItem(codItem);
@@ -61,8 +61,7 @@ public class ItemController {
      * Incluir um novo registro
      */
     @PostMapping
-    public ResponseEntity<ApiResponse> create(
-            @RequestBody @Valid ItemDTO dto) {
+    public ResponseEntity<ApiResponse> create(@RequestBody @Valid ItemDTO dto) {
 
         Item item = itemService.create(itemMapper.toEntity(dto));
         return new ResponseEntity<>(new ApiResponse(true, itemMapper.toDTO(item)), HttpStatus.CREATED);
@@ -72,8 +71,7 @@ public class ItemController {
      * Alterar um registro existente
      */
     @PutMapping
-    public ResponseEntity<ApiResponse> update(
-            @RequestBody @Valid ItemDTO dto) {
+    public ResponseEntity<ApiResponse> update(@RequestBody @Valid ItemDTO dto) {
 
         Item item = itemService.update(itemMapper.toEntity(dto));
         return new ResponseEntity<>(new ApiResponse(true, itemMapper.toDTO(item)), HttpStatus.OK);
@@ -83,8 +81,7 @@ public class ItemController {
      * Verificar se o item pode ser deletado
      */
     @GetMapping("/checkDelete")
-    public ResponseEntity<ApiResponse> checkDelete(
-            @RequestParam(name = "codItem") String codItem) {
+    public ResponseEntity<ApiResponse> checkDelete(@RequestParam(name = "codItem") String codItem) {
 
         itemService.checkDelete(codItem);
         return new ResponseEntity<>(new ApiResponse(true, "Item pode ser excluído"), HttpStatus.OK);
@@ -94,8 +91,7 @@ public class ItemController {
      * Excluir um registro
      */
     @DeleteMapping
-    public ResponseEntity<ApiResponse> delete(
-            @RequestParam(name = "codItem") String codItem) {
+    public ResponseEntity<ApiResponse> delete(@RequestParam(name = "codItem") String codItem) {
 
         itemService.delete(codItem);
         return new ResponseEntity<>(new ApiResponse(true, "Item excluído com sucesso"), HttpStatus.OK);
@@ -104,7 +100,7 @@ public class ItemController {
     @GetMapping("/tpItems")
     public ResponseEntity<ApiResponse> listTipoItem() {
 
-        List<TipoItem> tipoItems = tipoItemService.listar();
+        List<TipoItem> tipoItems = tipoItemService.listTipoItem();
         return new ResponseEntity<>(new ApiResponse(true, tipoItems), HttpStatus.OK);
     }
 

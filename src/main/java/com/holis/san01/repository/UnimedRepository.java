@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface UnimedRepository extends JpaRepository<Unimed, String> {
     @Query("select u from Unimed u Where upper(u.codUnimed) =  upper(?1)")
-    Optional<Unimed> findUnimed(String codUnimed);
+    Optional<Unimed> findUnimedByCodUnimed(String codUnimed);
 
     @Query("select u from Unimed u Where u.status =  ?1 order by u.sequencia, u.codUnimed")
     List<Unimed> listUnimed(int status);

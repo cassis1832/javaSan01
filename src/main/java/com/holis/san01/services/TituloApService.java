@@ -2,7 +2,10 @@ package com.holis.san01.services;
 
 import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.exceptions.NotFoundRequestException;
-import com.holis.san01.model.*;
+import com.holis.san01.model.ApiResponse;
+import com.holis.san01.model.EspDoc;
+import com.holis.san01.model.TituloAp;
+import com.holis.san01.model.VwTituloAp;
 import com.holis.san01.repository.EntidadeRepository;
 import com.holis.san01.repository.EspDocRepository;
 import com.holis.san01.repository.TituloApRepository;
@@ -10,7 +13,6 @@ import com.holis.san01.repository.VwTituloApRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -23,43 +25,40 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class TituloApService {
-    @Autowired
+
     private final TituloApRepository tituloApRepository;
-
-    @Autowired
     private final VwTituloApRepository vwTituloApRepository;
-
-    @Autowired
     private final EntidadeRepository entidadeRepository;
-
-    @Autowired
     private final ParamService paramService;
-
-    @Autowired
     private final EspDocRepository espDocRepository;
 
     public ApiResponse getTituloAp(Integer id) {
-        TituloAp tituloAp = tituloApRepository.getTituloAp(id)
+
+        TituloAp tituloAp = tituloApRepository.findTituloApById(id)
                 .orElseThrow(() -> new NotFoundRequestException("Título não encontrado"));
         return new ApiResponse(true, tituloAp);
     }
 
     public ApiResponse listVwTituloAp(int status) {
+
         List<VwTituloAp> vwTituloAp = vwTituloApRepository.ListVwTituloAp(status);
         return new ApiResponse(true, vwTituloAp);
     }
 
     public ApiResponse listVwTituloAp(int status, String codEspDoc) {
+
         List<VwTituloAp> vwTituloAp = vwTituloApRepository.ListVwTituloAp(status, codEspDoc);
         return new ApiResponse(true, vwTituloAp);
     }
 
     public ApiResponse listVwTituloAp(String codEspDoc, Integer docId) {
+
         List<VwTituloAp> vwTituloAp = vwTituloApRepository.ListVwTituloAp(codEspDoc, docId);
         return new ApiResponse(true, vwTituloAp);
     }
 
     public ApiResponse pageVwTituloAp(final String criteria, final int status, final String filterText, final Pageable pageable) {
+
         Page<VwTituloAp> vwTituloAp = null;
 
         if (criteria.equalsIgnoreCase("Todos")) {
@@ -95,12 +94,12 @@ public class TituloApService {
      * Incluir novo titulo
      */
     public ApiResponse create(TituloAp tituloAp) {
-        entidadeRepository.getEntidade(tituloAp.getCodEntd())
+
+        entidadeRepository.findEntidadeByCodEntd(tituloAp.getCodEntd())
                 .orElseThrow(() -> new NotFoundRequestException("Fornecedor não encontrado"));
 
         if (tituloAp.getNumDoc() == null || tituloAp.getNumDoc().equals(0)) {
-            Param param = paramService.getNextSequence("seq_titulo_ap");
-            tituloAp.setNumDoc(param.getCpoInteiro());
+            tituloAp.setNumDoc(paramService.getNextSequence("seq_titulo_ap"));
         }
 
         checkEspDoc(tituloAp.getCodEspDoc());
@@ -116,12 +115,13 @@ public class TituloApService {
      * Alterar titulo existente
      */
     public ApiResponse update(TituloAp tituloApDto) {
-        TituloAp tituloAp = tituloApRepository.getTituloAp(tituloApDto.getId())
+
+        TituloAp tituloAp = tituloApRepository.findTituloApById(tituloApDto.getId())
                 .orElseThrow(() -> new NotFoundRequestException("Título não encontrado"));
 
         // Verificar o emitente do titulo
         if (!tituloApDto.getCodEntd().equals(tituloAp.getCodEntd())) {
-            entidadeRepository.getEntidade(tituloApDto.getCodEntd())
+            entidadeRepository.findEntidadeByCodEntd(tituloApDto.getCodEntd())
                     .orElseThrow(() -> new NotFoundRequestException("Fornecedor não encontrado"));
         }
 
@@ -163,7 +163,8 @@ public class TituloApService {
     }
 
     private void checkEspDoc(String codEspDoc) {
-        EspDoc espDoc = espDocRepository.getEspDoc(codEspDoc)
+
+        EspDoc espDoc = espDocRepository.findEspDocByCodEspDoc(codEspDoc)
                 .orElseThrow(() -> new NotFoundRequestException("Espécie de documento não encontrada"));
     }
 
@@ -173,7 +174,8 @@ public class TituloApService {
      * movto)
      */
     public ApiResponse delete(Integer id) {
-        TituloAp tituloAp = tituloApRepository.getTituloAp(id)
+
+        TituloAp tituloAp = tituloApRepository.findTituloApById(id)
                 .orElseThrow(() -> new NotFoundRequestException("Título não encontrado"));
 
         if (!tituloAp.getCodEspDoc().equals("DA")) {

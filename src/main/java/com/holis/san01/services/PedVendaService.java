@@ -2,7 +2,6 @@ package com.holis.san01.services;
 
 import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.exceptions.NotFoundRequestException;
-import com.holis.san01.model.Param;
 import com.holis.san01.model.PedVenda;
 import com.holis.san01.model.VwPedVenda;
 import com.holis.san01.repository.PedVendaRepository;
@@ -23,7 +22,6 @@ public class PedVendaService {
 
     private final EntidadeService entidadeService;
     private final ParamService paramService;
-
     private final PedVendaRepository pedVRepository;
     private final VwPedVendaRepository vwPedVRepository;
 
@@ -32,7 +30,7 @@ public class PedVendaService {
      */
     public PedVenda getPedVenda(final int nrPedido) {
 
-        return pedVRepository.getPedVenda(nrPedido)
+        return pedVRepository.findPedVendaByNrPedido(nrPedido)
                 .orElseThrow(() -> new NotFoundRequestException("Pedido de venda não encontrado"));
     }
 
@@ -52,8 +50,7 @@ public class PedVendaService {
         entidadeService.getEntidade(pedVenda.getCodEntd());
 
         if (pedVenda.getNrPedido() == null || pedVenda.getNrPedido() == 0) {
-            Param param = paramService.getNextSequence("seq_ped_venda");
-            pedVenda.setNrPedido(param.getCpoInteiro());
+            pedVenda.setNrPedido(paramService.getNextSequence("seq_ped_venda"));
         }
 
         pedVenda.setStatus(0);
@@ -64,7 +61,7 @@ public class PedVendaService {
     @Transactional
     public PedVenda update(PedVenda pedVendaInput) {
 
-        PedVenda pedVenda = pedVRepository.getPedVenda(pedVendaInput.getNrPedido())
+        PedVenda pedVenda = pedVRepository.findPedVendaByNrPedido(pedVendaInput.getNrPedido())
                 .orElseThrow(() -> new NotFoundRequestException("Pedido de venda não encontrado"));
 
         pedVenda.setNrPedido(pedVendaInput.getNrPedido());
@@ -152,7 +149,7 @@ public class PedVendaService {
     @Transactional
     public void delete(int nrPedido) {
 
-        pedVRepository.getPedVenda(nrPedido)
+        pedVRepository.findPedVendaByNrPedido(nrPedido)
                 .orElseThrow(() -> new ApiRequestException("Pedido de venda não encontrado"));
 
         checkDelete(nrPedido);

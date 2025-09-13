@@ -1,4 +1,4 @@
-package com.holis.san01.controller.login;
+package com.holis.san01.controller;
 
 import com.holis.san01.model.LoginDTO;
 import com.holis.san01.model.TokenResponse;
@@ -26,8 +26,7 @@ public class LoginController {
      * Usuario esqueceu a senha
      */
     @GetMapping("/enviarSenha")
-    public ResponseEntity<String> enviarSenha(
-            @RequestParam(name = "email") String email) {
+    public ResponseEntity<String> enviarSenha(@RequestParam(name = "email") String email) {
 
         loginService.enviarNovaSenha(email);
         return new ResponseEntity<String>("Ok", HttpStatus.OK);

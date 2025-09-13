@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class JwtGenerator {
+
     private final JwtTokenUtil jwtTokenUtil;
 
     public TokenResponse generateToken(Authentication authentication, Usuario usuario) {

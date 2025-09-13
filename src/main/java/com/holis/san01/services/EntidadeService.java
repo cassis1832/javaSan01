@@ -2,7 +2,6 @@ package com.holis.san01.services;
 
 import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.exceptions.NotFoundRequestException;
-import com.holis.san01.model.ApiResponse;
 import com.holis.san01.model.Entidade;
 import com.holis.san01.model.PedVenda;
 import com.holis.san01.repository.EntidadeRepository;
@@ -10,7 +9,6 @@ import com.holis.san01.repository.PedVendaRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,22 +23,25 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class EntidadeService {
+
     private final EntidadeRepository entidadeRepository;
     private final PedVendaRepository pedVendaRepository;
-    private int status;
 
     /**
      * Ler uma ENTIDADE pelo codEntd
      */
     public Entidade getEntidade(final Integer codEntd) {
-        return entidadeRepository.getEntidade(codEntd)
+
+        return entidadeRepository.findEntidadeByCodEntd(codEntd)
                 .orElseThrow(() -> new NotFoundRequestException("Cliente/fornecedor não encontrado"));
     }
 
     /**
      * Listar Entidades
      */
-    public Page<Entidade> pageEntidade(final String criteria, final int status, final String filterText, final Pageable pageable) {
+    public Page<Entidade> pageEntidade(
+            final String criteria, final int status, final String filterText, final Pageable pageable) {
+
         Page<Entidade> entidades = null;
 
         if (criteria.equalsIgnoreCase("")) {
@@ -79,15 +80,16 @@ public class EntidadeService {
             throw new ApiRequestException("Parametros invalidos no HTTP!");
         }
 
-        return  entidades;
+        return entidades;
     }
 
     /**
      * Criar nova Entidade
      */
     @Transactional
-    public Entidade create(final Entidade entidadeInput ) {
-        Optional<Entidade> opt = entidadeRepository.getEntidade(entidadeInput.getCodEntd());
+    public Entidade create(final Entidade entidadeInput) {
+
+        Optional<Entidade> opt = entidadeRepository.findEntidadeByCodEntd(entidadeInput.getCodEntd());
 
         if (opt.isPresent()) {
             throw new ApiRequestException("Este código de cliente/fornecedor já existe!");
@@ -108,7 +110,8 @@ public class EntidadeService {
      */
     @Transactional
     public Entidade update(final Entidade entidadeInput) {
-        Entidade entidade = entidadeRepository.getEntidade(entidadeInput.getCodEntd())
+
+        Entidade entidade = entidadeRepository.findEntidadeByCodEntd(entidadeInput.getCodEntd())
                 .orElseThrow(() -> new ApiRequestException("Entidade não encontrado"));
 
         entidade.setNome(entidadeInput.getNome());
@@ -151,6 +154,7 @@ public class EntidadeService {
      */
     @Transactional
     public void delete(final Integer codEntd) {
+
         checkDelete(codEntd);
         entidadeRepository.deleteById(codEntd);
     }
@@ -159,7 +163,8 @@ public class EntidadeService {
      * Verificar se o cliente pode ser deletado
      */
     public void checkDelete(Integer codEntd) {
-        Entidade entidade = entidadeRepository.getEntidade(codEntd)
+
+        Entidade entidade = entidadeRepository.findEntidadeByCodEntd(codEntd)
                 .orElseThrow(() -> new ApiRequestException(
                         "Cliente/fornecedor não encontrado para exclusão"));
 

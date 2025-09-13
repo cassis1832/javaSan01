@@ -28,16 +28,13 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Usuario usuario = usuarioRepository.findByEmail(username)
+        Usuario usuario = usuarioRepository.findUsuarioByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
         return new User(usuario.getNome(), usuario.getSenha(), mapRolesToAuthorities(usuario.getRoles()));
     }
 
     /**
      * Todas as roles num mesmo campo string
-     *
-     * @param roles
-     * @return
      */
     private Collection<GrantedAuthority> mapRolesToAuthorities(String roles) {
         return Arrays.stream(roles.split(";"))

@@ -9,6 +9,7 @@ import java.util.List;
 
 @Repository
 public interface TipoItemRepository extends JpaRepository<TipoItem, String> {
-    @Query("select t from TipoItem t order by codTipoItem")
-    List<TipoItem> listTipos();
+
+    @Query("select t from TipoItem t where status = 0 order by codTipoItem")
+    List<TipoItem> listTipoItem();
 }

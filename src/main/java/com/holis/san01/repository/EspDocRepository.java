@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface EspDocRepository extends JpaRepository<EspDoc, String> {
 
     @Query("select e from EspDoc e Where codEspDoc =  upper(?1)")
-    Optional<EspDoc> getEspDoc(String codEspDoc);
+    Optional<EspDoc> findEspDocByCodEspDoc(String codEspDoc);
 
     @Query("select e from EspDoc e where e.tipoMovto = ?1")
     Page<EspDoc> pageEspDoc(boolean tipo, Pageable pageable);

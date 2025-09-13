@@ -15,7 +15,7 @@ public interface PedVendaItemRepository extends JpaRepository<PedVendaItem, Inte
      * Ler ped_venda_item pelo ID
      */
     @Query("select pi from PedVendaItem pi Where pi.id = ?1")
-    Optional<PedVendaItem> getPedVendaItem(Integer id);
+    Optional<PedVendaItem> findPedVendaItemById(Integer id);
 
     /**
      * Ler ped_venda_item pelo nr_pedido
