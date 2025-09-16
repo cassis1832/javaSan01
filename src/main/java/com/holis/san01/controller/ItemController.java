@@ -10,6 +10,7 @@ import com.holis.san01.services.TipoItemService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
@@ -35,7 +36,7 @@ public class ItemController {
      * Ler um determinado registro pelo código
      */
     @GetMapping
-    public ResponseEntity<ApiResponse> findItem(
+    public ResponseEntity<ApiResponse> findItemByCodItem(
             @RequestParam(name = "codItem", defaultValue = "") String codItem) {
 
         Item item = itemService.findItemByCodItem(codItem);
@@ -45,13 +46,15 @@ public class ItemController {
     /**
      * Ler uma lista de itens filtrando pelo nome/codigo e situacao
      */
-    @GetMapping("/pages")
-    public ResponseEntity<ApiResponse> pageItem(
+    @GetMapping("/page")
+    public ResponseEntity<ApiResponse> pageVwItem(
             @RequestParam(name = "tipoItem", defaultValue = "") String tipoItem,
             @RequestParam(name = "status", defaultValue = "0") Integer status,
             @RequestParam(name = "filterText", defaultValue = "") String filterText,
-            @PageableDefault(page = 0, size = 40)
-            @SortDefault.SortDefaults({@SortDefault(sort = "codItem")}) Pageable pageable) {
+            @PageableDefault(size = 40)
+            @SortDefault.SortDefaults({
+                    @SortDefault(sort = "codItem", direction = Sort.Direction.ASC)
+            }) Pageable pageable) {
 
         var pages = itemService.pageVwItem(tipoItem, status, filterText, pageable);
         return new ResponseEntity<>(new ApiResponse(true, pages), HttpStatus.OK);
@@ -75,6 +78,22 @@ public class ItemController {
 
         Item item = itemService.update(itemMapper.toEntity(dto));
         return new ResponseEntity<>(new ApiResponse(true, itemMapper.toDTO(item)), HttpStatus.OK);
+    }
+
+    @PutMapping("/archive")
+    public ResponseEntity<ApiResponse> archive(
+            @RequestParam(name = "codItem", defaultValue = "") String codItem) {
+
+        itemService.archive(codItem);
+        return new ResponseEntity<>(new ApiResponse(true, "Item arquivado"), HttpStatus.OK);
+    }
+
+    @PutMapping("/unarchive")
+    public ResponseEntity<ApiResponse> unarchive(
+            @RequestParam(name = "codItem", defaultValue = "") String codItem) {
+
+        itemService.unarchive(codItem);
+        return new ResponseEntity<>(new ApiResponse(true, "Item desarquivado"), HttpStatus.OK);
     }
 
     /**

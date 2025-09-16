@@ -1,6 +1,5 @@
 package com.holis.san01.controller;
 
-import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.mapper.PedVendaMapper;
 import com.holis.san01.model.ApiResponse;
 import com.holis.san01.model.PedVenda;
@@ -33,21 +32,21 @@ public class PedVendaController {
      * Ler um determinado pedido de venda pelo nr_pedido
      */
     @GetMapping
-    public ResponseEntity<ApiResponse> getPedVenda(
+    public ResponseEntity<ApiResponse> findPedVendaByNrPedido(
             @RequestParam(name = "nrPedido", defaultValue = "") Integer nrPedido) {
 
-        PedVenda pedVenda = pedVService.getPedVenda(nrPedido);
+        PedVenda pedVenda = pedVService.findPedVendaByNrPedido(nrPedido);
         return new ResponseEntity<>(new ApiResponse(true, pedVMapper.toDTO(pedVenda)), HttpStatus.OK);
     }
 
     /**
      * Ler uma lista dos pedidos de vendas
      */
-    @GetMapping("/pages")
+    @GetMapping("/page")
     public ResponseEntity<ApiResponse> pageVwPedVenda(
             @RequestParam(name = "status", defaultValue = "0") Integer status,
             @RequestParam(name = "filterText", defaultValue = "") String filterText,
-            @PageableDefault(page = 0, size = 40)
+            @PageableDefault(size = 40)
             @SortDefault.SortDefaults({@SortDefault(sort = "numPedido")}) Pageable pageable) {
 
         Page<VwPedVenda> vwPedVendas = pedVService.pageVwPedVenda(status, filterText, pageable);
@@ -90,11 +89,38 @@ public class PedVendaController {
     @DeleteMapping
     public ResponseEntity<ApiResponse> delete(@RequestParam(name = "nrPedido") Integer nrPedido) {
 
-        try {
-            pedVService.delete(nrPedido);
-        } catch (Exception ex) {
-            throw new ApiRequestException(ex.getMessage());
-        }
-        return new ResponseEntity<>(HttpStatus.OK);
+        pedVService.delete(nrPedido);
+        return new ResponseEntity<>(new ApiResponse(true, "Pedido excluído com sucesso"), HttpStatus.OK);
+    }
+
+    /**
+     * Confirmar o orçamento transformando em pedido
+     */
+    @PutMapping("/confirm")
+    public ResponseEntity<ApiResponse> confirm(@RequestParam(name = "nrPedido") Integer nrPedido) {
+
+        PedVenda pedVenda = pedVService.confirm(nrPedido);
+        return new ResponseEntity<>(new ApiResponse(true, pedVMapper.toDTO(pedVenda)), HttpStatus.OK);
+    }
+
+    @PutMapping("/cancel")
+    public ResponseEntity<ApiResponse> cancel(@RequestParam(name = "nrPedido") Integer nrPedido) {
+
+        PedVenda pedVenda = pedVService.cancel(nrPedido);
+        return new ResponseEntity<>(new ApiResponse(true, pedVMapper.toDTO(pedVenda)), HttpStatus.OK);
+    }
+
+    @PutMapping("/archive")
+    public ResponseEntity<ApiResponse> archive(@RequestParam(name = "nrPedido") Integer nrPedido) {
+
+        pedVService.archive(nrPedido);
+        return new ResponseEntity<>(new ApiResponse(true, "Pedido arquivado"), HttpStatus.OK);
+    }
+
+    @PutMapping("/unarchive")
+    public ResponseEntity<ApiResponse> unarchive(@RequestParam(name = "nrPedido") Integer nrPedido) {
+
+        pedVService.unarchive(nrPedido);
+        return new ResponseEntity<>(new ApiResponse(true, "Pedido desarquivado"), HttpStatus.OK);
     }
 }

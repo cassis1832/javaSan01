@@ -3,18 +3,19 @@ package com.holis.san01.services;
 import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.exceptions.NotFoundRequestException;
 import com.holis.san01.model.Entidade;
-import com.holis.san01.model.PedVenda;
 import com.holis.san01.repository.EntidadeRepository;
 import com.holis.san01.repository.PedVendaRepository;
+import com.holis.san01.repository.TituloApRepository;
+import com.holis.san01.specs.EntidadeSpecifications;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -26,6 +27,7 @@ public class EntidadeService {
 
     private final EntidadeRepository entidadeRepository;
     private final PedVendaRepository pedVendaRepository;
+    private final TituloApRepository tituloApRepository;
 
     /**
      * Ler uma ENTIDADE pelo codEntd
@@ -40,47 +42,29 @@ public class EntidadeService {
      * Listar Entidades
      */
     public Page<Entidade> pageEntidade(
-            final String criteria, final int status, final String filterText, final Pageable pageable) {
+            final String criteria, final Integer status, final String filterText, final Pageable pageable) {
 
-        Page<Entidade> entidades = null;
+        Specification<Entidade> spec = Specification.where(null);
 
-        if (criteria.equalsIgnoreCase("")) {
-            if (StringUtils.isBlank(filterText)) {
-                entidades = entidadeRepository.pageNenhumTipo(status, pageable);
-            } else {
-                entidades = entidadeRepository.pageNenhumTipo(status, filterText, pageable);
-            }
-        }
+        if (status != null)
+            spec = spec.and(EntidadeSpecifications.hasStatus(status));
 
-        if (criteria.equalsIgnoreCase("todos")) {
-            if (StringUtils.isBlank(filterText)) {
-                entidades = entidadeRepository.pageEntidades(status, pageable);
-            } else {
-                entidades = entidadeRepository.pageEntidades(status, filterText, pageable);
-            }
-        }
+        if (!StringUtils.isBlank(filterText))
+            spec = spec.and(EntidadeSpecifications.hasFiltro(filterText));
 
-        if (criteria.equalsIgnoreCase("clientes")) {
-            if (StringUtils.isBlank(filterText)) {
-                entidades = entidadeRepository.pageClientes(status, pageable);
-            } else {
-                entidades = entidadeRepository.pageClientes(status, filterText, pageable);
-            }
-        }
+        if (StringUtils.isBlank(criteria))
+            spec = spec.and(EntidadeSpecifications.nenhum());
 
-        if (criteria.equalsIgnoreCase("fornecedores")) {
-            if (StringUtils.isBlank(filterText)) {
-                entidades = entidadeRepository.pageFornecedores(status, pageable);
-            } else {
-                entidades = entidadeRepository.pageFornecedores(status, filterText, pageable);
-            }
-        }
+        if (criteria.equalsIgnoreCase("todos"))
+            spec = spec.and(EntidadeSpecifications.ambos());
 
-        if (entidades == null) {
-            throw new ApiRequestException("Parametros invalidos no HTTP!");
-        }
+        if (criteria.equalsIgnoreCase("clientes"))
+            spec = spec.and(EntidadeSpecifications.cliente());
 
-        return entidades;
+        if (criteria.equalsIgnoreCase("fornecedores"))
+            spec = spec.and(EntidadeSpecifications.fornecedor());
+
+        return entidadeRepository.findAll(spec, pageable);
     }
 
     /**
@@ -164,15 +148,15 @@ public class EntidadeService {
      */
     public void checkDelete(Integer codEntd) {
 
-        Entidade entidade = entidadeRepository.findEntidadeByCodEntd(codEntd)
-                .orElseThrow(() -> new ApiRequestException(
-                        "Cliente/fornecedor não encontrado para exclusão"));
+        if (!entidadeRepository.existsByCodEntd(codEntd))
+            throw new ApiRequestException("Cliente/fornecedor não encontrado para exclusão");
 
         //  Verifica se há pedido de venda relacionado
-        List<PedVenda> pedidos = pedVendaRepository.listPedVendas(entidade.getCodEntd());
-
-        if (!pedidos.isEmpty()) {
+        if (pedVendaRepository.existsByCodEntd(codEntd))
             throw new ApiRequestException("Não é possível excluir o cliente. Existem pedidos de vendas associados.");
-        }
+
+        //  Verifica se há titulos de contas a pagar relacionados ao cliente
+        if (tituloApRepository.existsByCodEntd(codEntd))
+            throw new ApiRequestException("Não é possível excluir o cliente. Existem títulos financeiros.");
     }
 }

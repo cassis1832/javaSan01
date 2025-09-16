@@ -41,7 +41,7 @@ public class NcmController {
     public ResponseEntity<Page<Ncm>> listarNcm(
             @RequestParam(name = "status", defaultValue = "0") int status,
             @RequestParam(name = "filterText", defaultValue = "") String filterText,
-            @PageableDefault(page = 0, size = 40)
+            @PageableDefault(size = 40)
             @SortDefault.SortDefaults({@SortDefault(sort = "codNcm")}) Pageable pageable) {
 
         Page<Ncm> ncms = ncmService.listarPaging(status, filterText, pageable);

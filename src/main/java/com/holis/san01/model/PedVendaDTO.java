@@ -22,8 +22,7 @@ public class PedVendaDTO {
         @Size(max = 30, message = "A descrição deve ter até 30 caracteres")
         private String descricao;
 
-        private Integer tpPedido;
-        private Integer nrCotacao;
+        private boolean tpPedido;
         private Integer nrContrato;
         private String nrPedcli;
         private BigDecimal percDesconto;

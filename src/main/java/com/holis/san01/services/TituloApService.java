@@ -2,24 +2,28 @@ package com.holis.san01.services;
 
 import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.exceptions.NotFoundRequestException;
-import com.holis.san01.model.ApiResponse;
-import com.holis.san01.model.EspDoc;
 import com.holis.san01.model.TituloAp;
 import com.holis.san01.model.VwTituloAp;
 import com.holis.san01.repository.EntidadeRepository;
 import com.holis.san01.repository.EspDocRepository;
 import com.holis.san01.repository.TituloApRepository;
 import com.holis.san01.repository.VwTituloApRepository;
+import com.holis.san01.specs.VwTituloApSpecifications;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+
+import static com.holis.san01.model.Constantes.STATUS_ATIVO;
+import static com.holis.san01.model.Constantes.STATUS_DELETADO;
 
 @Service
 @Transactional
@@ -29,71 +33,66 @@ public class TituloApService {
     private final TituloApRepository tituloApRepository;
     private final VwTituloApRepository vwTituloApRepository;
     private final EntidadeRepository entidadeRepository;
-    private final ParamService paramService;
     private final EspDocRepository espDocRepository;
+    private final ParamService paramService;
 
-    public ApiResponse getTituloAp(Integer id) {
+    public TituloAp findTituloAp(int id) {
 
-        TituloAp tituloAp = tituloApRepository.findTituloApById(id)
+        return tituloApRepository.findTituloApById(id)
                 .orElseThrow(() -> new NotFoundRequestException("Título não encontrado"));
-        return new ApiResponse(true, tituloAp);
     }
 
-    public ApiResponse listVwTituloAp(int status) {
+    public List<VwTituloAp> listVwTituloAp(
+            final Integer status, final Integer codEntd,
+            final String codEspDoc, final Integer docId,
+            final String vencto, final String filterText) {
 
-        List<VwTituloAp> vwTituloAp = vwTituloApRepository.ListVwTituloAp(status);
-        return new ApiResponse(true, vwTituloAp);
+        Specification<VwTituloAp> spec = prepareSpec(status, codEntd, codEspDoc, docId, vencto, filterText);
+        return vwTituloApRepository.findAll(spec);
     }
 
-    public ApiResponse listVwTituloAp(int status, String codEspDoc) {
+    public Page<VwTituloAp> pageVwTituloAp(
+            final Integer status, final Integer codEntd,
+            final String codEspDoc, final Integer docId,
+            final String vencto, final String filterText,
+            final Pageable pageable) {
 
-        List<VwTituloAp> vwTituloAp = vwTituloApRepository.ListVwTituloAp(status, codEspDoc);
-        return new ApiResponse(true, vwTituloAp);
+        Specification<VwTituloAp> spec = prepareSpec(status, codEntd, codEspDoc, docId, vencto, filterText);
+        return vwTituloApRepository.findAll(spec, pageable);
     }
 
-    public ApiResponse listVwTituloAp(String codEspDoc, Integer docId) {
+    private Specification<VwTituloAp> prepareSpec(
+            final Integer status, final Integer codEntd,
+            final String codEspDoc, final Integer docId,
+            final String vencto, final String filterText) {
 
-        List<VwTituloAp> vwTituloAp = vwTituloApRepository.ListVwTituloAp(codEspDoc, docId);
-        return new ApiResponse(true, vwTituloAp);
+        Specification<VwTituloAp> spec = Specification.where(null);
+
+        if (status != null)
+            spec = spec.and(VwTituloApSpecifications.hasStatus(status));
+
+        if (codEntd != null)
+            spec = spec.and(VwTituloApSpecifications.hasCodEntd(codEntd));
+
+        if (codEspDoc != null)
+            spec = spec.and(VwTituloApSpecifications.hasCodEspDoc(codEspDoc));
+
+        if (docId != null)
+            spec = spec.and(VwTituloApSpecifications.hashasDocId(docId));
+
+        if (!StringUtils.isBlank(filterText))
+            spec = spec.and(VwTituloApSpecifications.hasFiltro(filterText));
+
+        if (vencto.equalsIgnoreCase("vencidos"))
+            spec = spec.and(VwTituloApSpecifications.vencidos());
+
+        if (vencto.equalsIgnoreCase("avencer"))
+            spec = spec.and(VwTituloApSpecifications.aVencer());
+
+        return spec;
     }
 
-    public ApiResponse pageVwTituloAp(final String criteria, final int status, final String filterText, final Pageable pageable) {
-
-        Page<VwTituloAp> vwTituloAp = null;
-
-        if (criteria.equalsIgnoreCase("Todos")) {
-            if (StringUtils.isBlank(filterText)) {
-                vwTituloAp = vwTituloApRepository.PageVwTituloAp(status, pageable);
-            } else {
-                vwTituloAp = vwTituloApRepository.PageVwTituloAp(status, filterText, pageable);
-            }
-        }
-
-        LocalDate hoje = LocalDate.now();
-
-        if (criteria.equalsIgnoreCase("Vencidos")) {
-            if (StringUtils.isBlank(filterText)) {
-                vwTituloAp = vwTituloApRepository.PageVwTituloApVencidos(status, hoje, pageable);
-            } else {
-                vwTituloAp = vwTituloApRepository.PageVwTituloApVencidos(status, hoje, filterText, pageable);
-            }
-        }
-
-        if (criteria.equalsIgnoreCase("A Vencer")) {
-            if (StringUtils.isBlank(filterText)) {
-                vwTituloAp = vwTituloApRepository.PageVwTituloApVencer(status, hoje, pageable);
-            } else {
-                vwTituloAp = vwTituloApRepository.PageVwTituloApVencer(status, hoje, filterText, pageable);
-            }
-        }
-
-        return new ApiResponse(true, vwTituloAp);
-    }
-
-    /**
-     * Incluir novo titulo
-     */
-    public ApiResponse create(TituloAp tituloAp) {
+    public TituloAp create(@NotNull TituloAp tituloAp) {
 
         entidadeRepository.findEntidadeByCodEntd(tituloAp.getCodEntd())
                 .orElseThrow(() -> new NotFoundRequestException("Fornecedor não encontrado"));
@@ -105,16 +104,15 @@ public class TituloApService {
         checkEspDoc(tituloAp.getCodEspDoc());
 
         tituloAp.setId(null);
-        tituloAp.setStatus(0);
+        tituloAp.setStatus(STATUS_ATIVO);
         tituloAp.setDtCriacao(LocalDate.now());
-        TituloAp tituloAp1 = tituloApRepository.saveAndFlush(tituloAp);
-        return new ApiResponse(true, tituloAp1);
+        return tituloApRepository.saveAndFlush(tituloAp);
     }
 
     /**
      * Alterar titulo existente
      */
-    public ApiResponse update(TituloAp tituloApDto) {
+    public TituloAp update(@NotNull TituloAp tituloApDto) {
 
         TituloAp tituloAp = tituloApRepository.findTituloApById(tituloApDto.getId())
                 .orElseThrow(() -> new NotFoundRequestException("Título não encontrado"));
@@ -157,14 +155,12 @@ public class TituloApService {
             tituloAp.setVlSaldo(BigDecimal.ZERO);
         }
 
-        tituloAp = tituloApRepository.saveAndFlush(tituloAp);
-
-        return new ApiResponse(true, tituloAp);
+        return tituloApRepository.saveAndFlush(tituloAp);
     }
 
-    private void checkEspDoc(String codEspDoc) {
+    private void checkEspDoc(@NotNull String codEspDoc) {
 
-        EspDoc espDoc = espDocRepository.findEspDocByCodEspDoc(codEspDoc)
+        espDocRepository.findEspDocByCodEspDoc(codEspDoc)
                 .orElseThrow(() -> new NotFoundRequestException("Espécie de documento não encontrada"));
     }
 
@@ -173,7 +169,7 @@ public class TituloApService {
      * Titulo de despesa avulsa pode ser eliminado mesmo com pagamento (não possui
      * movto)
      */
-    public ApiResponse delete(Integer id) {
+    public void delete(int id) {
 
         TituloAp tituloAp = tituloApRepository.findTituloApById(id)
                 .orElseThrow(() -> new NotFoundRequestException("Título não encontrado"));
@@ -183,11 +179,8 @@ public class TituloApService {
                 throw new ApiRequestException("Título possui pagamento, exclusão não permitida!");
         }
 
-        tituloAp.setStatus(9);
-        tituloAp.setDtAlteracao(LocalDate.now());
-        //tituloAp.setUsrAlteracao(tokenUtil.getNomeUsuario());
+        tituloAp.setStatus(STATUS_DELETADO);
+        tituloAp.setDtDeleted(LocalDate.now());
         tituloApRepository.saveAndFlush(tituloAp);
-
-        return new ApiResponse(true, "Exclusão efetuada com sucesso");
     }
 }

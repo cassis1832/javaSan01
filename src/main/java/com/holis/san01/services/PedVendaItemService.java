@@ -5,11 +5,13 @@ import com.holis.san01.model.PedVendaItem;
 import com.holis.san01.model.VwPedVendaItem;
 import com.holis.san01.repository.PedVendaItemRepository;
 import com.holis.san01.repository.VwPedVendaItemRepository;
+import com.holis.san01.specs.VwPedVendaItemSpecifications;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,35 +30,32 @@ public class PedVendaItemService {
     /**
      * Ler um item do pedido de venda por ID
      */
-    public PedVendaItem getPedVendaItem(final Integer id) {
+    public PedVendaItem findPedVendaItemById(final Integer id) {
 
         return pedIRepository.findPedVendaItemById(id)
                 .orElseThrow(() -> new ApiRequestException("Item do pedido não encontrado"));
     }
 
-    public List<PedVendaItem> listPedVendaItem(final Integer nrPedido) {
+    public List<VwPedVendaItem> listVwPedVendaItem(
+            final Integer status, final Integer codEntd, final Integer nrPedido,
+            final String codItem, final String filterText) {
 
-        return pedIRepository.listPedVendaItemByPedido(nrPedido);
+        Specification<VwPedVendaItem> spec = prepareSpec(status, codEntd, nrPedido, codItem, filterText);
+        return vwPedIRepository.findAll(spec);
     }
 
-    /**
-     * Listar as linhas dos pedidos por status e filtro no nome da entidade ou descrição do item
-     */
     public Page<VwPedVendaItem> pageVwPedVendaItem(
-            final Integer status, final String filterText, final Pageable pageable) {
+            final Integer status, final Integer codEntd, final Integer nrPedido,
+            final String codItem, final String filterText, final Pageable pageable) {
 
-        if (StringUtils.isBlank(filterText)) {
-            return vwPedIRepository.pageVwPedVendaItem(status, pageable);
-        } else {
-            return vwPedIRepository.pageVwPedVendaItemByFilter(status, filterText, pageable);
-        }
+        Specification<VwPedVendaItem> spec = prepareSpec(status, codEntd, nrPedido, codItem, filterText);
+        return vwPedIRepository.findAll(spec, pageable);
     }
 
     @Transactional
     public PedVendaItem create(final PedVendaItem pedVendaItem) {
 
         itemService.findItemByCodItem(pedVendaItem.getCodItem());
-
         return pedIRepository.saveAndFlush(pedVendaItem);
     }
 
@@ -67,8 +66,39 @@ public class PedVendaItemService {
     }
 
     @Transactional
-    public void delete(Integer id) {
+    public void delete(int id) {
 
+        checkDelete(id);
         pedIRepository.deleteById(id);
+    }
+
+    public void checkDelete(int id) {
+
+        if (!pedIRepository.existsById(id))
+            throw new ApiRequestException("Item do pedido de venda não encontrado");
+    }
+
+    private Specification<VwPedVendaItem> prepareSpec(
+            final Integer status, final Integer codEntd, final Integer nrPedido,
+            final String codItem, final String filterText) {
+
+        Specification<VwPedVendaItem> spec = Specification.where(null);
+
+        if (status != null)
+            spec = spec.and(VwPedVendaItemSpecifications.hasStatus(status));
+
+        if (codEntd != null)
+            spec = spec.and(VwPedVendaItemSpecifications.hasCodEntd(codEntd));
+
+        if (nrPedido != null)
+            spec = spec.and(VwPedVendaItemSpecifications.hasNrPedido(nrPedido));
+
+        if (codItem != null)
+            spec = spec.and(VwPedVendaItemSpecifications.hasCodItem(codItem));
+
+        if (!StringUtils.isBlank(filterText))
+            spec = spec.and(VwPedVendaItemSpecifications.hasFiltro(filterText));
+
+        return spec;
     }
 }

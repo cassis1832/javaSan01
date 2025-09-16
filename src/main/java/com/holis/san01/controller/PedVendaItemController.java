@@ -1,6 +1,5 @@
 package com.holis.san01.controller;
 
-import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.mapper.PedVendaItemMapper;
 import com.holis.san01.model.ApiResponse;
 import com.holis.san01.model.PedVendaItem;
@@ -35,10 +34,10 @@ public class PedVendaItemController {
      * Ler um determinado item do pedido de venda pelo id
      */
     @GetMapping
-    public ResponseEntity<ApiResponse> getPedVendaItem(
+    public ResponseEntity<ApiResponse> findPedVendaItemById(
             @RequestParam(name = "id", defaultValue = "") Integer id) {
 
-        PedVendaItem pedVendaItem = pedIService.getPedVendaItem(id);
+        PedVendaItem pedVendaItem = pedIService.findPedVendaItemById(id);
         return new ResponseEntity<>(new ApiResponse(true, pedIMapper.toDTO(pedVendaItem)), HttpStatus.OK);
     }
 
@@ -46,24 +45,33 @@ public class PedVendaItemController {
      * Listar as linhas do pedido de vendas
      */
     @GetMapping("/list")
-    public ResponseEntity<ApiResponse> listPedVendaItem(
-            @RequestParam(name = "nrPedido", defaultValue = "0") Integer nrPedido) {
+    public ResponseEntity<ApiResponse> listVwPedVendaItem(
+            @RequestParam(name = "status", defaultValue = "0") Integer status,
+            @RequestParam(name = "codEntd", defaultValue = "0") Integer codEntd,
+            @RequestParam(name = "nrPedido", defaultValue = "0") Integer nrPedido,
+            @RequestParam(name = "codItem", defaultValue = "") String codItem,
+            @RequestParam(name = "filterText", defaultValue = "") String filterText) {
 
-        List<PedVendaItem> pedVendaItems = pedIService.listPedVendaItem(nrPedido);
-        return new ResponseEntity<>(new ApiResponse(true, pedVendaItems), HttpStatus.OK);
+        List<VwPedVendaItem> vwPedVendaItems = pedIService.listVwPedVendaItem(
+                status, codEntd, nrPedido, codItem, filterText);
+        return new ResponseEntity<>(new ApiResponse(true, vwPedVendaItems), HttpStatus.OK);
     }
 
     /**
      * Listar a view de linhas do pedido de vendas
      */
-    @GetMapping("/pageVwPedI")
+    @GetMapping("/page")
     public ResponseEntity<ApiResponse> pageVwPedVendaItem(
             @RequestParam(name = "status", defaultValue = "0") Integer status,
+            @RequestParam(name = "codEntd", defaultValue = "0") Integer codEntd,
+            @RequestParam(name = "nrPedido", defaultValue = "0") Integer nrPedido,
+            @RequestParam(name = "codItem", defaultValue = "") String codItem,
             @RequestParam(name = "filterText", defaultValue = "") String filterText,
-            @PageableDefault(page = 0, size = 40)
+            @PageableDefault(size = 40)
             @SortDefault.SortDefaults({@SortDefault(sort = "codEntd, codItem")}) Pageable pageable) {
 
-        Page<VwPedVendaItem> vwPedi = pedIService.pageVwPedVendaItem(status, filterText, pageable);
+        Page<VwPedVendaItem> vwPedi = pedIService.pageVwPedVendaItem(
+                status, codEntd, nrPedido, codItem, filterText, pageable);
         return new ResponseEntity<>(new ApiResponse(true, vwPedi), HttpStatus.OK);
     }
 
@@ -71,7 +79,8 @@ public class PedVendaItemController {
      * Incluir um novo registro PEDVENDAITEM
      */
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@RequestBody @Valid PedVendaItemDTO pedVendaItemDTO) {
+    public ResponseEntity<ApiResponse> create(
+            @RequestBody @Valid PedVendaItemDTO pedVendaItemDTO) {
 
         var pedVendaItem = pedIService.create(pedIMapper.toEntity(pedVendaItemDTO));
         return new ResponseEntity<>(new ApiResponse(true, pedIMapper.toDTO(pedVendaItem)), HttpStatus.CREATED);
@@ -81,7 +90,8 @@ public class PedVendaItemController {
      * Alterar um registro existente PEDVENDAITEM
      */
     @PutMapping
-    public ResponseEntity<ApiResponse> update(@RequestBody @Valid PedVendaItemDTO pedVendaItemDTO) {
+    public ResponseEntity<ApiResponse> update(
+            @RequestBody @Valid PedVendaItemDTO pedVendaItemDTO) {
 
         var pedVendaItem = pedIService.update(pedIMapper.toEntity(pedVendaItemDTO));
         return new ResponseEntity<>(new ApiResponse(true, pedIMapper.toDTO(pedVendaItem)), HttpStatus.OK);
@@ -100,13 +110,10 @@ public class PedVendaItemController {
      * Excluir uma linha do pedido de venda
      */
     @DeleteMapping
-    public ResponseEntity<ApiResponse> delete(@RequestParam(name = "id") Integer id) {
+    public ResponseEntity<ApiResponse> delete(
+            @RequestParam(name = "id") Integer id) {
 
-        try {
-            pedIService.delete(id);
-        } catch (Exception ex) {
-            throw new ApiRequestException(ex.getMessage());
-        }
+        pedIService.delete(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

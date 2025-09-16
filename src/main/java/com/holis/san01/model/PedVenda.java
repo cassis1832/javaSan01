@@ -1,9 +1,7 @@
 package com.holis.san01.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.holis.san01.enums.SituacaoPedidoEnum;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -28,10 +26,7 @@ public class PedVenda {
     private String descricao;
 
     @Column(name = "tp_pedido")
-    private Integer tpPedido;
-
-    @Column(name = "nr_cotacao")
-    private Integer nrCotacao;
+    private boolean tpPedido;
 
     @Column(name = "nr_contrato")
     private Integer nrContrato;
@@ -244,8 +239,8 @@ public class PedVenda {
     @Column(name = "dt_situacao")
     private LocalDate dtSituacao;
 
-    @Column(length = 20)
-    private String situacao;
+    @Enumerated(EnumType.STRING)
+    private SituacaoPedidoEnum situacao;
 
     @Column(name = "dt_criacao")
     private LocalDate dtCriacao;

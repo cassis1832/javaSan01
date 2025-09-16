@@ -6,15 +6,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
 
-import jakarta.validation.constraints.Pattern;
-
 @Data // @Getter, @Setter, @ToString, @EqualsAndHashCode e @RequiredArgsConstructor
 @Entity
-@Table(name = "unimed")
-public class Unimed {
+@Table(name = "unid_medida")
+public class UnidMedida {
     @Id
     @Column(nullable = false)
-    private String codUnimed;
+    private String codUniMed;
 
     @Column(nullable = false)
     private String descricao;

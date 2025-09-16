@@ -45,7 +45,7 @@ public class EntidadeController {
             @RequestParam(name = "tipo", defaultValue = "") String tipoEntd,
             @RequestParam(name = "status", defaultValue = "0") int status,
             @RequestParam(name = "filterText", defaultValue = "") String filterText,
-            @PageableDefault(page = 0, size = 40)
+            @PageableDefault(size = 40)
             @SortDefault.SortDefaults({@SortDefault(sort = "codEntd")}) Pageable pageable) {
 
         var pages = entidadeService.pageEntidade(tipoEntd, status, filterText, pageable);

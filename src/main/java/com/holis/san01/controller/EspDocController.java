@@ -36,7 +36,7 @@ public class EspDocController {
     public ResponseEntity<ApiResponse> pageEspDoc(
             @RequestParam(name = "tipo", defaultValue = "0") boolean tipo,
             @RequestParam(name = "filterText", defaultValue = "") String filterText,
-            @PageableDefault(page = 0, size = 40)
+            @PageableDefault(size = 40)
             @SortDefault.SortDefaults({@SortDefault(sort = "codEspDoc")}) Pageable pageable) {
 
         ApiResponse apiResponse = espDocService.pageEspDoc(tipo, pageable);

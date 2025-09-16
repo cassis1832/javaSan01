@@ -117,5 +117,6 @@ public class PedVendaItem {
     private BigDecimal valPrecoSuger;
     private String codOrdCompra;
     private int tpPreco;
+    private String situacao;
     private int status;
 }

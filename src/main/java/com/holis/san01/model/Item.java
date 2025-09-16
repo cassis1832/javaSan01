@@ -26,7 +26,7 @@ public class Item {
     private String codTipoItem;
 
     @Column(length = 6, nullable = false)
-    private String unimed;
+    private String codUniMed;
 
     private BigDecimal precoVenda;
 

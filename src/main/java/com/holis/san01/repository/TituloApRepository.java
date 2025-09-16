@@ -7,6 +7,10 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.Optional;
 
 public interface TituloApRepository extends JpaRepository<TituloAp, Integer> {
+
+    boolean existsByCodEntd(Integer codEntd);
+
     @Query("select t from TituloAp t where t.id = ?1 and t.status <> 9")
     Optional<TituloAp> findTituloApById(Integer id);
+
 }

@@ -3,7 +3,6 @@ package com.holis.san01.services;
 import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.exceptions.NotFoundRequestException;
 import com.holis.san01.model.Item;
-import com.holis.san01.model.PedVendaItem;
 import com.holis.san01.model.VwItem;
 import com.holis.san01.repository.ItemRepository;
 import com.holis.san01.repository.PedVendaItemRepository;
@@ -20,6 +19,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+
+import static com.holis.san01.model.Constantes.STATUS_ARQUIVADO;
+import static com.holis.san01.model.Constantes.STATUS_ATIVO;
 
 /**
  * Service para tratamento da tabela itens
@@ -113,7 +115,7 @@ public class ItemService {
         item.setResFabric(itemInput.getResFabric());
         item.setSituacao(itemInput.getSituacao());
         item.setTempoRessup(itemInput.getTempoRessup());
-        item.setUnimed(itemInput.getUnimed());
+        item.setCodUniMed(itemInput.getCodUniMed());
         item.setUsuarioObsol(itemInput.getUsuarioObsol());
 
         return itemRepository.saveAndFlush(item);
@@ -131,13 +133,29 @@ public class ItemService {
      */
     public void checkDelete(String codItem) {
 
-        Item item = itemRepository.findItemByCodItem(codItem)
-                .orElseThrow(() -> new NotFoundRequestException("Item não encontrado para exclusão"));
+        if (!itemRepository.existsByCodItem(codItem))
+            throw new NotFoundRequestException("Item não encontrado para exclusão");
 
-        List<PedVendaItem> pedVendaItems = pedVendaItemRepository.listPedVendaItemByItemByItem(item.getCodItem());
-        if (!pedVendaItems.isEmpty()) {
+        if (pedVendaItemRepository.existsByCodItem(codItem))
             throw new ApiRequestException("Exclusão inválida, existem pedidos para o item");
-        }
+    }
+
+    public void archive(String codItem) {
+
+        Item item = itemRepository.findItemByCodItem(codItem)
+                .orElseThrow(() -> new NotFoundRequestException("Item não encontrado"));
+
+        item.setStatus(STATUS_ARQUIVADO);
+        itemRepository.saveAndFlush(item);
+    }
+
+    public void unarchive(String codItem) {
+
+        Item item = itemRepository.findItemByCodItem(codItem)
+                .orElseThrow(() -> new NotFoundRequestException("Item não encontrado"));
+
+        item.setStatus(STATUS_ATIVO);
+        itemRepository.saveAndFlush(item);
     }
 
     public List<String> listFamilia() {

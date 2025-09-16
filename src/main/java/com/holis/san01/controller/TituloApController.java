@@ -1,9 +1,13 @@
 package com.holis.san01.controller;
 
+import com.holis.san01.mapper.TituloApMapper;
 import com.holis.san01.model.ApiResponse;
 import com.holis.san01.model.TituloAp;
+import com.holis.san01.model.VwTituloAp;
 import com.holis.san01.services.TituloApService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -12,84 +16,76 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/tituloaps")
 public class TituloApController {
-    private final TituloApService servico;
+
+    private final TituloApService tituloApService;
+    private final TituloApMapper tituloApMapper;
 
     @GetMapping
-    public ResponseEntity<ApiResponse> getTituloAp(@RequestParam(name = "id") Integer id) {
-        ApiResponse apiResponse = servico.getTituloAp(id);
-        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    public ResponseEntity<ApiResponse> findTituloAp(@RequestParam(name = "id") Integer id) {
+
+        TituloAp tituloAp = tituloApService.findTituloAp(id);
+        return new ResponseEntity<>(new ApiResponse(true, tituloApMapper.toDTO(tituloAp)), HttpStatus.OK);
     }
 
-    @GetMapping("/lists")
+    @GetMapping("/list")
     public ResponseEntity<ApiResponse> listVwTituloAp(
-            @RequestParam(name = "status", defaultValue = "0") int status) {
-        ApiResponse apiResponse = servico.listVwTituloAp(status);
-        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+            @RequestParam(name = "status") Integer status,
+            @RequestParam(name = "codEntd") Integer codEntd,
+            @RequestParam(name = "codEspDco") String codEspDoc,
+            @RequestParam(name = "docId") Integer docId,
+            @RequestParam(name = "vencto") String vencto,
+            @RequestParam(name = "filterText") String filterText) {
+
+        List<VwTituloAp> vwTituloAp = tituloApService.listVwTituloAp(
+                status, codEntd, codEspDoc, docId, vencto, filterText);
+        return new ResponseEntity<>(new ApiResponse(true, vwTituloAp), HttpStatus.OK);
     }
 
-    @GetMapping("/pages")
+    @GetMapping("/page")
     public ResponseEntity<ApiResponse> pageVwTituloAp(
-            @RequestParam(name = "status", defaultValue = "0") int status,
-            @RequestParam(name = "criteria", defaultValue = "") String criteria,
-            @RequestParam(name = "filterText", defaultValue = "") String filterText,
+            @RequestParam(name = "status") Integer status,
+            @RequestParam(name = "codEntd") Integer codEntd,
+            @RequestParam(name = "codEspDco") String codEspDoc,
+            @RequestParam(name = "docId") Integer docId,
+            @RequestParam(name = "vencto") String vencto,
+            @RequestParam(name = "filterText") String filterText,
             @PageableDefault(size = 20) @SortDefault.SortDefaults({
                     @SortDefault(sort = "dtVencto", direction = Sort.Direction.ASC),
                     @SortDefault(sort = "codEntd", direction = Sort.Direction.ASC)
             }) Pageable pageable) {
 
-        ApiResponse apiResponse = servico.pageVwTituloAp(criteria,status, filterText, pageable);
-        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
-    }
-
-    @GetMapping("/listCodEspDoc")
-    public ResponseEntity<ApiResponse> listVwTituloApPorTipoRef(
-            @RequestParam(name = "codEspDoc", defaultValue = "") String codEspDoc,
-            @RequestParam(name = "status", defaultValue = "0") int status) {
-
-        ApiResponse apiResponse = servico.listVwTituloAp(status, codEspDoc);
-        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
-    }
-
-    @GetMapping("/listDocRef")
-    public ResponseEntity<ApiResponse> listVwTituloApPorReferencia(
-            @RequestParam(name = "codEspDoc") String codEspDoc,
-            @RequestParam(name = "docId") Integer docId) {
-
-        ApiResponse apiResponse = servico.listVwTituloAp(codEspDoc, docId);
-        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+        Page<VwTituloAp> pageVwTituloAp = tituloApService.pageVwTituloAp(
+                status, codEntd, codEspDoc, docId, vencto, filterText, pageable);
+        return new ResponseEntity<>(new ApiResponse(true, pageVwTituloAp), HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<ApiResponse> create(
             @RequestBody @Valid TituloAp tituloApDto) {
 
-        ApiResponse apiResponse = servico.create(tituloApDto);
-        return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
+        TituloAp tituloAp = tituloApService.create(tituloApDto);
+        return new ResponseEntity<>(new ApiResponse(true, tituloApMapper.toDTO(tituloAp)), HttpStatus.CREATED);
     }
 
     @PutMapping
     public ResponseEntity<ApiResponse> update(
             @RequestBody @Valid TituloAp tituloApDto) {
 
-        ApiResponse apiResponse = servico.update(tituloApDto);
-
-        System.out.println(apiResponse.getMessage());
-        System.out.println(apiResponse.isSuccess());
-
-        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+        TituloAp tituloAp = tituloApService.update(tituloApDto);
+        return new ResponseEntity<>(new ApiResponse(true, tituloApMapper.toDTO(tituloAp)), HttpStatus.CREATED);
     }
 
     @DeleteMapping
     public ResponseEntity<ApiResponse> delete(
             @RequestParam(name = "id") Integer id) {
 
-        ApiResponse apiResponse = servico.delete(id);
-        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+        tituloApService.delete(id);
+        return new ResponseEntity<>(new ApiResponse(true, "Título excluído com sucesso"), HttpStatus.OK);
     }
 }

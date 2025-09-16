@@ -9,6 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface ParamRepository extends JpaRepository<Param, String> {
+
     @Query("select p from Param p Where upper(p.codParam) =  upper(?1)")
     Optional<Param> findParamByCodParam(String codParam);
 }

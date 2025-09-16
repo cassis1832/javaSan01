@@ -15,7 +15,7 @@ public class LoginController {
 
     private final LoginService loginService;
 
-    @PostMapping("")
+    @PostMapping
     public ResponseEntity<TokenResponse> login(@RequestBody LoginDTO loginDTO) {
 
         TokenResponse tokenResponse = loginService.login(loginDTO);
@@ -29,6 +29,6 @@ public class LoginController {
     public ResponseEntity<String> enviarSenha(@RequestParam(name = "email") String email) {
 
         loginService.enviarNovaSenha(email);
-        return new ResponseEntity<String>("Ok", HttpStatus.OK);
+        return new ResponseEntity<>("Ok", HttpStatus.OK);
     }
 }
