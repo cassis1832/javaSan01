@@ -1,7 +1,7 @@
 package com.holis.san01.controller;
 
 import com.holis.san01.mapper.TituloApMapper;
-import com.holis.san01.model.ApiResponse;
+import com.holis.san01.model.local.ApiResponse;
 import com.holis.san01.model.TituloAp;
 import com.holis.san01.model.VwTituloAp;
 import com.holis.san01.services.TituloApService;
@@ -35,12 +35,12 @@ public class TituloApController {
 
     @GetMapping("/list")
     public ResponseEntity<ApiResponse> listVwTituloAp(
-            @RequestParam(name = "status") Integer status,
-            @RequestParam(name = "codEntd") Integer codEntd,
-            @RequestParam(name = "codEspDco") String codEspDoc,
-            @RequestParam(name = "docId") Integer docId,
-            @RequestParam(name = "vencto") String vencto,
-            @RequestParam(name = "filterText") String filterText) {
+            @RequestParam(name = "status" , defaultValue = "0") Integer status,
+            @RequestParam(name = "codEntd", defaultValue = "0") Integer codEntd,
+            @RequestParam(name = "codEspDco", defaultValue = "") String codEspDoc,
+            @RequestParam(name = "docId", defaultValue = "0") Integer docId,
+            @RequestParam(name = "vencto", defaultValue = "0") String vencto,
+            @RequestParam(name = "filterText", defaultValue = "") String filterText) {
 
         List<VwTituloAp> vwTituloAp = tituloApService.listVwTituloAp(
                 status, codEntd, codEspDoc, docId, vencto, filterText);
@@ -49,12 +49,12 @@ public class TituloApController {
 
     @GetMapping("/page")
     public ResponseEntity<ApiResponse> pageVwTituloAp(
-            @RequestParam(name = "status") Integer status,
-            @RequestParam(name = "codEntd") Integer codEntd,
-            @RequestParam(name = "codEspDco") String codEspDoc,
-            @RequestParam(name = "docId") Integer docId,
-            @RequestParam(name = "vencto") String vencto,
-            @RequestParam(name = "filterText") String filterText,
+            @RequestParam(name = "status", defaultValue = "0") Integer status,
+            @RequestParam(name = "codEntd", defaultValue = "0") Integer codEntd,
+            @RequestParam(name = "codEspDco", defaultValue = "") String codEspDoc,
+            @RequestParam(name = "docId", defaultValue = "0") Integer docId,
+            @RequestParam(name = "vencto", defaultValue = "") String vencto,
+            @RequestParam(name = "filterText", defaultValue = "") String filterText,
             @PageableDefault(size = 20) @SortDefault.SortDefaults({
                     @SortDefault(sort = "dtVencto", direction = Sort.Direction.ASC),
                     @SortDefault(sort = "codEntd", direction = Sort.Direction.ASC)

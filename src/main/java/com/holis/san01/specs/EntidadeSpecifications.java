@@ -11,12 +11,12 @@ public class EntidadeSpecifications {
         return (root, query, cb) -> cb.equal(root.get("status"), status);
     }
 
-    public static Specification<Entidade> cliente() {
+    public static Specification<Entidade> clientes() {
 
         return (root, query, cb) -> cb.equal(root.get("indCliente"), true);
     }
 
-    public static Specification<Entidade> fornecedor() {
+    public static Specification<Entidade> fornecedores() {
 
         return (root, query, cb) -> cb.equal(root.get("indFornec"), true);
     }
@@ -30,7 +30,7 @@ public class EntidadeSpecifications {
         };
     }
 
-    public static Specification<Entidade> nenhum() {
+    public static Specification<Entidade> nenhumTipo() {
 
         return (root, query, cb) -> {
             Predicate cliente = cb.equal(root.get("indCliente"), false);

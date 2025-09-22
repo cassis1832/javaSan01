@@ -1,9 +1,10 @@
 package com.holis.san01.controller;
 
 import com.holis.san01.mapper.EntidadeMapper;
-import com.holis.san01.model.ApiResponse;
+import com.holis.san01.model.local.ApiResponse;
 import com.holis.san01.model.Entidade;
 import com.holis.san01.model.EntidadeDTO;
+import com.holis.san01.model.local.FiltroPesquisa;
 import com.holis.san01.services.EntidadeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -40,16 +41,12 @@ public class EntidadeController {
     /**
      * Ler uma lista de entidades paginada com filtro
      */
-    @GetMapping("/pages")
+    @GetMapping("/page")
     public ResponseEntity<ApiResponse> pageEntidade(
-            @RequestParam(name = "tipo", defaultValue = "") String tipoEntd,
-            @RequestParam(name = "status", defaultValue = "0") int status,
-            @RequestParam(name = "filterText", defaultValue = "") String filterText,
-            @PageableDefault(size = 40)
-            @SortDefault.SortDefaults({@SortDefault(sort = "codEntd")}) Pageable pageable) {
+            @ModelAttribute FiltroPesquisa filtroPesquisa) {
 
-        var pages = entidadeService.pageEntidade(tipoEntd, status, filterText, pageable);
-        return new ResponseEntity<>(new ApiResponse(true, pages), HttpStatus.OK);
+        var page = entidadeService.pageEntidade(filtroPesquisa);
+        return new ResponseEntity<>(new ApiResponse(true, page), HttpStatus.OK);
     }
 
     /**

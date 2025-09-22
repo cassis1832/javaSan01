@@ -13,6 +13,5 @@ public interface EntidadeRepository extends JpaRepository<Entidade, Integer>, Jp
 
     boolean existsByCodEntd(Integer codEntd);
 
-    @Query("select e from Entidade e Where e.codEntd = ?1")
     Optional<Entidade> findEntidadeByCodEntd(Integer codEntd);
 }

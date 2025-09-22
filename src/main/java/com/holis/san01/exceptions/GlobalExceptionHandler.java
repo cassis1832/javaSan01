@@ -1,6 +1,6 @@
 package com.holis.san01.exceptions;
 
-import com.holis.san01.model.ApiResponse;
+import com.holis.san01.model.local.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

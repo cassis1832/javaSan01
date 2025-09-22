@@ -3,7 +3,7 @@ package com.holis.san01.services;
 import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.mapper.UsuarioMapper;
 import com.holis.san01.model.LoginDTO;
-import com.holis.san01.model.TokenResponse;
+import com.holis.san01.model.local.TokenResponse;
 import com.holis.san01.model.Usuario;
 import com.holis.san01.model.UsuarioDTO;
 import com.holis.san01.repository.UsuarioRepository;

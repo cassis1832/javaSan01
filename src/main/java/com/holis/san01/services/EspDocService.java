@@ -1,7 +1,7 @@
 package com.holis.san01.services;
 
 import com.holis.san01.exceptions.NotFoundRequestException;
-import com.holis.san01.model.ApiResponse;
+import com.holis.san01.model.local.ApiResponse;
 import com.holis.san01.model.EspDoc;
 import com.holis.san01.repository.EspDocRepository;
 import lombok.RequiredArgsConstructor;

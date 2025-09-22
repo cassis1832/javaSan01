@@ -1,4 +1,4 @@
-package com.holis.san01.model;
+package com.holis.san01.model.local;
 
 public class Constantes {
 

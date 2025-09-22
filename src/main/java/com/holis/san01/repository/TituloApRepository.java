@@ -10,6 +10,8 @@ public interface TituloApRepository extends JpaRepository<TituloAp, Integer> {
 
     boolean existsByCodEntd(Integer codEntd);
 
+    boolean existsByNumDoc(Integer numnDoc);
+
     @Query("select t from TituloAp t where t.id = ?1 and t.status <> 9")
     Optional<TituloAp> findTituloApById(Integer id);
 

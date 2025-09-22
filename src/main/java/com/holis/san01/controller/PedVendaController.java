@@ -1,17 +1,13 @@
 package com.holis.san01.controller;
 
 import com.holis.san01.mapper.PedVendaMapper;
-import com.holis.san01.model.ApiResponse;
 import com.holis.san01.model.PedVenda;
 import com.holis.san01.model.PedVendaDTO;
-import com.holis.san01.model.VwPedVenda;
+import com.holis.san01.model.local.ApiResponse;
+import com.holis.san01.model.local.FiltroPesquisa;
 import com.holis.san01.services.PedVendaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -44,13 +40,10 @@ public class PedVendaController {
      */
     @GetMapping("/page")
     public ResponseEntity<ApiResponse> pageVwPedVenda(
-            @RequestParam(name = "status", defaultValue = "0") Integer status,
-            @RequestParam(name = "filterText", defaultValue = "") String filterText,
-            @PageableDefault(size = 40)
-            @SortDefault.SortDefaults({@SortDefault(sort = "numPedido")}) Pageable pageable) {
+            @ModelAttribute FiltroPesquisa filtroPesquisa) {
 
-        Page<VwPedVenda> vwPedVendas = pedVService.pageVwPedVenda(status, filterText, pageable);
-        return new ResponseEntity<>(new ApiResponse(true, vwPedVendas), HttpStatus.OK);
+        var page = pedVService.pageVwPedVenda(filtroPesquisa);
+        return new ResponseEntity<>(new ApiResponse(true, page), HttpStatus.OK);
     }
 
     /**

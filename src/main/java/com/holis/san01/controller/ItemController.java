@@ -1,18 +1,15 @@
 package com.holis.san01.controller;
 
 import com.holis.san01.mapper.ItemMapper;
-import com.holis.san01.model.ApiResponse;
 import com.holis.san01.model.Item;
 import com.holis.san01.model.ItemDTO;
 import com.holis.san01.model.TipoItem;
+import com.holis.san01.model.local.ApiResponse;
+import com.holis.san01.model.local.FiltroPesquisa;
 import com.holis.san01.services.ItemService;
 import com.holis.san01.services.TipoItemService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -48,16 +45,10 @@ public class ItemController {
      */
     @GetMapping("/page")
     public ResponseEntity<ApiResponse> pageVwItem(
-            @RequestParam(name = "tipoItem", defaultValue = "") String tipoItem,
-            @RequestParam(name = "status", defaultValue = "0") Integer status,
-            @RequestParam(name = "filterText", defaultValue = "") String filterText,
-            @PageableDefault(size = 40)
-            @SortDefault.SortDefaults({
-                    @SortDefault(sort = "codItem", direction = Sort.Direction.ASC)
-            }) Pageable pageable) {
+            @ModelAttribute FiltroPesquisa filtroPesquisa) {
 
-        var pages = itemService.pageVwItem(tipoItem, status, filterText, pageable);
-        return new ResponseEntity<>(new ApiResponse(true, pages), HttpStatus.OK);
+        var page = itemService.pageVwItem(filtroPesquisa);
+        return new ResponseEntity<>(new ApiResponse(true, page), HttpStatus.OK);
     }
 
     /**

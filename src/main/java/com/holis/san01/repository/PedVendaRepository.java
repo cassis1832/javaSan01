@@ -14,6 +14,6 @@ public interface PedVendaRepository extends JpaRepository<PedVenda, Integer> {
 
     boolean existsByNrPedido(Integer nrPedido);
 
-    @Query("select p from PedVenda p Where p.nrPedido = ?1")
+    //@Query("select p from PedVenda p Where p.nrPedido = ?1")
     Optional<PedVenda> findPedVendaByNrPedido(Integer nrPedido);
 }

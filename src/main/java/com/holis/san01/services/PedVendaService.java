@@ -5,19 +5,22 @@ import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.exceptions.NotFoundRequestException;
 import com.holis.san01.model.PedVenda;
 import com.holis.san01.model.VwPedVenda;
+import com.holis.san01.model.local.FiltroPesquisa;
 import com.holis.san01.repository.PedVendaRepository;
 import com.holis.san01.repository.VwPedVendaRepository;
 import com.holis.san01.specs.VwPedVendaSpecifications;
+import jakarta.annotation.Nonnull;
 import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import static com.holis.san01.model.Constantes.*;
+import static com.holis.san01.model.local.Constantes.*;
 
 /**
  * Service para tratamento de pedidos de vendas
@@ -42,21 +45,25 @@ public class PedVendaService {
     }
 
     public Page<VwPedVenda> pageVwPedVenda(
-            final Integer status, final String filterText, final Pageable pageable) {
+            @Nonnull FiltroPesquisa filtro) {
 
         Specification<VwPedVenda> spec = Specification.where(null);
 
-        if (status != null)
-            spec = spec.and(VwPedVendaSpecifications.hasStatus(status));
+        if (filtro.getStatus() != null)
+            spec = spec.and(VwPedVendaSpecifications.hasStatus(filtro.getStatus()));
 
-        if (!StringUtils.isBlank(filterText))
-            spec = spec.and(VwPedVendaSpecifications.hasFiltro(filterText));
+        if (!StringUtils.isBlank(filtro.getFilterText()))
+            spec = spec.and(VwPedVendaSpecifications.hasFiltro(filtro.getFilterText()));
+
+        Sort sort = Sort.by(Sort.Direction.fromString(filtro.getSortDirection()), filtro.getSortField());
+        Pageable pageable = PageRequest.of(filtro.getPageIndex(), filtro.getSize(), sort);
 
         return vwPedVRepository.findAll(spec, pageable);
     }
 
     @Transactional
-    public PedVenda create(@NotNull PedVenda pedVenda) {
+    public PedVenda create(
+            @Nonnull final PedVenda pedVenda) {
 
         entidadeService.getEntidade(pedVenda.getCodEntd());
 
@@ -65,7 +72,6 @@ public class PedVendaService {
 
             do {
                 nrPedido = paramService.getNextSequence("seq_ped_venda");
-
             } while (pedVRepository.existsByNrPedido(nrPedido));
 
             pedVenda.setNrPedido(nrPedido);
@@ -82,7 +88,8 @@ public class PedVendaService {
     }
 
     @Transactional
-    public PedVenda update(@NotNull PedVenda pedVendaInput) {
+    public PedVenda update(
+            @Nonnull PedVenda pedVendaInput) {
 
         PedVenda pedVenda = pedVRepository.findPedVendaByNrPedido(pedVendaInput.getNrPedido())
                 .orElseThrow(() -> new NotFoundRequestException("Pedido de venda não encontrado"));

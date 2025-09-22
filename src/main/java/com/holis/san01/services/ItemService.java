@@ -4,24 +4,27 @@ import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.exceptions.NotFoundRequestException;
 import com.holis.san01.model.Item;
 import com.holis.san01.model.VwItem;
+import com.holis.san01.model.local.FiltroPesquisa;
 import com.holis.san01.repository.ItemRepository;
-import com.holis.san01.repository.PedVendaItemRepository;
+import com.holis.san01.repository.PedItemRepository;
 import com.holis.san01.repository.VwItemRepository;
 import com.holis.san01.specs.VwItemSpecifications;
+import jakarta.annotation.Nonnull;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
-import static com.holis.san01.model.Constantes.STATUS_ARQUIVADO;
-import static com.holis.san01.model.Constantes.STATUS_ATIVO;
+import static com.holis.san01.model.local.Constantes.STATUS_ARQUIVADO;
+import static com.holis.san01.model.local.Constantes.STATUS_ATIVO;
 
 /**
  * Service para tratamento da tabela itens
@@ -32,7 +35,7 @@ public class ItemService {
 
     private final ItemRepository itemRepository;
     private final VwItemRepository vwItemRepository;
-    private final PedVendaItemRepository pedVendaItemRepository;
+    private final PedItemRepository pedItemRepository;
 
     /**
      * Ler Item por codigo de item
@@ -43,29 +46,29 @@ public class ItemService {
                 .orElseThrow(() -> new NotFoundRequestException("Item não encontrado"));
     }
 
-    public Page<VwItem> pageVwItem(
-            final String tpProd, final Integer status, final String filterText, final Pageable pageable) {
+    public Page<VwItem> pageVwItem(FiltroPesquisa filtro) {
 
         Specification<VwItem> spec = Specification.where(null);
 
-        if (status != null)
-            spec = spec.and(VwItemSpecifications.hasStatus(status));
+        if (filtro.getStatus() != null)
+            spec = spec.and(VwItemSpecifications.hasStatus(filtro.getStatus()));
 
-        if (!tpProd.equalsIgnoreCase("todos"))
-            spec = spec.and(VwItemSpecifications.hasTpProd(tpProd));
+        if (!StringUtils.isBlank(filtro.getTipo()))
+            spec = spec.and(VwItemSpecifications.hasTpProd(filtro.getTipo()));
 
-        if (!StringUtils.isBlank(filterText))
-            spec = spec.and(VwItemSpecifications.hasFiltro(filterText));
+        if (!StringUtils.isBlank(filtro.getFilterText()))
+            spec = spec.and(VwItemSpecifications.hasFiltro(filtro.getFilterText()));
+
+        Sort sort = Sort.by(Sort.Direction.fromString(filtro.getSortDirection()), filtro.getSortField());
+        Pageable pageable = PageRequest.of(filtro.getPageIndex(), filtro.getSize(), sort);
 
         return vwItemRepository.findAll(spec, pageable);
     }
 
     @Transactional
-    public Item create(final Item item) {
+    public Item create(@Nonnull final Item item) {
 
-        Optional<Item> opt = itemRepository.findItemByCodItem(item.getCodItem());
-
-        if (opt.isPresent()) {
+        if (itemRepository.existsByCodItem(item.getCodItem())) {
             throw new ApiRequestException("Este código de item já existe!");
         }
 
@@ -136,7 +139,7 @@ public class ItemService {
         if (!itemRepository.existsByCodItem(codItem))
             throw new NotFoundRequestException("Item não encontrado para exclusão");
 
-        if (pedVendaItemRepository.existsByCodItem(codItem))
+        if (pedItemRepository.existsByCodItem(codItem))
             throw new ApiRequestException("Exclusão inválida, existem pedidos para o item");
     }
 

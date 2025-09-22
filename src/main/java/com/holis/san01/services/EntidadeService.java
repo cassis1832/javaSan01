@@ -3,6 +3,7 @@ package com.holis.san01.services;
 import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.exceptions.NotFoundRequestException;
 import com.holis.san01.model.Entidade;
+import com.holis.san01.model.local.FiltroPesquisa;
 import com.holis.san01.repository.EntidadeRepository;
 import com.holis.san01.repository.PedVendaRepository;
 import com.holis.san01.repository.TituloApRepository;
@@ -11,7 +12,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -41,29 +44,31 @@ public class EntidadeService {
     /**
      * Listar Entidades
      */
-    public Page<Entidade> pageEntidade(
-            final String criteria, final Integer status, final String filterText, final Pageable pageable) {
+    public Page<Entidade> pageEntidade(FiltroPesquisa filtro) {
 
         Specification<Entidade> spec = Specification.where(null);
 
-        if (status != null)
-            spec = spec.and(EntidadeSpecifications.hasStatus(status));
+        if (filtro.getStatus() != null)
+            spec = spec.and(EntidadeSpecifications.hasStatus(filtro.getStatus()));
 
-        if (!StringUtils.isBlank(filterText))
-            spec = spec.and(EntidadeSpecifications.hasFiltro(filterText));
+        if (!StringUtils.isBlank(filtro.getFilterText()))
+            spec = spec.and(EntidadeSpecifications.hasFiltro(filtro.getFilterText()));
 
-        if (StringUtils.isBlank(criteria))
-            spec = spec.and(EntidadeSpecifications.nenhum());
+        if (filtro.getTipo().equalsIgnoreCase("nenhum"))
+            spec = spec.and(EntidadeSpecifications.nenhumTipo());
 
-        if (criteria.equalsIgnoreCase("todos"))
+        if (filtro.getTipo().equalsIgnoreCase("todos"))
             spec = spec.and(EntidadeSpecifications.ambos());
 
-        if (criteria.equalsIgnoreCase("clientes"))
-            spec = spec.and(EntidadeSpecifications.cliente());
+        if (filtro.getTipo().equalsIgnoreCase("clientes"))
+            spec = spec.and(EntidadeSpecifications.clientes());
 
-        if (criteria.equalsIgnoreCase("fornecedores"))
-            spec = spec.and(EntidadeSpecifications.fornecedor());
+        if (filtro.getTipo().equalsIgnoreCase("fornecedores"))
+            spec = spec.and(EntidadeSpecifications.fornecedores());
 
+        Sort sort = Sort.by(Sort.Direction.fromString(filtro.getSortDirection()), filtro.getSortField());
+
+        Pageable pageable = PageRequest.of(filtro.getPageIndex(), filtro.getSize(), sort);
         return entidadeRepository.findAll(spec, pageable);
     }
 

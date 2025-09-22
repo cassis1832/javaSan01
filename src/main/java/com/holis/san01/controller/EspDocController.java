@@ -1,6 +1,6 @@
 package com.holis.san01.controller;
 
-import com.holis.san01.model.ApiResponse;
+import com.holis.san01.model.local.ApiResponse;
 import com.holis.san01.services.EspDocService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -32,7 +32,7 @@ public class EspDocController {
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/pages")
+    @GetMapping("/page")
     public ResponseEntity<ApiResponse> pageEspDoc(
             @RequestParam(name = "tipo", defaultValue = "0") boolean tipo,
             @RequestParam(name = "filterText", defaultValue = "") String filterText,

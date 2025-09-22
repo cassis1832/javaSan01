@@ -37,7 +37,7 @@ public class NcmController {
     /**
      * Ler uma lista de registros filtrando pelo nome/codigo e situacao
      */
-    @GetMapping("/pages")
+    @GetMapping("/page")
     public ResponseEntity<Page<Ncm>> listarNcm(
             @RequestParam(name = "status", defaultValue = "0") int status,
             @RequestParam(name = "filterText", defaultValue = "") String filterText,

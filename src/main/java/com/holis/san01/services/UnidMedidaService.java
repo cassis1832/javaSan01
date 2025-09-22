@@ -1,7 +1,7 @@
 package com.holis.san01.services;
 
 import com.holis.san01.exceptions.ApiRequestException;
-import com.holis.san01.model.ApiResponse;
+import com.holis.san01.model.local.ApiResponse;
 import com.holis.san01.model.UnidMedida;
 import com.holis.san01.repository.UnidMedidaRepository;
 import jakarta.transaction.Transactional;

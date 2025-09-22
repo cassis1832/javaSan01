@@ -1,7 +1,7 @@
 package com.holis.san01.controller;
 
 import com.holis.san01.model.LoginDTO;
-import com.holis.san01.model.TokenResponse;
+import com.holis.san01.model.local.TokenResponse;
 import com.holis.san01.services.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

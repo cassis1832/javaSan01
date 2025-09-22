@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Data
 @Entity
 @Table(name = "vw_ped_venda_item")
-public class VwPedVendaItem {
+public class VwPedItem {
 
     @Id
     private BigInteger id;

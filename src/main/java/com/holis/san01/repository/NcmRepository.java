@@ -11,6 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface NcmRepository extends JpaRepository<Ncm, String> {
+
     @Query("select t from Ncm t Where upper(t.codNcm) =  upper(?1)")
     Optional<Ncm> findNcmByCodNcm(String codNcm);
 

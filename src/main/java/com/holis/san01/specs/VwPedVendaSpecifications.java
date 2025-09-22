@@ -23,4 +23,5 @@ public class VwPedVendaSpecifications {
             return cb.or(nomeLike);
         };
     }
+
 }

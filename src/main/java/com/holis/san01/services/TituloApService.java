@@ -22,8 +22,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-import static com.holis.san01.model.Constantes.STATUS_ATIVO;
-import static com.holis.san01.model.Constantes.STATUS_DELETADO;
+import static com.holis.san01.model.local.Constantes.STATUS_ATIVO;
+import static com.holis.san01.model.local.Constantes.STATUS_DELETADO;
 
 @Service
 @Transactional
@@ -98,7 +98,13 @@ public class TituloApService {
                 .orElseThrow(() -> new NotFoundRequestException("Fornecedor não encontrado"));
 
         if (tituloAp.getNumDoc() == null || tituloAp.getNumDoc().equals(0)) {
-            tituloAp.setNumDoc(paramService.getNextSequence("seq_titulo_ap"));
+            var numDoc = 0;
+
+            do {
+                numDoc = paramService.getNextSequence("seq_titulo_ap");
+            } while (tituloApRepository.existsByNumDoc(numDoc));
+
+            tituloAp.setNumDoc(numDoc);
         }
 
         checkEspDoc(tituloAp.getCodEspDoc());

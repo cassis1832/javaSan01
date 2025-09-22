@@ -10,32 +10,38 @@ public class VwTituloApSpecifications {
 
     public static Specification<VwTituloAp> hasStatus(Integer status) {
 
-        return (root, query, cb) -> cb.equal(root.get("status"), status);
+        return (root, query, cb)
+                -> cb.equal(root.get("status"), status);
     }
 
     public static Specification<VwTituloAp> hasCodEntd(Integer codEntd) {
 
-        return (root, query, cb) -> cb.equal(root.get("codEntd"), codEntd);
+        return (root, query, cb)
+                -> cb.equal(root.get("codEntd"), codEntd);
     }
 
     public static Specification<VwTituloAp> hasCodEspDoc(String codEspDoc) {
 
-        return (root, query, cb) -> cb.equal(cb.upper(root.get("codEspDoc")), codEspDoc.toUpperCase());
+        return (root, query, cb)
+                -> cb.equal(cb.upper(root.get("codEspDoc")), codEspDoc.toUpperCase());
     }
 
     public static Specification<VwTituloAp> hashasDocId(Integer docId) {
 
-        return (root, query, cb) -> cb.equal(root.get("docId"), docId);
+        return (root, query, cb)
+                -> cb.equal(root.get("docId"), docId);
     }
 
     public static Specification<VwTituloAp> vencidos() {
 
-        return (root, query, cb) -> cb.lessThan(root.get("dtVencto"), LocalDate.now());
+        return (root, query, cb)
+                -> cb.lessThan(root.get("dtVencto"), LocalDate.now());
     }
 
     public static Specification<VwTituloAp> aVencer() {
 
-        return (root, query, cb) -> cb.greaterThanOrEqualTo(root.get("dtVencto"), LocalDate.now());
+        return (root, query, cb)
+                -> cb.greaterThanOrEqualTo(root.get("dtVencto"), LocalDate.now());
     }
 
     public static Specification<VwTituloAp> hasFiltro(String filtro) {
