@@ -53,7 +53,7 @@ public class ItemService {
         if (filtro.getStatus() != null)
             spec = spec.and(VwItemSpecifications.hasStatus(filtro.getStatus()));
 
-        if (!StringUtils.isBlank(filtro.getTipo()))
+        if (!StringUtils.isBlank(filtro.getTipo()) && !filtro.getTipo().equalsIgnoreCase("todos"))
             spec = spec.and(VwItemSpecifications.hasTpProd(filtro.getTipo()));
 
         if (!StringUtils.isBlank(filtro.getFilterText()))

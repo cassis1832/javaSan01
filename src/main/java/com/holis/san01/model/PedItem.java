@@ -24,10 +24,11 @@ public class PedItem {
     @Column(nullable = false)
     private String codItem;
 
+    @Column(nullable = false)
     private String descricao;
 
     @Column(nullable = false)
-    private String unimed;
+    private String codUniMed;
 
     private LocalDate dtEntrega;
     private BigDecimal vlPretab;

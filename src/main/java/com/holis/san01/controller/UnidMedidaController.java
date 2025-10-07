@@ -1,7 +1,7 @@
 package com.holis.san01.controller;
 
-import com.holis.san01.model.local.ApiResponse;
 import com.holis.san01.model.UnidMedida;
+import com.holis.san01.model.local.ApiResponse;
 import com.holis.san01.services.UnidMedidaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -61,7 +61,7 @@ public class UnidMedidaController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<ApiResponse> listUnime(
+    public ResponseEntity<ApiResponse> list(
             @RequestParam(name = "status", defaultValue = "0") int status) {
 
         ApiResponse apiResponse = unidMedidaService.listUnidMedida(status);

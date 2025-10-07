@@ -45,13 +45,19 @@ public class PedItemService {
             FiltroPesquisa filtro) {
 
         var spec = PreparaSpec(filtro);
-        return vwPedIRepository.findAll(spec);
+
+        Sort sort = Sort.by(
+                Sort.Order.asc("codItem")
+        );
+
+        return vwPedIRepository.findAll(spec, sort);
     }
 
     public Page<VwPedItem> pageVwPedItem(
             FiltroPesquisa filtro) {
 
         var spec = PreparaSpec(filtro);
+
         Sort sort = Sort.by(Sort.Direction.fromString(filtro.getSortDirection()), filtro.getSortField());
         Pageable pageable = PageRequest.of(filtro.getPageIndex(), filtro.getSize(), sort);
 
@@ -66,14 +72,22 @@ public class PedItemService {
         if (filtro.getStatus() != null)
             spec = spec.and(VwPedItemSpecifications.hasStatus(filtro.getStatus()));
 
-        if (filtro.getCodEntd() != null)
+        if (filtro.getCodEntd() != null && filtro.getCodEntd() != 0)
             spec = spec.and(VwPedItemSpecifications.hasCodEntd(filtro.getCodEntd()));
 
-        if (filtro.getCodItem() != null)
+        if (!StringUtils.isBlank(filtro.getCodItem()))
             spec = spec.and(VwPedItemSpecifications.hasCodItem(filtro.getCodItem()));
 
-        if (filtro.getNumero() != null)
+        if (filtro.getNumero() != null && filtro.getNumero() != 0)
             spec = spec.and(VwPedItemSpecifications.hasNrPedido(filtro.getNumero()));
+
+        if (!StringUtils.isBlank(filtro.getTipo())) {
+            if (filtro.getTipo().equalsIgnoreCase("orcamentos"))
+                spec = spec.and(VwPedItemSpecifications.hasTpPedido(false));
+
+            if (filtro.getTipo().equalsIgnoreCase("pedidos"))
+                spec = spec.and(VwPedItemSpecifications.hasTpPedido(true));
+        }
 
         if (!StringUtils.isBlank(filtro.getFilterText()))
             spec = spec.and(VwPedItemSpecifications.hasFiltro(filtro.getFilterText()));

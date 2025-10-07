@@ -32,5 +32,5 @@ public class Param {
     @Column(nullable = false)
     private BigDecimal cpoDecimal;
 
-    private LocalDate data;
+    private LocalDate cpoData;
 }

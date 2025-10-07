@@ -11,18 +11,19 @@ import java.time.LocalDate;
 
 @Data
 @Entity
-@Table(name = "vw_ped_venda_item")
+@Table(name = "vw_ped_item")
 public class VwPedItem {
 
     @Id
     private BigInteger id;
     private Integer nrPedido;
-    private int codEntd;
+    private Boolean tpPedido;
+    private Integer codEntd;
     private String nome;
     private Integer nrSequencia;
     private String codItem;
     private String descricao;
-    private String unimed;
+    private String codUniMed;
     private LocalDate dtEntrega;
     private BigDecimal vlPreuni;
     private BigDecimal qtPedida;
@@ -31,8 +32,6 @@ public class VwPedItem {
     private BigDecimal vlTotitem;
     private String situacao;
     private int status;
-    private String descricaoItem;
-    private String nomeCliente;
     private int statusPedVenda;
     private String situacaoPedVenda;
 }

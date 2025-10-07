@@ -13,7 +13,7 @@ public class PedItemDTO {
     private int nrSequencia;
     private String codItem;
     private String descricao;
-    private String unimed;
+    private String codUniMed;
     private LocalDate dtEntrega;
     private BigDecimal vlPretab;
     private BigDecimal vlPreuni;
@@ -89,7 +89,6 @@ public class PedItemDTO {
     private String desUnMedida;
     private BigDecimal decFtconvUnest;
     private String codClassFis;
-    private String codUn;
     private boolean logCancSaldo;
     private BigDecimal valAliqIss;
     private BigDecimal valIpi;

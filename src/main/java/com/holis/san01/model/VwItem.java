@@ -17,7 +17,7 @@ public class VwItem {
     private String codItem;
     private String descricao;
     private String codTipoItem;
-    private String unimed;
+    private String codUniMed;
     private String codFamilia;
     private BigDecimal preco_venda;
     private LocalDate dt_preco_venda;

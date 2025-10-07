@@ -5,12 +5,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
 @Entity
 @Table(name = "vw_ped_venda")
 public class VwPedVenda {
+
     @Id
     private Integer nrPedido;
 
@@ -20,35 +22,25 @@ public class VwPedVenda {
 
     private String descricao;
 
-    private Integer tpPedido;
+    private Boolean tpPedido;
 
-    private Integer nrCotacao;
+    private BigDecimal percDesconto;
 
-    private Integer nrContrato;
+    private BigDecimal vlDesconto;
 
-    private String nrPedcli;
+    private BigDecimal vlFrete;
 
-    private Double percDesconto;
+    private BigDecimal vlSeguro;
 
-    private Double vlDesconto;
+    private BigDecimal vlEmbal;
 
-    private Double vlFrete;
+    private BigDecimal vlTotPed;
 
-    private Double vlSeguro;
-
-    private Double vlEmbal;
-
-    private Double vlTotPed;
-
-    private Double vlTotItens;
+    private BigDecimal vlTotItens;
 
     private String codCondPag;
 
     private Integer parcelas;
-
-    private String prazoEntrega;
-
-    private String natOperacao;
 
     private String contato;
 
@@ -61,24 +53,6 @@ public class VwPedVenda {
     private LocalDate dtEmissao;
 
     private LocalDate dtEntrega;
-
-    private Byte indAprov;
-
-    private LocalDate dtAprovacao;
-
-    private LocalDate dtValCot;
-
-    private String prazoValCot;
-
-    private LocalDate dtMinfat;
-
-    private LocalDate dtLimFat;
-
-    private LocalDate dtDevolucao;
-
-    private LocalDate dtSuspensao;
-
-    private Integer codPriori;
 
     private String logradouro;
 
@@ -98,69 +72,13 @@ public class VwPedVenda {
 
     private String cgc;
 
-    private String insEstadual;
+    private BigDecimal vlLiqPed;
 
-    private Double percDesco2;
+    private BigDecimal vlLiqAbe;
 
-    private String condRedespa;
+    private BigDecimal vlDescontoTotal;
 
-    private String cidadeCif;
-
-    private Integer codPortador;
-
-    private Integer modalidade;
-
-    private Integer codMensagem;
-
-    private String condEspec;
-
-    private Integer codDesMerc;
-
-    private String nomeTransp;
-
-    private Integer tpPreco;
-
-    private Byte indFatPar;
-
-    private Double vlLiqPed;
-
-    private Double vlLiqAbe;
-
-    private Byte indAntecip;
-
-    private Double distancia;
-
-    private Double vlMerAbe;
-
-    private String descSuspend;
-
-    private String descBloqCr;
-
-    private String descForcCr;
-
-    private String nomeTrRed;
-
-    private Integer tipCobDesp;
-
-    private Integer codSitPre;
-
-    private Double perDesIcms;
-
-    private Double vlCredLib;
-
-    private Byte incDescTxt;
-
-    private LocalDate dtBaseFt;
-
-    private Byte indEntCompleta;
-
-    private Byte completo;
-
-    private Double vlDescontoTotal;
-
-    private Double descValorPed;
-
-    private Integer tipoFinId;
+    private BigDecimal descValorPed;
 
     private String condPag;
 
@@ -170,5 +88,5 @@ public class VwPedVenda {
 
     private Integer status;
 
-    private  String nome;
+    private String nome;
 }

@@ -29,7 +29,7 @@ public class PedItemController {
      */
     @GetMapping
     public ResponseEntity<ApiResponse> findPedItemById(
-            @RequestParam(name = "id", defaultValue = "") Integer id) {
+            @RequestParam(name = "id", defaultValue = "0") Integer id) {
 
         PedItem pedItem = pedIService.findPedItemById(id);
         return new ResponseEntity<>(new ApiResponse(true, pedIMapper.toDTO(pedItem)), HttpStatus.OK);

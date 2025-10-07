@@ -25,7 +25,7 @@ public class ItemDTO {
 
     @NotBlank(message = "Unidade de medida é obrigatória")
     @Size(max = 6, message = "A unidade de medida deve ter até 6 caracteres")
-    private String unimed;
+    private String codUniMed;
 
     private BigDecimal precoVenda;
 

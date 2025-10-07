@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Data
 @Entity
@@ -84,7 +85,7 @@ public class PedVenda {
     @Column(name = "dt_entrega")
     private LocalDate dtEntrega;
 
-    @Column(name = "ind_aprov", nullable = false)
+    @Column(name = "ind_aprov")
     private boolean indAprov;
 
     @Column(name = "dt_aprovacao")
@@ -167,10 +168,10 @@ public class PedVenda {
     @Column(name = "nome_transp", length = 20)
     private String nomeTransp;
 
-    @Column(name = "tp_preco", nullable = false)
+    @Column(name = "tp_preco")
     private Integer tpPreco;
 
-    @Column(name = "ind_fat_par", nullable = false)
+    @Column(name = "ind_fat_par")
     private boolean indFatPar;
 
     @Column(name = "vl_liq_ped", precision = 20, scale = 2)
@@ -179,7 +180,7 @@ public class PedVenda {
     @Column(name = "vl_liq_abe", precision = 20, scale = 2)
     private BigDecimal vlLiqAbe;
 
-    @Column(name = "ind_antecip", nullable = false)
+    @Column(name = "ind_antecip")
     private boolean indAntecip;
 
     @Column(precision = 7, scale = 1)
@@ -212,16 +213,15 @@ public class PedVenda {
     @Column(name = "vl_cred_lib", precision = 12, scale = 2)
     private BigDecimal vlCredLib;
 
-    @Column(name = "inc_desc_txt", nullable = false)
+    @Column(name = "inc_desc_txt")
     private boolean incDescTxt;
 
     @Column(name = "dt_base_ft")
     private LocalDate dtBaseFt;
 
-    @Column(name = "ind_ent_completa", nullable = false)
+    @Column(name = "ind_ent_completa")
     private boolean indEntCompleta;
 
-    @Column(nullable = false)
     private boolean completo;
 
     @Column(name = "vl_desconto_total", precision = 19, scale = 2)
@@ -243,8 +243,7 @@ public class PedVenda {
     private SituacaoPedidoEnum situacao;
 
     @Column(name = "dt_criacao")
-    private LocalDate dtCriacao;
+    private LocalTime dtCriacao;
 
-    @Column(nullable = false)
     private int status;
 }

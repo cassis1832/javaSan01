@@ -10,6 +10,7 @@ import lombok.Data;
 @Entity
 @Table(name = "unid_medida")
 public class UnidMedida {
+
     @Id
     @Column(nullable = false)
     private String codUniMed;
@@ -18,7 +19,7 @@ public class UnidMedida {
     private String descricao;
 
     @Column(nullable = false)
-    private String sequencia;
+    private Integer sequencia;
 
     @Column(nullable = false)
     private String fraciona;

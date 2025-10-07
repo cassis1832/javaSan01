@@ -16,6 +16,11 @@ public class VwPedVendaSpecifications {
         return (root, query, cb) -> cb.equal(root.get("codEntd"), codEntd);
     }
 
+    public static Specification<VwPedVenda> hasTpPedido(Boolean tpPedido) {
+
+        return (root, query, cb) -> cb.equal(root.get("tpPedido"), tpPedido);
+    }
+
     public static Specification<VwPedVenda> hasFiltro(String filtro) {
 
         return (root, query, cb) -> {
