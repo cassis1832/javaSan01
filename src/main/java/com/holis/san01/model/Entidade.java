@@ -3,14 +3,13 @@ package com.holis.san01.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import jakarta.validation.constraints.Pattern;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Data // @Getter, @Setter, @ToString, @EqualsAndHashCode e @RequiredArgsConstructor
 @Entity
 @Table(name = "entidade")
 public class Entidade {
+
     @Id
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,11 +21,11 @@ public class Entidade {
     @Column(nullable = false)
     private String razaoSocial;
 
-    private boolean indCliente;
+    private Boolean indCliente;
 
-    private boolean indFornec;
+    private Boolean indFornec;
 
-    private boolean indTransp;
+    private Boolean indTransp;
 
     private String tpPessoa;
 

@@ -35,7 +35,7 @@ public class ItemDTO {
 
     private LocalDate dtPrecoCompra;
 
-    @Size(max = 15, message = "A familia deve ter até 15 caracteres")
+    @Size(max = 20, message = "A familia deve ter até 20 caracteres")
     private String codFamilia;
 
     private Boolean indItemFat;
@@ -44,7 +44,7 @@ public class ItemDTO {
 
     private LocalDate dtUltEnt;
 
-    private boolean indComprado;
+    private Boolean indComprado;
 
     private Integer resCompra;
 

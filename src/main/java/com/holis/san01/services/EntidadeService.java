@@ -108,9 +108,9 @@ public class EntidadeService {
         entidade.setTpPessoa(entidadeInput.getTpPessoa());
         entidade.setCgc(entidadeInput.getCgc());
         entidade.setRg(entidadeInput.getRg());
-        entidade.setIndCliente(entidadeInput.isIndCliente());
-        entidade.setIndFornec(entidadeInput.isIndFornec());
-        entidade.setIndTransp(entidadeInput.isIndTransp());
+        entidade.setIndCliente(entidadeInput.getIndCliente());
+        entidade.setIndFornec(entidadeInput.getIndFornec());
+        entidade.setIndTransp(entidadeInput.getIndTransp());
         entidade.setCep(entidadeInput.getCep());
         entidade.setLocalidade(entidadeInput.getLocalidade());
         entidade.setLogradouro(entidadeInput.getLogradouro());

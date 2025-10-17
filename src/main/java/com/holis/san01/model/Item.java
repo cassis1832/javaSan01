@@ -36,7 +36,7 @@ public class Item {
 
     private LocalDate dtPrecoCompra;
 
-    @Column(length = 15)
+    @Column(length = 20)
     private String codFamilia;
 
     private Boolean indItemFat;
@@ -45,7 +45,7 @@ public class Item {
 
     private LocalDate dtUltEnt;
 
-    private boolean indComprado;
+    private Boolean indComprado;
 
     private Integer resCompra;
 

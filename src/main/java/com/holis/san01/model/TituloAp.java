@@ -66,17 +66,17 @@ public class TituloAp {
 
     private Integer tipoFinId;
 
-    private boolean logDuplEmitid = false;
+    private Boolean logDuplEmitid = false;
 
-    private boolean logEmisBoleto = false;
+    private Boolean logEmisBoleto = false;
 
-    private boolean logAvisoDbEmitid = false;
+    private Boolean logAvisoDbEmitid = false;
 
-    private boolean logReciboEmitid = false;
+    private Boolean logReciboEmitid = false;
 
-    private boolean logNpromisEmitid = false;
+    private Boolean logNpromisEmitid = false;
 
-    private boolean logDbAutom = false;
+    private Boolean logDbAutom = false;
 
     private Integer parcelas = 1;
 
@@ -98,7 +98,7 @@ public class TituloAp {
 
     private String usrAlteracao;
 
-    private int status ;
+    private int status;
 
     private LocalDate dtDeleted;
 

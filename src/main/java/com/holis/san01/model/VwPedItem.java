@@ -6,7 +6,6 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.time.LocalDate;
 
 @Data
@@ -15,7 +14,7 @@ import java.time.LocalDate;
 public class VwPedItem {
 
     @Id
-    private BigInteger id;
+    private Integer id;
     private Integer nrPedido;
     private Boolean tpPedido;
     private Integer codEntd;
@@ -30,8 +29,8 @@ public class VwPedItem {
     private BigDecimal qtAtendida;
     private BigDecimal qtPendente;
     private BigDecimal vlTotitem;
-    private String situacao;
-    private int status;
-    private int statusPedVenda;
+    private Integer situacao;
+    private Integer status;
+    private Integer statusPedVenda;
     private String situacaoPedVenda;
 }

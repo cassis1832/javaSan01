@@ -1,9 +1,5 @@
 package com.holis.san01.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -17,11 +13,11 @@ public class EntidadeDTO {
 
     private String razaoSocial;
 
-    private boolean indCliente;
+    private Boolean indCliente;
 
-    private boolean indFornec;
+    private Boolean indFornec;
 
-    private boolean indTransp;
+    private Boolean indTransp;
 
     private String tpPessoa;
 

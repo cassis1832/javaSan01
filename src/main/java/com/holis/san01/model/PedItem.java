@@ -1,5 +1,7 @@
 package com.holis.san01.model;
 
+import com.holis.san01.enums.SituacaoPedidoEnum;
+import com.holis.san01.enums.SituacaoPedidoEnumConverter;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -19,7 +21,7 @@ public class PedItem {
     @Column(nullable = false)
     private Integer nrPedido;
 
-    private int nrSequencia;
+    private Integer nrSequencia;
 
     @Column(nullable = false)
     private String codItem;
@@ -38,7 +40,7 @@ public class PedItem {
     private BigDecimal qtPendente;
     private String observacao;
     private LocalDate dtAprovacao;
-    private int nrOrdem;
+    private Integer nrOrdem;
     private LocalDate dtEntorig;
     private LocalDate dtCanseq;
     private LocalDate dtReativ;
@@ -49,9 +51,9 @@ public class PedItem {
     private BigDecimal vlPreori;
     private BigDecimal perDesItem;
     private BigDecimal perMinfat;
-    private int codSitItem;
+    private Integer codSitItem;
     private BigDecimal aliquotaIpi;
-    private boolean indIcmRet;
+    private Boolean indIcmRet;
     private BigDecimal vlMercAbe;
     private BigDecimal vlLiqIt;
     private BigDecimal vlLiqAbe;
@@ -59,46 +61,46 @@ public class PedItem {
     private String nrTabpre;
     private BigDecimal perDesIcms;
     private String natOperacao;
-    private int tipoAtend;
-    private int indComponen;
+    private Integer tipoAtend;
+    private Integer indComponen;
     private BigDecimal qtFatenf;
     private String codRefer;
     private BigDecimal qtTransfer;
     private String descTxt;
     private BigDecimal qtAlocada;
-    private int codSitPre;
+    private Integer codSitPre;
     private LocalDate dtMaxFat;
-    private int tpAlocLote;
+    private Integer tpAlocLote;
     private LocalDate dtMinFat;
-    private int espPed;
+    private Integer espPed;
     private BigDecimal percFornec;
     private BigDecimal qtLoteMin;
     private String codEntrega;
-    private int cdOrigem;
-    private int nrOrdProdu;
-    private int nrPrograma;
+    private Integer cdOrigem;
+    private Integer nrOrdProdu;
+    private Integer nrPrograma;
     private BigDecimal qtTransMp;
-    private int codIsencao;
+    private Integer codIsencao;
     private BigDecimal qtOrdens;
     private BigDecimal vlDesconto;
-    private int codCondEsp;
-    private int codSitCom;
+    private Integer codCondEsp;
+    private Integer codSitCom;
     private String motivoAltSitQuota;
-    private boolean logUsaTabelaDesconto;
+    private Boolean logUsaTabelaDesconto;
     private BigDecimal valPctDescontoTabPreco;
     private String desPctDescontoInform;
     private BigDecimal valDescontoInform;
     private BigDecimal valPctDescontoTotal;
-    private boolean logConcedeBonifQtd;
+    private Boolean logConcedeBonifQtd;
     private BigDecimal valPctBonif;
     private BigDecimal valPctDescontoPeriodo;
     private BigDecimal valPctDescontoPrazo;
     private BigDecimal valDescontoTotal;
     private BigDecimal valDescontoBonif;
-    private int numSequenciaBonif;
+    private Integer numSequenciaBonif;
     private BigDecimal qtUnFat;
     private BigDecimal vlPreoriUnFat;
-    private int codMotCancCot;
+    private Integer codMotCancCot;
     private String userAprovCot;
     private String descLibPreco;
     private String enderecoText;
@@ -106,7 +108,7 @@ public class PedItem {
     private BigDecimal decFtconvUnest;
     private String codClassFis;
     private String codUn;
-    private boolean logCancSaldo;
+    private Boolean logCancSaldo;
     private BigDecimal valAliqIss;
     private BigDecimal valIpi;
     private BigDecimal valFrete;
@@ -117,7 +119,10 @@ public class PedItem {
     private BigDecimal valTaxApldo;
     private BigDecimal valPrecoSuger;
     private String codOrdCompra;
-    private int tpPreco;
-    private String situacao;
+    private Integer tpPreco;
+
+    @Convert(converter = SituacaoPedidoEnumConverter.class)
+    private SituacaoPedidoEnum situacao;
+
     private int status;
 }

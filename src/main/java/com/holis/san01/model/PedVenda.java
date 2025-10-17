@@ -1,6 +1,7 @@
 package com.holis.san01.model;
 
 import com.holis.san01.enums.SituacaoPedidoEnum;
+import com.holis.san01.enums.SituacaoPedidoEnumConverter;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -27,7 +28,7 @@ public class PedVenda {
     private String descricao;
 
     @Column(name = "tp_pedido")
-    private boolean tpPedido;
+    private Boolean tpPedido;
 
     @Column(name = "nr_contrato")
     private Integer nrContrato;
@@ -86,7 +87,7 @@ public class PedVenda {
     private LocalDate dtEntrega;
 
     @Column(name = "ind_aprov")
-    private boolean indAprov;
+    private Boolean indAprov;
 
     @Column(name = "dt_aprovacao")
     private LocalDate dtAprovacao;
@@ -124,7 +125,7 @@ public class PedVenda {
     @Column(length = 30)
     private String bairro;
 
-    @Column(length = 50)
+    @Column(name = "localidade", length = 50, nullable = false)
     private String localidade;
 
     @Column(length = 4)
@@ -172,7 +173,7 @@ public class PedVenda {
     private Integer tpPreco;
 
     @Column(name = "ind_fat_par")
-    private boolean indFatPar;
+    private Boolean indFatPar;
 
     @Column(name = "vl_liq_ped", precision = 20, scale = 2)
     private BigDecimal vlLiqPed;
@@ -181,7 +182,7 @@ public class PedVenda {
     private BigDecimal vlLiqAbe;
 
     @Column(name = "ind_antecip")
-    private boolean indAntecip;
+    private Boolean indAntecip;
 
     @Column(precision = 7, scale = 1)
     private BigDecimal distancia;
@@ -214,15 +215,15 @@ public class PedVenda {
     private BigDecimal vlCredLib;
 
     @Column(name = "inc_desc_txt")
-    private boolean incDescTxt;
+    private Boolean incDescTxt;
 
     @Column(name = "dt_base_ft")
     private LocalDate dtBaseFt;
 
     @Column(name = "ind_ent_completa")
-    private boolean indEntCompleta;
+    private Boolean indEntCompleta;
 
-    private boolean completo;
+    private Boolean completo;
 
     @Column(name = "vl_desconto_total", precision = 19, scale = 2)
     private BigDecimal vlDescontoTotal;
@@ -239,11 +240,12 @@ public class PedVenda {
     @Column(name = "dt_situacao")
     private LocalDate dtSituacao;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = SituacaoPedidoEnumConverter.class)
     private SituacaoPedidoEnum situacao;
 
     @Column(name = "dt_criacao")
     private LocalTime dtCriacao;
 
+    @Column(nullable = false)
     private int status;
 }

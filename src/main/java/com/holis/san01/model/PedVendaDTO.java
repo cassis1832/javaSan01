@@ -23,7 +23,7 @@ public class PedVendaDTO {
     @Size(max = 30, message = "A descrição deve ter até 30 caracteres")
     private String descricao;
 
-    private boolean tpPedido;
+    private Boolean tpPedido;
     private Integer nrContrato;
     private String nrPedcli;
     private BigDecimal percDesconto;
@@ -43,7 +43,7 @@ public class PedVendaDTO {
     private String observacao;
     private LocalDate dtEmissao;
     private LocalDate dtEntrega;
-    private boolean indAprov;
+    private Boolean indAprov;
     private LocalDate dtAprovacao;
     private LocalDate dtValCot;
     private String prazoValCot;
@@ -56,6 +56,8 @@ public class PedVendaDTO {
     private String numero;
     private String complemento;
     private String bairro;
+
+    @NotNull(message = "Cidade é obrigatória")
     private String localidade;
     private String estado;
     private String cep;
@@ -72,10 +74,10 @@ public class PedVendaDTO {
     private Integer codDesMerc;
     private String nomeTransp;
     private Integer tpPreco;
-    private boolean indFatPar;
+    private Boolean indFatPar;
     private BigDecimal vlLiqPed;
     private BigDecimal vlLiqAbe;
-    private boolean indAntecip;
+    private Boolean indAntecip;
     private BigDecimal distancia;
     private BigDecimal vlMerAbe;
     private String descSuspend;
@@ -86,10 +88,10 @@ public class PedVendaDTO {
     private Integer codSitPre;
     private BigDecimal perDesIcms;
     private BigDecimal vlCredLib;
-    private boolean incDescTxt;
+    private Boolean incDescTxt;
     private LocalDate dtBaseFt;
-    private boolean indEntCompleta;
-    private boolean completo;
+    private Boolean indEntCompleta;
+    private Boolean completo;
     private BigDecimal vlDescontoTotal;
     private BigDecimal descValorPed;
     private Integer tipoFinId;

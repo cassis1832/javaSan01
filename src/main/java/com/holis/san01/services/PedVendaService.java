@@ -39,12 +39,10 @@ public class PedVendaService {
      * Ler o pedido de venda pelo numero do pedido
      */
     public PedVenda findPedVendaByNrPedido(final int nrPedido) {
-
         return pedVRepository.findPedVendaByNrPedido(nrPedido).orElseThrow(() -> new NotFoundRequestException("Pedido de venda não encontrado"));
     }
 
     public Page<VwPedVenda> pageVwPedVenda(@Nonnull FiltroPesquisa filtro) {
-
         Specification<VwPedVenda> spec = Specification.where(null);
 
         if (filtro.getStatus() != null) {
@@ -134,7 +132,7 @@ public class PedVendaService {
         pedVenda.setObservacao(pedVendaInput.getObservacao());
         pedVenda.setDtEmissao(pedVendaInput.getDtEmissao());
         pedVenda.setDtEntrega(pedVendaInput.getDtEntrega());
-        pedVenda.setIndAprov(pedVendaInput.isIndAprov());
+        pedVenda.setIndAprov(pedVendaInput.getIndAprov());
         pedVenda.setDtAprovacao(pedVendaInput.getDtAprovacao());
         pedVenda.setDtValCot(pedVendaInput.getDtValCot());
         pedVenda.setPrazoValCot(pedVendaInput.getPrazoValCot());
@@ -147,8 +145,9 @@ public class PedVendaService {
         pedVenda.setNumero(pedVendaInput.getNumero());
         pedVenda.setComplemento(pedVendaInput.getComplemento());
         pedVenda.setBairro(pedVendaInput.getBairro());
-        pedVenda.setEstado(pedVendaInput.getEstado());
+        pedVenda.setLocalidade(pedVendaInput.getLocalidade());
         pedVenda.setCep(pedVendaInput.getCep());
+        pedVenda.setEstado(pedVendaInput.getEstado());
         pedVenda.setPais(pedVendaInput.getPais());
         pedVenda.setCgc(pedVendaInput.getCgc());
         pedVenda.setInsEstadual(pedVendaInput.getInsEstadual());
@@ -162,10 +161,10 @@ public class PedVendaService {
         pedVenda.setCodDesMerc(pedVendaInput.getCodDesMerc());
         pedVenda.setNomeTransp(pedVendaInput.getNomeTransp());
         pedVenda.setTpPreco(pedVendaInput.getTpPreco());
-        pedVenda.setIndFatPar(pedVendaInput.isIndFatPar());
+        pedVenda.setIndFatPar(pedVendaInput.getIndFatPar());
         pedVenda.setVlLiqPed(pedVendaInput.getVlLiqPed());
         pedVenda.setVlLiqAbe(pedVendaInput.getVlLiqAbe());
-        pedVenda.setIndAntecip(pedVendaInput.isIndAntecip());
+        pedVenda.setIndAntecip(pedVendaInput.getIndAntecip());
         pedVenda.setDistancia(pedVendaInput.getDistancia());
         pedVenda.setVlMerAbe(pedVendaInput.getVlMerAbe());
         pedVenda.setDescSuspend(pedVendaInput.getDescSuspend());
@@ -176,10 +175,10 @@ public class PedVendaService {
         pedVenda.setCodSitPre(pedVendaInput.getCodSitPre());
         pedVenda.setPerDesIcms(pedVendaInput.getPerDesIcms());
         pedVenda.setVlCredLib(pedVendaInput.getVlCredLib());
-        pedVenda.setIncDescTxt(pedVendaInput.isIncDescTxt());
+        pedVenda.setIncDescTxt(pedVendaInput.getIncDescTxt());
         pedVenda.setDtBaseFt(pedVendaInput.getDtBaseFt());
-        pedVenda.setIndEntCompleta(pedVendaInput.isIndEntCompleta());
-        pedVenda.setCompleto(pedVendaInput.isCompleto());
+        pedVenda.setIndEntCompleta(pedVendaInput.getIndEntCompleta());
+        pedVenda.setCompleto(pedVendaInput.getCompleto());
         pedVenda.setVlDescontoTotal(pedVendaInput.getVlDescontoTotal());
         pedVenda.setDescValorPed(pedVendaInput.getDescValorPed());
         pedVenda.setTipoFinId(pedVendaInput.getTipoFinId());
@@ -209,7 +208,7 @@ public class PedVendaService {
 
         PedVenda pedVenda = pedVRepository.findPedVendaByNrPedido(nrPedido).orElseThrow(() -> new ApiRequestException("Pedido de venda não encontrado"));
 
-        if (pedVenda.isTpPedido() == PEDIDO) throw new ApiRequestException("Registro já é um pedido de venda");
+        if (pedVenda.getTpPedido() == PEDIDO) throw new ApiRequestException("Registro já é um pedido de venda");
 
         pedVenda.setTpPedido(PEDIDO);
         pedVenda.setSituacao(SituacaoPedidoEnum.ABERTO);
@@ -236,7 +235,7 @@ public class PedVendaService {
 
         PedVenda pedVenda = pedVRepository.findPedVendaByNrPedido(nrPedido).orElseThrow(() -> new ApiRequestException("Pedido de venda não encontrado"));
 
-        if (pedVenda.isTpPedido()) throw new ApiRequestException("Registro já é um pedido de venda");
+        if (pedVenda.getTpPedido()) throw new ApiRequestException("Registro já é um pedido de venda");
 
         pedVenda.setSituacao(SituacaoPedidoEnum.CANCELADO);
         pedVenda.setStatus(STATUS_ARQUIVADO);

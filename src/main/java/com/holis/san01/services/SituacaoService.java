@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
- * Service para tratamento da tabela de unidade de medida
+ * Service para tratamento da tabela de situações
  */
 @Service
 @RequiredArgsConstructor
@@ -48,7 +48,7 @@ public class SituacaoService {
 
         situacao.setDescricao(dto.getDescricao());
         situacao.setSequencia(dto.getSequencia());
-        situacao.setTipo(dto.getTipo());
+        situacao.setSituacao(dto.getSituacao());
         return situacaoRepository.saveAndFlush(situacao);
     }
 

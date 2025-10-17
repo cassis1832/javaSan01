@@ -43,7 +43,7 @@ public class ItemService {
     public Item findItemByCodItem(final String codItem) {
 
         return itemRepository.findItemByCodItem(codItem)
-                .orElseThrow(() -> new NotFoundRequestException("Item não encontrado"));
+                .orElseThrow(() -> new NotFoundRequestException("Item não cadastrado"));
     }
 
     public Page<VwItem> pageVwItem(FiltroPesquisa filtro) {
@@ -81,7 +81,7 @@ public class ItemService {
     public Item update(final Item itemInput) {
 
         Item item = itemRepository.findItemByCodItem(itemInput.getCodItem())
-                .orElseThrow(() -> new NotFoundRequestException("Item não encontrado"));
+                .orElseThrow(() -> new NotFoundRequestException("Item não cadastrado"));
 
         item.setCodItem(itemInput.getCodItem());
         item.setStatus(itemInput.getStatus());
@@ -89,7 +89,7 @@ public class ItemService {
         item.setAliquotaIpi(itemInput.getAliquotaIpi());
         item.setCodLocaliz(itemInput.getCodLocaliz());
         item.setCodOrigem(itemInput.getCodOrigem());
-        item.setIndComprado((itemInput.isIndComprado()));
+        item.setIndComprado((itemInput.getIndComprado()));
         item.setDescricao(itemInput.getDescricao());
         item.setPrecoVenda(itemInput.getPrecoVenda());
         item.setDtPrecoVenda(itemInput.getDtPrecoVenda());
@@ -137,7 +137,7 @@ public class ItemService {
     public void checkDelete(String codItem) {
 
         if (!itemRepository.existsByCodItem(codItem))
-            throw new NotFoundRequestException("Item não encontrado para exclusão");
+            throw new NotFoundRequestException("Item não cadsatrado");
 
         if (pedItemRepository.existsByCodItem(codItem))
             throw new ApiRequestException("Exclusão inválida, existem pedidos para o item");
@@ -146,7 +146,7 @@ public class ItemService {
     public void archive(String codItem) {
 
         Item item = itemRepository.findItemByCodItem(codItem)
-                .orElseThrow(() -> new NotFoundRequestException("Item não encontrado"));
+                .orElseThrow(() -> new NotFoundRequestException("Item não cadastrado"));
 
         item.setStatus(STATUS_ARQUIVADO);
         itemRepository.saveAndFlush(item);
@@ -155,7 +155,7 @@ public class ItemService {
     public void unarchive(String codItem) {
 
         Item item = itemRepository.findItemByCodItem(codItem)
-                .orElseThrow(() -> new NotFoundRequestException("Item não encontrado"));
+                .orElseThrow(() -> new NotFoundRequestException("Item não cadastrado"));
 
         item.setStatus(STATUS_ATIVO);
         itemRepository.saveAndFlush(item);

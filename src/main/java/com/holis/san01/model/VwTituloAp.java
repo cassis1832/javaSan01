@@ -3,7 +3,6 @@ package com.holis.san01.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -13,6 +12,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "vw_titulo_ap")
 public class VwTituloAp {
+
     @Id
     private Integer id;
 
@@ -30,7 +30,7 @@ public class VwTituloAp {
 
     private Integer docId;
 
-    private boolean parcela;
+    private Boolean parcela;
 
     private Integer parcelas;
 
@@ -58,15 +58,15 @@ public class VwTituloAp {
 
     private Integer tipoFinId;
 
-    private boolean logEmisBoleto;
+    private Boolean logEmisBoleto;
 
-    private boolean logAvisoDbEmitid;
+    private Boolean logAvisoDbEmitid;
 
-    private boolean logReciboEmitid;
+    private Boolean logReciboEmitid;
 
-    private boolean logNpromisEmitid;
+    private Boolean logNpromisEmitid;
 
-    private boolean logDbAutom;
+    private Boolean logDbAutom;
 
     private String observacao;
 
