@@ -4,23 +4,26 @@ import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.exceptions.NotFoundRequestException;
 import com.holis.san01.model.TituloAp;
 import com.holis.san01.model.VwTituloAp;
+import com.holis.san01.model.local.FiltroPesquisa;
 import com.holis.san01.repository.EntidadeRepository;
 import com.holis.san01.repository.EspDocRepository;
 import com.holis.san01.repository.TituloApRepository;
 import com.holis.san01.repository.VwTituloApRepository;
 import com.holis.san01.specs.VwTituloApSpecifications;
+import jakarta.annotation.Nonnull;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 
 import static com.holis.san01.model.local.Constantes.STATUS_ATIVO;
 import static com.holis.san01.model.local.Constantes.STATUS_DELETADO;
@@ -37,59 +40,48 @@ public class TituloApService {
     private final ParamService paramService;
 
     public TituloAp findTituloAp(int id) {
-
         return tituloApRepository.findTituloApById(id)
                 .orElseThrow(() -> new NotFoundRequestException("Título não encontrado"));
     }
 
-    public List<VwTituloAp> listVwTituloAp(
-            final Integer status, final Integer codEntd,
-            final String codEspDoc, final Integer docId,
-            final String vencto, final String filterText) {
-
-        Specification<VwTituloAp> spec = prepareSpec(status, codEntd, codEspDoc, docId, vencto, filterText);
-        return vwTituloApRepository.findAll(spec);
-    }
-
-    public Page<VwTituloAp> pageVwTituloAp(
-            final Integer status, final Integer codEntd,
-            final String codEspDoc, final Integer docId,
-            final String vencto, final String filterText,
-            final Pageable pageable) {
-
-        Specification<VwTituloAp> spec = prepareSpec(status, codEntd, codEspDoc, docId, vencto, filterText);
-        return vwTituloApRepository.findAll(spec, pageable);
-    }
-
-    private Specification<VwTituloAp> prepareSpec(
-            final Integer status, final Integer codEntd,
-            final String codEspDoc, final Integer docId,
-            final String vencto, final String filterText) {
-
+    public Page<VwTituloAp> pageVwTituloAp(@Nonnull FiltroPesquisa filtro) {
         Specification<VwTituloAp> spec = Specification.where(null);
 
-        if (status != null)
-            spec = spec.and(VwTituloApSpecifications.hasStatus(status));
+        if (filtro.getStatus() != null)
+            spec = spec.and(VwTituloApSpecifications.hasStatus(filtro.getStatus()));
 
-        if (codEntd != null)
-            spec = spec.and(VwTituloApSpecifications.hasCodEntd(codEntd));
+        if (filtro.getCodEntd() != null && filtro.getCodEntd() != 0)
+            spec = spec.and(VwTituloApSpecifications.hasCodEntd(filtro.getCodEntd()));
 
-        if (codEspDoc != null)
-            spec = spec.and(VwTituloApSpecifications.hasCodEspDoc(codEspDoc));
+        if (!StringUtils.isBlank(filtro.getCodigo()))
+            spec = spec.and(VwTituloApSpecifications.hasCodEspDoc(filtro.getCodigo()));
 
-        if (docId != null)
-            spec = spec.and(VwTituloApSpecifications.hashasDocId(docId));
+        if (filtro.getId() != null && filtro.getId() != 0)
+            spec = spec.and(VwTituloApSpecifications.hasDocId(filtro.getId()));
 
-        if (!StringUtils.isBlank(filterText))
-            spec = spec.and(VwTituloApSpecifications.hasFiltro(filterText));
+        if (!StringUtils.isBlank(filtro.getFilterText()))
+            spec = spec.and(VwTituloApSpecifications.hasFiltro(filtro.getFilterText()));
 
-        if (vencto.equalsIgnoreCase("vencidos"))
-            spec = spec.and(VwTituloApSpecifications.vencidos());
+        if (filtro.getDtInicio() != null)
+            spec = spec.and(VwTituloApSpecifications.depoisDe(filtro.getDtInicio()));
 
-        if (vencto.equalsIgnoreCase("avencer"))
-            spec = spec.and(VwTituloApSpecifications.aVencer());
+        if (filtro.getDtFim() != null)
+            spec = spec.and(VwTituloApSpecifications.antesDe(filtro.getDtFim()));
 
-        return spec;
+        Sort sort;
+
+        if (filtro.getSortField().equalsIgnoreCase("")) {
+            sort = Sort.by(
+                    Sort.Order.asc("codEntd"),
+                    Sort.Order.asc("nrPedido")
+            );
+        } else {
+            sort = Sort.by(Sort.Direction.fromString(filtro.getSortDirection()), filtro.getSortField());
+        }
+
+        Pageable pageable = PageRequest.of(filtro.getPageIndex(), filtro.getSize(), sort);
+
+        return vwTituloApRepository.findAll(spec, pageable);
     }
 
     public TituloAp create(@NotNull TituloAp tituloAp) {

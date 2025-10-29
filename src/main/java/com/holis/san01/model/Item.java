@@ -119,8 +119,7 @@ public class Item {
 
     private Integer prazoEntrega;
 
-    @Column(length = 20)
-    private String situacao;
+    private Integer codSit;
 
     @CreatedDate
     private LocalDate dtCriacao;

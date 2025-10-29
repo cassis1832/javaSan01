@@ -1,7 +1,6 @@
 package com.holis.san01.model.local;
 
 import lombok.Data;
-import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 
@@ -15,8 +14,8 @@ public class FiltroPesquisa {
     private String filterText;
     private String codItem;
     private Integer codEntd;
-    private String dtInicio;
-    private String dtFim;
+    private LocalDate dtInicio;
+    private LocalDate dtFim;
     private String tipo;
     private Integer numero;
     private Integer id;

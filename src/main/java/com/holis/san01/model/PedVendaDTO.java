@@ -59,8 +59,10 @@ public class PedVendaDTO {
 
     @NotNull(message = "Cidade é obrigatória")
     private String localidade;
+
     private String estado;
     private String cep;
+    private String obsEndereco;
     private String pais;
     private String cgc;
     private String insEstadual;

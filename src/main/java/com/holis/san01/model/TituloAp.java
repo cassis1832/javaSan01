@@ -21,9 +21,6 @@ public class TituloAp {
     @Column(nullable = false)
     private Integer codEntd;
 
-    @Column(nullable = false)
-    private Integer tpTitulo;
-
     @Column(nullable = false, length = 3)
     private String codEspDoc;
 

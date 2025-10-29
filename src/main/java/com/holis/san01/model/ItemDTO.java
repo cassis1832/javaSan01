@@ -118,8 +118,7 @@ public class ItemDTO {
 
     private Integer prazoEntrega;
 
-    @Size(max = 20, message = "A situação deve ter até 60 caracteres")
-    private String situacao;
+    private Integer codSit;
 
     private LocalDate dtCriacao;
 

@@ -36,7 +36,7 @@ public class PedVendaController {
     }
 
     /**
-     * Ler uma lista dos pedidos de vendas
+     * Ler uma página de pedidos de vendas
      */
     @GetMapping("/page")
     public ResponseEntity<ApiResponse> pageVwPedVenda(

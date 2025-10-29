@@ -17,11 +17,12 @@ public class Situacao {
     private String objeto;
 
     @Column(nullable = false)
+    private Integer codSit;
+
+    @Column(nullable = false)
     private Integer sequencia;
 
     @Column(nullable = false)
     private String descricao;
 
-    @Column(nullable = false)
-    private Integer situacao;
 }

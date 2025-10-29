@@ -19,9 +19,9 @@ public class VwItem {
     private String codTipoItem;
     private String codUniMed;
     private String codFamilia;
-    private BigDecimal preco_venda;
-    private LocalDate dt_preco_venda;
-    private String situacao;
+    private BigDecimal precoVenda;
+    private LocalDate dtPrecoVenda;
+    private String descricaoSituacao;
     private String descricaoTipoItem;
     private String tpProd;
     private int status;

@@ -49,6 +49,9 @@ public class Entidade {
 
     private String cep;
 
+    @Column(length = 100)
+    private String obsEndereco;
+
     private String contato;
 
     private String email;

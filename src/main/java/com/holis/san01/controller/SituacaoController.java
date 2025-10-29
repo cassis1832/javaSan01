@@ -1,8 +1,7 @@
 package com.holis.san01.controller;
 
-import com.holis.san01.model.local.ApiResponse;
 import com.holis.san01.model.Situacao;
-import com.holis.san01.model.local.FiltroPesquisa;
+import com.holis.san01.model.local.ApiResponse;
 import com.holis.san01.services.SituacaoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Controller para tratamento de Situações
@@ -22,41 +23,44 @@ public class SituacaoController {
     private final SituacaoService situacaoService;
 
     /**
-     * Ler um determinado registro pelo id
+     * Ler um determinado registro
      */
     @GetMapping
-    public ResponseEntity<Situacao> findSituacaoById(
-            @RequestParam(name = "id", defaultValue = "") Integer id) {
+    public ResponseEntity<ApiResponse> findSituacaoBySituacao(
+            @RequestParam(name = "objeto", defaultValue = "") String objeto,
+            @RequestParam(name = "situacao", defaultValue = "") Integer codSit) {
 
-        return ResponseEntity.status(HttpStatus.OK).body(situacaoService.findSituacaoById(id));
+        Situacao situacao = situacaoService.findSituacaoBySituacao(objeto, codSit);
+        return new ResponseEntity<>(new ApiResponse(true, situacao), HttpStatus.OK);
+
     }
 
     @GetMapping("/list")
     public ResponseEntity<ApiResponse> listSituacao(
-            @ModelAttribute FiltroPesquisa filtro) {
+            @RequestParam(name = "objeto", defaultValue = "") String objeto) {
 
-        ApiResponse apiResponse = situacaoService.listSituacao(filtro);
-        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+        List<Situacao> situacoes = situacaoService.listSituacao(objeto);
+        return new ResponseEntity<>(new ApiResponse(true, situacoes), HttpStatus.OK);
     }
 
     /**
      * Incluir um novo registro
      */
     @PostMapping
-    public ResponseEntity<Situacao> create(@RequestBody @Valid Situacao situacao) {
+    public ResponseEntity<ApiResponse> create(@RequestBody @Valid Situacao situacao) {
 
         situacao = situacaoService.create(situacao);
-        return new ResponseEntity<>(situacao, HttpStatus.CREATED);
+        return new ResponseEntity<>(new ApiResponse(true, situacao), HttpStatus.OK);
     }
 
     /**
      * Alterar um registro existente
      */
     @PutMapping
-    public ResponseEntity<Situacao> update(@RequestBody @Valid Situacao situacao) {
+    public ResponseEntity<ApiResponse> update(@RequestBody @Valid Situacao situacao) {
 
         situacao = situacaoService.update(situacao);
-        return new ResponseEntity<>(situacao, HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse(true, situacao), HttpStatus.OK);
     }
 
     /**

@@ -87,6 +87,7 @@ public class ItemService {
         item.setStatus(itemInput.getStatus());
         item.setCodTipoItem(itemInput.getCodTipoItem());
         item.setAliquotaIpi(itemInput.getAliquotaIpi());
+        item.setGtin(itemInput.getGtin());
         item.setCodLocaliz(itemInput.getCodLocaliz());
         item.setCodOrigem(itemInput.getCodOrigem());
         item.setIndComprado((itemInput.getIndComprado()));
@@ -116,7 +117,7 @@ public class ItemService {
         item.setQuantPacote(itemInput.getQuantPacote());
         item.setResCompra(itemInput.getResCompra());
         item.setResFabric(itemInput.getResFabric());
-        item.setSituacao(itemInput.getSituacao());
+        item.setCodSit(itemInput.getCodSit());
         item.setTempoRessup(itemInput.getTempoRessup());
         item.setCodUniMed(itemInput.getCodUniMed());
         item.setUsuarioObsol(itemInput.getUsuarioObsol());
@@ -164,10 +165,5 @@ public class ItemService {
     public List<String> listFamilia() {
 
         return itemRepository.listFamilias();
-    }
-
-    public List<String> listSituacao() {
-
-        return itemRepository.listSituacoes();
     }
 }

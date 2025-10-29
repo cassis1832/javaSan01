@@ -41,6 +41,8 @@ public class EntidadeDTO {
 
     private String cep;
 
+    private String obsEndereco;
+
     private String contato;
 
     private String email;

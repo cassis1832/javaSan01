@@ -137,6 +137,9 @@ public class PedVenda {
     @Column(length = 20)
     private String pais;
 
+    @Column(length = 100)
+    private String obsEndereco;
+
     @Column(length = 19)
     private String cgc;
 
