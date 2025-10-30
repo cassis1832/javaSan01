@@ -119,7 +119,16 @@ public class Item {
 
     private Integer prazoEntrega;
 
-    private Integer codSit;
+    private String situacao;
+
+    @Column(nullable = false)
+    private Boolean libCompra;
+
+    @Column(nullable = false)
+    private Boolean libVenda;
+
+    @Column(nullable = false)
+    private Boolean libProducao;
 
     @CreatedDate
     private LocalDate dtCriacao;

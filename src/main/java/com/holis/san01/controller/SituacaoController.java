@@ -62,14 +62,4 @@ public class SituacaoController {
         situacao = situacaoService.update(situacao);
         return new ResponseEntity<>(new ApiResponse(true, situacao), HttpStatus.OK);
     }
-
-    /**
-     * Excluir um registro
-     */
-    @DeleteMapping
-    public ResponseEntity<?> delete(@RequestParam(name = "id") Integer id) {
-
-        situacaoService.delete(id);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
 }

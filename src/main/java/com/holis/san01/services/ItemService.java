@@ -66,12 +66,14 @@ public class ItemService {
     }
 
     @Transactional
-    public Item create(@Nonnull final Item item) {
+    public Item create(@Nonnull Item item) {
 
         if (itemRepository.existsByCodItem(item.getCodItem())) {
             throw new ApiRequestException("Este código de item já existe!");
         }
 
+        System.out.println("item.getLibProducao()");
+        System.out.println(item.getLibProducao());
         item.setStatus(0);
         item.setDtCriacao(LocalDate.now());
         return itemRepository.saveAndFlush(item);
@@ -117,10 +119,13 @@ public class ItemService {
         item.setQuantPacote(itemInput.getQuantPacote());
         item.setResCompra(itemInput.getResCompra());
         item.setResFabric(itemInput.getResFabric());
-        item.setCodSit(itemInput.getCodSit());
         item.setTempoRessup(itemInput.getTempoRessup());
         item.setCodUniMed(itemInput.getCodUniMed());
         item.setUsuarioObsol(itemInput.getUsuarioObsol());
+        item.setSituacao(itemInput.getSituacao());
+        item.setLibCompra(itemInput.getLibCompra());
+        item.setLibVenda(itemInput.getLibVenda());
+        item.setLibProducao(itemInput.getLibProducao());
 
         return itemRepository.saveAndFlush(item);
     }
@@ -165,5 +170,10 @@ public class ItemService {
     public List<String> listFamilia() {
 
         return itemRepository.listFamilias();
+    }
+
+    public List<String> listSituacao() {
+
+        return itemRepository.listSituacoes();
     }
 }

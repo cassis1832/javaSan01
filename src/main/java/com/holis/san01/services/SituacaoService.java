@@ -47,12 +47,4 @@ public class SituacaoService {
         situacao.setSequencia(dto.getSequencia());
         return situacaoRepository.saveAndFlush(situacao);
     }
-
-    @Transactional
-    public void delete(@NotNull final Integer id) {
-        if (!situacaoRepository.existsById(id))
-            throw new ApiRequestException("Situação não encontrada!");
-
-        situacaoRepository.deleteById(id);
-    }
 }

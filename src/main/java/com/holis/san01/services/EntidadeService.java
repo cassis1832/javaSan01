@@ -128,6 +128,8 @@ public class EntidadeService {
         entidade.setObsEntrega(entidadeInput.getObsEntrega());
         entidade.setObservacoes(entidadeInput.getObservacoes());
         entidade.setSituacao(entidadeInput.getSituacao());
+        entidade.setLibCompra(entidadeInput.getLibCompra());
+        entidade.setLibVenda(entidadeInput.getLibVenda());
         entidade.setStatus(entidadeInput.getStatus());
 
         // Campos chave estrangeira tem que ser convertidos para NULL

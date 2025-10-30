@@ -118,7 +118,16 @@ public class ItemDTO {
 
     private Integer prazoEntrega;
 
-    private Integer codSit;
+    private String situacao;
+
+    @NotNull(message = "Situação de compra é obrigatoria")
+    private Boolean libCompra;
+
+    @NotNull(message = "Situação de venda é obrigatoria")
+    private Boolean libVenda;
+
+    @NotNull(message = "Situação de produção é obrigatoria")
+    private Boolean libProducao;
 
     private LocalDate dtCriacao;
 

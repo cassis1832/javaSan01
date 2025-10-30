@@ -124,4 +124,14 @@ public class ItemController {
         return new ResponseEntity<>(new ApiResponse(true, familias), HttpStatus.OK);
     }
 
+    /**
+     * Ler uma lista das situações
+     */
+    @GetMapping("/situacoes")
+    public ResponseEntity<ApiResponse> listSituacao() {
+
+        List<String> situacoes = itemService.listSituacao();
+        return new ResponseEntity<>(new ApiResponse(true, situacoes), HttpStatus.OK);
+    }
+
 }
