@@ -122,4 +122,8 @@ public class PedItemService {
         if (!pedIRepository.existsById(id))
             throw new ApiRequestException("Item do pedido de venda não encontrado");
     }
+
+    public boolean existsByCoditem(String codItem) {
+        return pedIRepository.existsByCodItem(codItem);
+    }
 }

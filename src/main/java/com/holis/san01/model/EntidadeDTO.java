@@ -66,8 +66,11 @@ public class EntidadeDTO {
     private String obsEntrega;
     private String observacoes;
     private String situacao;
+    @NotNull(message = "Situação de compra é obrigatória")
     private Boolean libCompra;
+    @NotNull(message = "Situação de venda é obrigatória")
     private Boolean libVenda;
+    @NotNull(message = "Situação de pagamento é obrigatória")
     private Boolean libPagamento;
     private LocalDate dtCriacao;
     private int status;

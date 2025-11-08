@@ -22,7 +22,7 @@ import java.util.List;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/items", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/itemsXXX", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ItemController {
 
     private final ItemService itemService;
@@ -37,7 +37,7 @@ public class ItemController {
             @RequestParam(name = "codItem", defaultValue = "") String codItem) {
 
         Item item = itemService.findItemByCodItem(codItem);
-        return new ResponseEntity<>(new ApiResponse(true, itemMapper.toDTO(item)), HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse(true, itemMapper.toDto(item)), HttpStatus.OK);
     }
 
     /**
@@ -58,7 +58,7 @@ public class ItemController {
     public ResponseEntity<ApiResponse> create(@RequestBody @Valid ItemDTO dto) {
 
         Item item = itemService.create(itemMapper.toEntity(dto));
-        return new ResponseEntity<>(new ApiResponse(true, itemMapper.toDTO(item)), HttpStatus.CREATED);
+        return new ResponseEntity<>(new ApiResponse(true, itemMapper.toDto(item)), HttpStatus.CREATED);
     }
 
     /**
@@ -68,7 +68,7 @@ public class ItemController {
     public ResponseEntity<ApiResponse> update(@RequestBody @Valid ItemDTO dto) {
 
         Item item = itemService.update(itemMapper.toEntity(dto));
-        return new ResponseEntity<>(new ApiResponse(true, itemMapper.toDTO(item)), HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse(true, itemMapper.toDto(item)), HttpStatus.OK);
     }
 
     @PutMapping("/archive")

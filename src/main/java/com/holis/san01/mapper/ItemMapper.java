@@ -5,9 +5,6 @@ import com.holis.san01.model.ItemDTO;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
-public interface ItemMapper {
+public interface ItemMapper extends BaseMapper<Item, ItemDTO> {
 
-    Item toEntity(ItemDTO itemDTO);
-
-    ItemDTO toDTO(Item item);
 }

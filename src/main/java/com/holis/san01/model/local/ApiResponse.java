@@ -36,4 +36,16 @@ public class ApiResponse {
         this.code = "obj";
         this.data = data;
     }
+
+    public static ApiResponse success(Object data) {
+        return new ApiResponse(true, "Operação realizada com sucesso", "ok", data);
+    }
+
+    public static ApiResponse errorValid(Object data) {
+        return new ApiResponse(false, "", "valid", data);
+    }
+
+    public static ApiResponse errorMessage(String message) {
+        return new ApiResponse(false, message, "error", null);
+    }
 }
