@@ -9,6 +9,7 @@ import com.holis.san01.repository.VwItemRepository;
 import com.holis.san01.utils.SpecificationUtils;
 import jakarta.annotation.Nonnull;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.holis.san01.model.local.Constantes.STATUS_ARQUIVADO;
 import static com.holis.san01.model.local.Constantes.STATUS_ATIVO;
@@ -25,32 +27,31 @@ import static com.holis.san01.model.local.Constantes.STATUS_ATIVO;
  * Service para tratamento da tabela itens
  */
 @Service
-public class ItemService02 extends BaseService<Item, String> {
+@RequiredArgsConstructor
+public class ItemService03 implements BaseService<Item, String, VwItem> {
 
     private final ItemRepository itemRepository;
     private final VwItemRepository vwItemRepository;
     private final PedItemService pedItemService;
 
-    public ItemService02(
-            ItemRepository itemRepository,
-            VwItemRepository vwItemRepository,
-            PedItemService pedItemService) {
-        super(itemRepository, itemRepository);
-        this.itemRepository = itemRepository;
-        this.vwItemRepository = vwItemRepository;
-        this.pedItemService = pedItemService;
+    @Override
+    public Optional<Item> findById(String id) {
+        return itemRepository.findItemByCodItem(id);
+    }
+
+    @Override
+    public List<Item> listEntity(Map<String, String> filters) {
+        Specification<Item> spec = SpecificationUtils.createSpecification(filters);
+        return itemRepository.findAll(spec);
     }
 
     @Override
     @Transactional
-    public Item save(@Nonnull final Item item) {
-
+    public Item save(@Nonnull Item item) {
         if (itemRepository.existsByCodItem(item.getCodItem())) {
             throw new ApiRequestException("Este código de item já existe!");
         }
 
-        System.out.println("item.getLibProducao()");
-        System.out.println(item.getLibProducao());
         item.setStatus(0);
         item.setDtCriacao(LocalDate.now());
         return itemRepository.saveAndFlush(item);
@@ -59,7 +60,6 @@ public class ItemService02 extends BaseService<Item, String> {
     @Override
     @Transactional
     public Item update(@Nonnull final Item itemInput) {
-
         Item item = itemRepository.findItemByCodItem(itemInput.getCodItem())
                 .orElseThrow(() -> new NotFoundRequestException("Item não cadastrado"));
 
@@ -104,7 +104,6 @@ public class ItemService02 extends BaseService<Item, String> {
         item.setLibCompra(itemInput.getLibCompra());
         item.setLibVenda(itemInput.getLibVenda());
         item.setLibProducao(itemInput.getLibProducao());
-
         return itemRepository.saveAndFlush(item);
     }
 
@@ -115,19 +114,23 @@ public class ItemService02 extends BaseService<Item, String> {
         itemRepository.deleteById(codItem);
     }
 
-    public Page<VwItem> pageVwItem(Pageable pageable, Map<String, String> filtros) {
+    @Override
+    public Page<VwItem> pageView(Pageable pageable, Map<String, String> filtros) {
         Specification<VwItem> spec = SpecificationUtils.createSpecification(filtros);
         return vwItemRepository.findAll(spec, pageable);
     }
 
+    @Override
     public void checkDelete(String codItem) {
         if (!itemRepository.existsByCodItem(codItem))
-            throw new NotFoundRequestException("Item não cadsatrado");
+            throw new NotFoundRequestException("Item não cadastrado");
 
         if (pedItemService.existsByCoditem(codItem))
             throw new ApiRequestException("Exclusão inválida, existem pedidos para o item");
     }
 
+    @Override
+    @Transactional
     public void archive(String codItem) {
         Item item = itemRepository.findItemByCodItem(codItem)
                 .orElseThrow(() -> new NotFoundRequestException("Item não cadastrado"));
@@ -136,6 +139,8 @@ public class ItemService02 extends BaseService<Item, String> {
         itemRepository.saveAndFlush(item);
     }
 
+    @Override
+    @Transactional
     public void unarchive(String codItem) {
         Item item = itemRepository.findItemByCodItem(codItem)
                 .orElseThrow(() -> new NotFoundRequestException("Item não cadastrado"));

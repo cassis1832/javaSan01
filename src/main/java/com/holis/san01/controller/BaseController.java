@@ -1,62 +1,38 @@
 package com.holis.san01.controller;
 
-import com.holis.san01.mapper.BaseMapper;
 import com.holis.san01.model.local.ApiResponse02;
-import com.holis.san01.services.BaseService;
+import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Map;
 
 /**
- * Controller base genérico com suporte a paginação e filtros dinâmicos.
+ * Controller Base
  *
- * @param <E>  Entidade
- * @param <D>  DTO
- * @param <ID> Tipo do ID
+ * @param <DTO>
+ * @param <ID>
+ * @param <VIEW>
  */
-public abstract class BaseController<E, D, ID> {
+public interface BaseController<DTO, ID, VIEW> {
 
-    protected final BaseService<E, ID> service;
-    protected final BaseMapper<E, D> mapper;
+    ResponseEntity<ApiResponse02<DTO>> buscarPorId(@RequestParam(name = "id") ID id);
 
-    protected BaseController(BaseService<E, ID> service, BaseMapper<E, D> mapper) {
-        this.service = service;
-        this.mapper = mapper;
-    }
+    ResponseEntity<ApiResponse02<DTO>> criar(@RequestBody @Valid DTO dto);
 
-    @GetMapping
-    public ResponseEntity<ApiResponse02<D>> buscarPorId(@RequestParam(name = "id") ID id) {
-        return service.findById(id)
-                .map(entidade -> ResponseEntity.ok(ApiResponse02.success(mapper.toDto(entidade))))
-                .orElse(ResponseEntity.status(200).body(ApiResponse02.errorMessage("Registro não encontrado")));
-    }
+    ResponseEntity<ApiResponse02<DTO>> alterar(@RequestBody @Valid DTO dto);
 
-    @GetMapping("/list")
-    public ResponseEntity<ApiResponse02<List<D>>> listar(@RequestParam(required = false) Map<String, String> filtros) {
-        List<E> entidades = service.findList(filtros);
-        List<D> dtos = mapper.toDtoList(entidades);
-        return ResponseEntity.ok(ApiResponse02.success(dtos));
-    }
+    ResponseEntity<ApiResponse02<Void>> excluir(@RequestParam(name = "id") ID id);
 
-    @PostMapping
-    public ResponseEntity<ApiResponse02<D>> criar(@RequestBody D dto) {
-        E entidade = mapper.toEntity(dto);
-        E salvo = service.save(entidade);
-        return ResponseEntity.ok(ApiResponse02.success(mapper.toDto(salvo), "Registro criado com sucesso"));
-    }
+    ResponseEntity<ApiResponse02<List<DTO>>> listar(@RequestParam(required = false) Map<String, String> filtros);
 
-    @PutMapping
-    public ResponseEntity<ApiResponse02<D>> atualizar(@RequestBody D dto) {
-        E entidade = mapper.toEntity(dto);
-        E atualizado = service.update(entidade);
-        return ResponseEntity.ok(ApiResponse02.success(mapper.toDto(atualizado), "Registro atualizado com sucesso"));
-    }
+    ResponseEntity<ApiResponse02<Page<VIEW>>> listarPagina(Pageable pageable, @RequestParam(required = false) Map<String, String> filtros);
 
-    @DeleteMapping
-    public ResponseEntity<ApiResponse02<Void>> excluir(@RequestParam(name = "id") ID id) {
-        service.deleteById(id);
-        return ResponseEntity.ok(ApiResponse02.success(null, "Registro excluído com sucesso"));
-    }
+    ResponseEntity<ApiResponse02<Void>> arquivar(@RequestParam(name = "id") ID id);
+
+    ResponseEntity<ApiResponse02<Void>> desarquivar(@RequestParam(name = "id") ID id);
 }
