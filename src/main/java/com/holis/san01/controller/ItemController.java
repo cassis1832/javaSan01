@@ -20,6 +20,7 @@ import java.util.List;
 /**
  * Controller para tratamento de Itens
  */
+@Deprecated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/itemsXXX", produces = MediaType.APPLICATION_JSON_VALUE)

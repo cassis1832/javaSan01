@@ -29,6 +29,7 @@ import static com.holis.san01.model.local.Constantes.STATUS_ATIVO;
 /**
  * Service para tratamento da tabela itens
  */
+@Deprecated
 @Service
 @RequiredArgsConstructor
 public class ItemService {

@@ -8,6 +8,7 @@ import org.springframework.data.jpa.domain.Specification;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,10 +20,16 @@ public class SpecificationUtils {
 
     private static final Pattern OPERATOR_PATTERN = Pattern.compile("^(<=|>=|<|>|=)?(.*)$");
 
+    private static final Set<String> PAGEABLE_PARAMS = Set.of(
+            "page", "size", "sort", "direction", "sortField", "sortDirection",
+            "pageNumber", "pageSize"
+    );
+
     public static <T> Specification<T> createSpecification(Map<String, String> filters) {
         return (root, query, cb) -> {
             Predicate[] predicates = filters.entrySet().stream()
                     .filter(e -> e.getValue() != null && !e.getValue().isBlank())
+                    .filter(e -> !PAGEABLE_PARAMS.contains(e.getKey())) // ← Filtrar parâmetros de paginação
                     .map(e -> buildPredicate(root.get(e.getKey()), e.getValue().trim(), cb))
                     .toArray(Predicate[]::new);
 

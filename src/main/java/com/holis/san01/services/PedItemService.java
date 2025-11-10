@@ -29,7 +29,7 @@ public class PedItemService {
 
     private final PedItemRepository pedIRepository;
     private final VwPedItemRepository vwPedIRepository;
-    private final ItemService itemService;
+    private final ItemService03 itemService;
 
     /**
      * Ler um item do pedido de venda por ID
@@ -99,7 +99,7 @@ public class PedItemService {
     public PedItem create(
             @Nonnull final PedItem pedItem) {
 
-        itemService.findItemByCodItem(pedItem.getCodItem());
+        itemService.findById(pedItem.getCodItem());
         return pedIRepository.saveAndFlush(pedItem);
     }
 

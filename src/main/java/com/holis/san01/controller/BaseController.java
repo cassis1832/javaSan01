@@ -20,19 +20,28 @@ import java.util.Map;
  */
 public interface BaseController<DTO, ID, VIEW> {
 
-    ResponseEntity<ApiResponse02<DTO>> buscarPorId(@RequestParam(name = "id") ID id);
+    ResponseEntity<ApiResponse02<DTO>> buscarPorId(
+            @RequestParam(name = "id") ID id);
 
-    ResponseEntity<ApiResponse02<DTO>> criar(@RequestBody @Valid DTO dto);
+    ResponseEntity<ApiResponse02<DTO>> criar(
+            @RequestBody @Valid DTO dto);
 
-    ResponseEntity<ApiResponse02<DTO>> alterar(@RequestBody @Valid DTO dto);
+    ResponseEntity<ApiResponse02<DTO>> alterar(
+            @RequestBody @Valid DTO dto);
 
-    ResponseEntity<ApiResponse02<Void>> excluir(@RequestParam(name = "id") ID id);
+    ResponseEntity<ApiResponse02<Void>> excluir(
+            @RequestParam(name = "id") ID id);
 
-    ResponseEntity<ApiResponse02<List<DTO>>> listar(@RequestParam(required = false) Map<String, String> filtros);
+    ResponseEntity<ApiResponse02<List<DTO>>> listar(
+            @RequestParam(required = false) Map<String, String> filtros);
 
-    ResponseEntity<ApiResponse02<Page<VIEW>>> listarPagina(Pageable pageable, @RequestParam(required = false) Map<String, String> filtros);
+    ResponseEntity<ApiResponse02<Page<VIEW>>> listarPagina(
+            Pageable pageable,
+            @RequestParam(required = false) Map<String, String> filtros);
 
-    ResponseEntity<ApiResponse02<Void>> arquivar(@RequestParam(name = "id") ID id);
+    ResponseEntity<ApiResponse02<Void>> arquivar(
+            @RequestParam(name = "id") ID id);
 
-    ResponseEntity<ApiResponse02<Void>> desarquivar(@RequestParam(name = "id") ID id);
+    ResponseEntity<ApiResponse02<Void>> desarquivar(
+            @RequestParam(name = "id") ID id);
 }

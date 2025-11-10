@@ -33,7 +33,8 @@ public class ItemController03 implements BaseController<ItemDTO, String, VwItem>
 
     @Override
     @GetMapping
-    public ResponseEntity<ApiResponse02<ItemDTO>> buscarPorId(@RequestParam(name = "id") String id) {
+    public ResponseEntity<ApiResponse02<ItemDTO>> buscarPorId(
+            @RequestParam(name = "id") String id) {
         return itemService.findById(id)
                 .map(entidade -> ResponseEntity.ok(ApiResponse02.success(itemMapper.toDto(entidade))))
                 .orElse(ResponseEntity.status(200).body(ApiResponse02.errorMessage("Item não encontrado")));
@@ -41,7 +42,8 @@ public class ItemController03 implements BaseController<ItemDTO, String, VwItem>
 
     @Override
     @GetMapping("/list")
-    public ResponseEntity<ApiResponse02<List<ItemDTO>>> listar(@RequestParam(required = false) Map<String, String> filtros) {
+    public ResponseEntity<ApiResponse02<List<ItemDTO>>> listar(
+            @RequestParam(required = false) Map<String, String> filtros) {
         List<Item> entidades = itemService.listEntity(filtros);
         List<ItemDTO> dtos = itemMapper.toDtoList(entidades);
         return ResponseEntity.ok(ApiResponse02.success(dtos, "Lista de Itens"));
@@ -49,7 +51,8 @@ public class ItemController03 implements BaseController<ItemDTO, String, VwItem>
 
     @Override
     @PostMapping
-    public ResponseEntity<ApiResponse02<ItemDTO>> criar(@RequestBody @Valid ItemDTO dto) {
+    public ResponseEntity<ApiResponse02<ItemDTO>> criar(
+            @RequestBody @Valid ItemDTO dto) {
         Item salvo = itemService.save(itemMapper.toEntity(dto));
         ItemDTO salvoDTO = itemMapper.toDto(salvo);
         return ResponseEntity.ok(ApiResponse02.success(salvoDTO, "Item criado com sucesso"));
@@ -57,7 +60,8 @@ public class ItemController03 implements BaseController<ItemDTO, String, VwItem>
 
     @Override
     @PutMapping
-    public ResponseEntity<ApiResponse02<ItemDTO>> alterar(@RequestBody @Valid ItemDTO dto) {
+    public ResponseEntity<ApiResponse02<ItemDTO>> alterar(
+            @RequestBody @Valid ItemDTO dto) {
         Item salvo = itemService.update(itemMapper.toEntity(dto));
         ItemDTO salvoDTO = itemMapper.toDto(salvo);
         return ResponseEntity.ok(ApiResponse02.success(salvoDTO, "Item alterado com sucesso"));
@@ -65,7 +69,8 @@ public class ItemController03 implements BaseController<ItemDTO, String, VwItem>
 
     @Override
     @DeleteMapping
-    public ResponseEntity<ApiResponse02<Void>> excluir(@RequestParam(name = "codItem") String codItem) {
+    public ResponseEntity<ApiResponse02<Void>> excluir(
+            @RequestParam(name = "codItem") String codItem) {
         itemService.deleteById(codItem);
         return ResponseEntity.ok(ApiResponse02.success("Item excluído sucesso"));
     }
@@ -73,27 +78,31 @@ public class ItemController03 implements BaseController<ItemDTO, String, VwItem>
     @Override
     @GetMapping("/page")
     public ResponseEntity<ApiResponse02<Page<VwItem>>> listarPagina(
-            Pageable pageable, @RequestParam(required = false) Map<String, String> filtros) {
+            Pageable pageable,
+            @RequestParam(required = false) Map<String, String> filtros) {
         Page<VwItem> pagina = itemService.pageView(pageable, filtros);
         return ResponseEntity.ok(ApiResponse02.success(pagina, "Pagina de VwItem"));
     }
 
     @Override
     @PutMapping("/archive")
-    public ResponseEntity<ApiResponse02<Void>> arquivar(@RequestParam(name = "codItem", defaultValue = "") String codItem) {
+    public ResponseEntity<ApiResponse02<Void>> arquivar(
+            @RequestParam(name = "codItem", defaultValue = "") String codItem) {
         itemService.archive(codItem);
         return ResponseEntity.ok(ApiResponse02.success("Item arquivado com sucesso"));
     }
 
     @Override
     @PutMapping("/unarchive")
-    public ResponseEntity<ApiResponse02<Void>> desarquivar(@RequestParam(name = "codItem", defaultValue = "") String codItem) {
+    public ResponseEntity<ApiResponse02<Void>> desarquivar(
+            @RequestParam(name = "codItem", defaultValue = "") String codItem) {
         itemService.unarchive(codItem);
         return ResponseEntity.ok(ApiResponse02.success("Item desarquivado com sucesso"));
     }
 
     @GetMapping("/checkDelete")
-    public ResponseEntity<ApiResponse02<Void>> checkExcluir(@RequestParam(name = "codItem") String codItem) {
+    public ResponseEntity<ApiResponse02<Void>> checkExcluir(
+            @RequestParam(name = "codItem") String codItem) {
         itemService.checkDelete(codItem);
         return ResponseEntity.ok(ApiResponse02.success("Item pode ser excluído"));
     }
