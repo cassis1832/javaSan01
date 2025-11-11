@@ -13,31 +13,74 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Classe utilitária para criação dinâmica de Specifications JPA
- * com suporte a operadores (> >= < <= =) e LIKE (%valor%).
+ * Classe utilitária para criação dinâmica de Specifications JPA,
+ * com suporte a operadores (> >= < <= =),
+ * LIKE (%valor%) e OR-LIKE para buscas globais (filterText).
  */
 public class SpecificationUtils {
 
     private static final Pattern OPERATOR_PATTERN = Pattern.compile("^(<=|>=|<|>|=)?(.*)$");
 
     private static final Set<String> PAGEABLE_PARAMS = Set.of(
-            "page", "size", "sort", "direction", "sortField", "sortDirection",
-            "pageNumber", "pageSize"
+            "page", "size", "sort", "direction",
+            "sortField", "sortDirection", "pageNumber", "pageSize", "filterText"
     );
 
-    public static <T> Specification<T> createSpecification(Map<String, String> filters) {
+    /**
+     * Cria uma Specification baseada em um Map de filtros.
+     * Permite definir um campo especial 'filterText' que aplica OR-LIKE
+     * automaticamente em vários campos definidos na aplicação.
+     */
+    public static <T> Specification<T> createSpecification(
+            Map<String, String> filters,
+            String... camposFilterText
+    ) {
         return (root, query, cb) -> {
+
+            // 🔹 Cria filtros diretos (sem o filterText)
             Predicate[] predicates = filters.entrySet().stream()
                     .filter(e -> e.getValue() != null && !e.getValue().isBlank())
-                    .filter(e -> !PAGEABLE_PARAMS.contains(e.getKey())) // ← Filtrar parâmetros de paginação
+                    .filter(e -> !PAGEABLE_PARAMS.contains(e.getKey()))
                     .map(e -> buildPredicate(root.get(e.getKey()), e.getValue().trim(), cb))
                     .toArray(Predicate[]::new);
 
-            return cb.and(predicates);
+            Predicate mainPredicate = cb.and(predicates);
+
+            // 🔹 Se houver um "filterText", aplica OR-LIKE nos campos informados
+            String filterText = filters.get("filterText");
+
+            if (filterText != null && !filterText.isBlank() && camposFilterText.length > 0) {
+                Predicate orLikePredicate = buildOrLikePredicate(filterText, root, cb, camposFilterText);
+                mainPredicate = cb.and(mainPredicate, orLikePredicate);
+            }
+
+            return mainPredicate;
         };
     }
 
-    private static Predicate buildPredicate(Path<?> path, String rawValue, CriteriaBuilder cb) {
+    private static <T> Predicate buildOrLikePredicate(
+            String termo,
+            jakarta.persistence.criteria.Root<T> root,
+            CriteriaBuilder cb, String... campos) {
+
+        if (termo == null || termo.isBlank()) {
+            return cb.conjunction();
+        }
+
+        String likeValue = "%" + termo.toLowerCase() + "%";
+        Predicate[] likes = new Predicate[campos.length];
+
+        for (int i = 0; i < campos.length; i++) {
+            likes[i] = cb.like(cb.lower(root.get(campos[i]).as(String.class)), likeValue);
+        }
+
+        return cb.or(likes);
+    }
+
+    private static Predicate buildPredicate(
+            Path<?> path,
+            String rawValue,
+            CriteriaBuilder cb) {
         Class<?> type = path.getJavaType();
         Matcher matcher = OPERATOR_PATTERN.matcher(rawValue);
 
@@ -116,23 +159,14 @@ public class SpecificationUtils {
         return cb.equal(path, value);
     }
 
-    private static Number parseNumber(String value, Class<?> type) {
-        if (type.equals(Integer.class) || type.equals(int.class)) {
-            return Integer.parseInt(value);
-        }
-        if (type.equals(Long.class) || type.equals(long.class)) {
-            return Long.parseLong(value);
-        }
-        if (type.equals(Double.class) || type.equals(double.class)) {
-            return Double.parseDouble(value);
-        }
-        if (type.equals(Float.class) || type.equals(float.class)) {
-            return Float.parseFloat(value);
-        }
-        if (type.equals(Short.class) || type.equals(short.class)) {
-            return Short.parseShort(value);
-        }
+    private static Number parseNumber(
+            String value,
+            Class<?> type) {
+        if (type.equals(Integer.class) || type.equals(int.class)) return Integer.parseInt(value);
+        if (type.equals(Long.class) || type.equals(long.class)) return Long.parseLong(value);
+        if (type.equals(Double.class) || type.equals(double.class)) return Double.parseDouble(value);
+        if (type.equals(Float.class) || type.equals(float.class)) return Float.parseFloat(value);
+        if (type.equals(Short.class) || type.equals(short.class)) return Short.parseShort(value);
         throw new NumberFormatException("Tipo numérico não suportado: " + type);
     }
 }
-

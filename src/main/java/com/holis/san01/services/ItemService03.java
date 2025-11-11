@@ -5,6 +5,7 @@ import com.holis.san01.exceptions.NotFoundRequestException;
 import com.holis.san01.model.Item;
 import com.holis.san01.model.VwItem;
 import com.holis.san01.repository.ItemRepository;
+import com.holis.san01.repository.PedItemRepository;
 import com.holis.san01.repository.VwItemRepository;
 import com.holis.san01.utils.SpecificationUtils;
 import jakarta.annotation.Nonnull;
@@ -32,7 +33,7 @@ public class ItemService03 implements BaseService<Item, String, VwItem> {
 
     private final ItemRepository itemRepository;
     private final VwItemRepository vwItemRepository;
-    private final PedItemService pedItemService;
+    private final PedItemRepository pedItemRepository;
 
     @Override
     public Optional<Item> findById(String id) {
@@ -116,7 +117,12 @@ public class ItemService03 implements BaseService<Item, String, VwItem> {
 
     @Override
     public Page<VwItem> pageView(Pageable pageable, Map<String, String> filtros) {
-        Specification<VwItem> spec = SpecificationUtils.createSpecification(filtros);
+
+        Specification<VwItem> spec = SpecificationUtils.createSpecification(
+                filtros,                                    // Map com parâmetros da requisição
+                "descricao", "codItem"     // campos que serão usados no OR do filterText
+        );
+
         return vwItemRepository.findAll(spec, pageable);
     }
 
@@ -125,7 +131,7 @@ public class ItemService03 implements BaseService<Item, String, VwItem> {
         if (!itemRepository.existsByCodItem(codItem))
             throw new NotFoundRequestException("Item não cadastrado");
 
-        if (pedItemService.existsByCoditem(codItem))
+        if (pedItemRepository.existsByCodItem(codItem))
             throw new ApiRequestException("Exclusão inválida, existem pedidos para o item");
     }
 

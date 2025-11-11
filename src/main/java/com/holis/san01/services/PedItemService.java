@@ -4,6 +4,7 @@ import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.model.PedItem;
 import com.holis.san01.model.VwPedItem;
 import com.holis.san01.model.local.FiltroPesquisa;
+import com.holis.san01.repository.ItemRepository;
 import com.holis.san01.repository.PedItemRepository;
 import com.holis.san01.repository.VwPedItemRepository;
 import com.holis.san01.specs.VwPedItemSpecifications;
@@ -29,7 +30,7 @@ public class PedItemService {
 
     private final PedItemRepository pedIRepository;
     private final VwPedItemRepository vwPedIRepository;
-    private final ItemService03 itemService;
+    private final ItemRepository itemRepository;
 
     /**
      * Ler um item do pedido de venda por ID
@@ -99,7 +100,7 @@ public class PedItemService {
     public PedItem create(
             @Nonnull final PedItem pedItem) {
 
-        itemService.findById(pedItem.getCodItem());
+        itemRepository.findById(pedItem.getCodItem());
         return pedIRepository.saveAndFlush(pedItem);
     }
 
