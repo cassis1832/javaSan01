@@ -29,7 +29,7 @@ import static com.holis.san01.model.local.Constantes.STATUS_ATIVO;
  */
 @Service
 @RequiredArgsConstructor
-public class ItemService03 implements BaseService<Item, String, VwItem> {
+public class ItemService implements BaseService<Item, String, VwItem> {
 
     private final ItemRepository itemRepository;
     private final VwItemRepository vwItemRepository;
@@ -37,13 +37,7 @@ public class ItemService03 implements BaseService<Item, String, VwItem> {
 
     @Override
     public Optional<Item> findById(String id) {
-        return itemRepository.findItemByCodItem(id);
-    }
-
-    @Override
-    public List<Item> listEntity(Map<String, String> filters) {
-        Specification<Item> spec = SpecificationUtils.createSpecification(filters);
-        return itemRepository.findAll(spec);
+        return itemRepository.findByCodItem(id);
     }
 
     @Override
@@ -61,7 +55,7 @@ public class ItemService03 implements BaseService<Item, String, VwItem> {
     @Override
     @Transactional
     public Item update(@Nonnull final Item itemInput) {
-        Item item = itemRepository.findItemByCodItem(itemInput.getCodItem())
+        Item item = itemRepository.findByCodItem(itemInput.getCodItem())
                 .orElseThrow(() -> new NotFoundRequestException("Item não cadastrado"));
 
         item.setCodItem(itemInput.getCodItem());
@@ -116,8 +110,13 @@ public class ItemService03 implements BaseService<Item, String, VwItem> {
     }
 
     @Override
-    public Page<VwItem> pageView(Pageable pageable, Map<String, String> filtros) {
+    public List<Item> findList(Map<String, String> filters) {
+        Specification<Item> spec = SpecificationUtils.createSpecification(filters);
+        return itemRepository.findAll(spec);
+    }
 
+    @Override
+    public Page<VwItem> findPage(Pageable pageable, Map<String, String> filtros) {
         Specification<VwItem> spec = SpecificationUtils.createSpecification(
                 filtros,                                    // Map com parâmetros da requisição
                 "descricao", "codItem"     // campos que serão usados no OR do filterText
@@ -126,7 +125,6 @@ public class ItemService03 implements BaseService<Item, String, VwItem> {
         return vwItemRepository.findAll(spec, pageable);
     }
 
-    @Override
     public void checkDelete(String codItem) {
         if (!itemRepository.existsByCodItem(codItem))
             throw new NotFoundRequestException("Item não cadastrado");
@@ -135,20 +133,18 @@ public class ItemService03 implements BaseService<Item, String, VwItem> {
             throw new ApiRequestException("Exclusão inválida, existem pedidos para o item");
     }
 
-    @Override
     @Transactional
     public void archive(String codItem) {
-        Item item = itemRepository.findItemByCodItem(codItem)
+        Item item = itemRepository.findByCodItem(codItem)
                 .orElseThrow(() -> new NotFoundRequestException("Item não cadastrado"));
 
         item.setStatus(STATUS_ARQUIVADO);
         itemRepository.saveAndFlush(item);
     }
 
-    @Override
     @Transactional
     public void unarchive(String codItem) {
-        Item item = itemRepository.findItemByCodItem(codItem)
+        Item item = itemRepository.findByCodItem(codItem)
                 .orElseThrow(() -> new NotFoundRequestException("Item não cadastrado"));
 
         item.setStatus(STATUS_ATIVO);

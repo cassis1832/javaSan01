@@ -86,7 +86,7 @@ public class TituloApService {
 
     public TituloAp create(@NotNull TituloAp tituloAp) {
 
-        entidadeRepository.findEntidadeByCodEntd(tituloAp.getCodEntd())
+        entidadeRepository.findByCodEntd(tituloAp.getCodEntd())
                 .orElseThrow(() -> new NotFoundRequestException("Fornecedor não encontrado"));
 
         if (tituloAp.getNumDoc() == null || tituloAp.getNumDoc().equals(0)) {
@@ -117,7 +117,7 @@ public class TituloApService {
 
         // Verificar o emitente do titulo
         if (!tituloApDto.getCodEntd().equals(tituloAp.getCodEntd())) {
-            entidadeRepository.findEntidadeByCodEntd(tituloApDto.getCodEntd())
+            entidadeRepository.findByCodEntd(tituloApDto.getCodEntd())
                     .orElseThrow(() -> new NotFoundRequestException("Fornecedor não encontrado"));
         }
 

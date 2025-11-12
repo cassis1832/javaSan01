@@ -4,6 +4,7 @@ import com.holis.san01.model.Entidade;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -13,5 +14,6 @@ public interface EntidadeRepository extends JpaRepository<Entidade, Integer>, Jp
 
     boolean existsByCodEntd(Integer codEntd);
 
-    Optional<Entidade> findEntidadeByCodEntd(Integer codEntd);
+    @Query("SELECT e FROM Entidade e WHERE e.codEntd = :codEntd")
+    Optional<Entidade> findByCodEntd(@Param("codEntd") Integer codEntd);
 }

@@ -83,7 +83,7 @@ public class PedVendaService {
     @Transactional
     public PedVenda create(@Nonnull final PedVenda pedVenda) {
 
-        entidadeService.getEntidade(pedVenda.getCodEntd());
+        entidadeService.findById(pedVenda.getCodEntd());
 
         if (pedVenda.getNrPedido() == null || pedVenda.getNrPedido() == 0) {
             var nrPedido = 0;

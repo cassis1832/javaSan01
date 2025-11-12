@@ -25,13 +25,7 @@ public interface BaseService<ENTITY, ID, VIEW> {
 
     void deleteById(@Nonnull ID id);
 
-    List<ENTITY> listEntity(Map<String, String> filters);
+    List<ENTITY> findList(Map<String, String> filters);
 
-    Page<VIEW> pageView(Pageable pageable, Map<String, String> filtros);
-
-    void checkDelete(ID id);
-
-    void archive(ID id);
-
-    void unarchive(ID id);
+    Page<VIEW> findPage(Pageable pageable, Map<String, String> filtros);
 }

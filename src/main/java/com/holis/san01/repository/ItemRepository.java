@@ -18,7 +18,7 @@ public interface ItemRepository extends JpaRepository<Item, String>, JpaSpecific
     boolean existsByCodItem(@Param("codItem") String codItem);
 
     @Query("SELECT i FROM Item i WHERE LOWER(i.codItem) = LOWER(:codItem)")
-    Optional<Item> findItemByCodItem(@Param("codItem") String codItem);
+    Optional<Item> findByCodItem(@Param("codItem") String codItem);
 
     @Query("SELECT DISTINCT i.codFamilia FROM Item i WHERE i.codFamilia <> '' ORDER BY i.codFamilia")
     List<String> listFamilias();

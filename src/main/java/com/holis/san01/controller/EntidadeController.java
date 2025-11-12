@@ -1,20 +1,22 @@
 package com.holis.san01.controller;
 
 import com.holis.san01.mapper.EntidadeMapper;
-import com.holis.san01.model.local.ApiResponse;
 import com.holis.san01.model.Entidade;
 import com.holis.san01.model.EntidadeDTO;
-import com.holis.san01.model.local.FiltroPesquisa;
+import com.holis.san01.model.local.ApiResponse;
+import com.holis.san01.model.local.ApiResponse02;
 import com.holis.san01.services.EntidadeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Controller para tratamento de Entidades
@@ -22,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/entds", produces = MediaType.APPLICATION_JSON_VALUE)
-public class EntidadeController {
+public class EntidadeController implements BaseController<EntidadeDTO, Integer, Entidade> {
 
     private final EntidadeService entidadeService;
     private final EntidadeMapper entidadeMapper;
@@ -30,45 +32,57 @@ public class EntidadeController {
     /**
      * Ler um determinado registro pelo código da entidade
      */
+    @Override
     @GetMapping
-    public ResponseEntity<ApiResponse> getEntidade(
-            @RequestParam(name = "codEntd", defaultValue = "0") Integer codEntd) {
-
-        Entidade entidade = entidadeService.getEntidade(codEntd);
-        return new ResponseEntity<>(new ApiResponse(true, entidadeMapper.toDTO(entidade)), HttpStatus.OK);
+    public ResponseEntity<ApiResponse02<EntidadeDTO>> buscarPorId(
+            @RequestParam(name = "id") Integer id) {
+        return entidadeService.findById(id)
+                .map(entidade -> ResponseEntity.ok(ApiResponse02.success(entidadeMapper.toDto(entidade))))
+                .orElse(ResponseEntity.status(200).body(ApiResponse02.errorMessage("Item não encontrado")));
     }
 
-    /**
-     * Ler uma lista de entidades paginada com filtro
-     */
-    @GetMapping("/page")
-    public ResponseEntity<ApiResponse> pageEntidade(
-            @ModelAttribute FiltroPesquisa filtroPesquisa) {
-
-        var page = entidadeService.pageEntidade(filtroPesquisa);
-        return new ResponseEntity<>(new ApiResponse(true, page), HttpStatus.OK);
-    }
-
-    /**
-     * Incluir um novo registro de entidade
-     */
+    @Override
     @PostMapping
-    public ResponseEntity<ApiResponse> create(
-            @RequestBody @Valid EntidadeDTO entidadeDTO) {
-
-        Entidade entidade = entidadeService.create(entidadeMapper.toEntity(entidadeDTO));
-        return new ResponseEntity<>(new ApiResponse(true, entidadeMapper.toDTO(entidade)), HttpStatus.CREATED);
+    public ResponseEntity<ApiResponse02<EntidadeDTO>> criar(
+            @RequestBody @Valid EntidadeDTO dto) {
+        Entidade salvo = entidadeService.save(entidadeMapper.toEntity(dto));
+        EntidadeDTO salvoDTO = entidadeMapper.toDto(salvo);
+        return ResponseEntity.ok(ApiResponse02.success(salvoDTO, "Item criado com sucesso"));
     }
 
-    /**
-     * Alterar um registro existente
-     */
+    @Override
     @PutMapping
-    public ResponseEntity<ApiResponse> update(
-            @RequestBody @Valid EntidadeDTO entidadeDTO) {
+    public ResponseEntity<ApiResponse02<EntidadeDTO>> alterar(
+            @RequestBody @Valid EntidadeDTO dto) {
+        Entidade salvo = entidadeService.update(entidadeMapper.toEntity(dto));
+        EntidadeDTO salvoDTO = entidadeMapper.toDto(salvo);
+        return ResponseEntity.ok(ApiResponse02.success(salvoDTO, "Item alterado com sucesso"));
+    }
 
-        Entidade entidade = entidadeService.update(entidadeMapper.toEntity(entidadeDTO));
-        return new ResponseEntity<>(new ApiResponse(true, entidadeMapper.toDTO(entidade)), HttpStatus.OK);
+    @Override
+    @DeleteMapping
+    public ResponseEntity<ApiResponse02<Void>> excluir(
+            @RequestParam(name = "id") Integer id) {
+        entidadeService.deleteById(id);
+        return ResponseEntity.ok(ApiResponse02.success("Item excluído sucesso"));
+    }
+
+    @Override
+    @GetMapping("/list")
+    public ResponseEntity<ApiResponse02<List<EntidadeDTO>>> buscarLista(
+            @RequestParam(required = false) Map<String, String> filtros) {
+        List<Entidade> entidades = entidadeService.findList(filtros);
+        List<EntidadeDTO> dtos = entidadeMapper.toDtoList(entidades);
+        return ResponseEntity.ok(ApiResponse02.success(dtos, "Lista de Itens"));
+    }
+
+    @Override
+    @GetMapping("/page")
+    public ResponseEntity<ApiResponse02<Page<Entidade>>> buscarPagina(
+            Pageable pageable,
+            @RequestParam(required = false) Map<String, String> filtros) {
+        Page<Entidade> pagina = entidadeService.findPage(pageable, filtros);
+        return ResponseEntity.ok(ApiResponse02.success(pagina, "Pagina de Entidades"));
     }
 
     @GetMapping("/checkDelete")
@@ -77,16 +91,5 @@ public class EntidadeController {
 
         entidadeService.checkDelete(codEntd);
         return new ResponseEntity<>(new ApiResponse(true, "Entidade pode ser excluído"), HttpStatus.OK);
-    }
-
-    /**
-     * Excluir um registro
-     */
-    @DeleteMapping
-    public ResponseEntity<ApiResponse> delete(
-            @RequestParam(name = "codEntd") Integer codEntd) {
-
-        entidadeService.delete(codEntd);
-        return new ResponseEntity<>(new ApiResponse(true, "Entidade excluído com sucesso"), HttpStatus.OK);
     }
 }
