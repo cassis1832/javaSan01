@@ -19,7 +19,7 @@ public class ParamService {
     @Transactional
     public int getNextSequence(final String codParam) {
 
-        Param param = paramRepository.findParamByCodParam(codParam)
+        Param param = paramRepository.findByCodParam(codParam)
                 .orElseThrow(() -> new ApiRequestException("Parâmetro " + codParam + " não encontrado"));
 
         param.setSequencia(param.getSequencia() + 1);

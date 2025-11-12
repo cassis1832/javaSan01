@@ -7,5 +7,4 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 @Immutable
 public interface VwTituloApRepository extends JpaRepository<VwTituloAp, Integer>, JpaSpecificationExecutor<VwTituloAp> {
-
 }

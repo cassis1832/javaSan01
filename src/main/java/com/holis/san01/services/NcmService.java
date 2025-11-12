@@ -21,14 +21,12 @@ public class NcmService {
 
     private final NcmRepository ncmRepository;
 
-    public Ncm ler(final String codNcm) {
-
-        return ncmRepository.findNcmByCodNcm(codNcm)
+    public Ncm findById(final String codNcm) {
+        return ncmRepository.findByCodNcm(codNcm)
                 .orElseThrow(() -> new ApiRequestException("NCM não encontrada"));
     }
 
     public Page<Ncm> listarPaging(final int status, final String filterText, final Pageable pageable) {
-
         Page<Ncm> ncms;
 
         if (StringUtils.isBlank(filterText)) {
@@ -43,7 +41,7 @@ public class NcmService {
     @Transactional
     public Ncm incluir(final Ncm dto) {
 
-        Optional<Ncm> opt = ncmRepository.findNcmByCodNcm(dto.getCodNcm());
+        Optional<Ncm> opt = ncmRepository.findByCodNcm(dto.getCodNcm());
 
         if (opt.isPresent()) {
             throw new ApiRequestException("Este código de ncm já existe!");
@@ -55,7 +53,7 @@ public class NcmService {
     @Transactional
     public Ncm alterar(final Ncm dto) {
 
-        Ncm ncm = ncmRepository.findNcmByCodNcm(dto.getCodNcm())
+        Ncm ncm = ncmRepository.findByCodNcm(dto.getCodNcm())
                 .orElseThrow(() -> new ApiRequestException("Ncm não encontrado"));
 
         ncm.setCodNcm(dto.getCodNcm());
@@ -68,7 +66,7 @@ public class NcmService {
     @Transactional
     public void excluir(final String codNcm) {
 
-        Ncm ncm = ncmRepository.findNcmByCodNcm(codNcm)
+        Ncm ncm = ncmRepository.findByCodNcm(codNcm)
                 .orElseThrow(() -> new ApiRequestException("Ncm não encontrado"));
         ncmRepository.deleteById(ncm.getCodNcm());
     }

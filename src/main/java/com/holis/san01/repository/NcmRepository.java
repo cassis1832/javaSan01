@@ -4,16 +4,17 @@ import com.holis.san01.model.Ncm;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface NcmRepository extends JpaRepository<Ncm, String> {
+public interface NcmRepository extends JpaRepository<Ncm, String>, JpaSpecificationExecutor<Ncm> {
 
     @Query("select t from Ncm t Where upper(t.codNcm) =  upper(?1)")
-    Optional<Ncm> findNcmByCodNcm(String codNcm);
+    Optional<Ncm> findByCodNcm(String codNcm);
 
     @Query("select i from Ncm i Where i.status  = ?1")
     Page<Ncm> listNcm(int status, Pageable pageable);

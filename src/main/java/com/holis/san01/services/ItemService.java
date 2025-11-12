@@ -106,7 +106,7 @@ public class ItemService implements BaseService<Item, String, VwItem> {
     @Transactional
     public void deleteById(@Nonnull String codItem) {
         checkDelete(codItem);
-        itemRepository.deleteById(codItem);
+        itemRepository.deleteByCodItem(codItem);
     }
 
     @Override

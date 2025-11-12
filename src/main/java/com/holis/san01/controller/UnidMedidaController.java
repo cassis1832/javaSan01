@@ -26,8 +26,7 @@ public class UnidMedidaController {
     @GetMapping
     public ResponseEntity<UnidMedida> findUnidMedidaByCodUnimed(
             @RequestParam(name = "codUniMed", defaultValue = "") String codUniMed) {
-
-        return ResponseEntity.status(HttpStatus.OK).body(unidMedidaService.findUnidMedidaByCodUnimed(codUniMed));
+        return ResponseEntity.status(HttpStatus.OK).body(unidMedidaService.findByCodUnimed(codUniMed));
     }
 
     /**

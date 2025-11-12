@@ -30,7 +30,7 @@ public class SituacaoController {
             @RequestParam(name = "objeto", defaultValue = "") String objeto,
             @RequestParam(name = "situacao", defaultValue = "") Integer codSit) {
 
-        Situacao situacao = situacaoService.findSituacaoBySituacao(objeto, codSit);
+        Situacao situacao = situacaoService.findBySituacao(objeto, codSit);
         return new ResponseEntity<>(new ApiResponse(true, situacao), HttpStatus.OK);
 
     }

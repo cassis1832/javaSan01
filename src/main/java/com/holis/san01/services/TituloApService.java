@@ -4,34 +4,32 @@ import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.exceptions.NotFoundRequestException;
 import com.holis.san01.model.TituloAp;
 import com.holis.san01.model.VwTituloAp;
-import com.holis.san01.model.local.FiltroPesquisa;
 import com.holis.san01.repository.EntidadeRepository;
 import com.holis.san01.repository.EspDocRepository;
 import com.holis.san01.repository.TituloApRepository;
 import com.holis.san01.repository.VwTituloApRepository;
-import com.holis.san01.specs.VwTituloApSpecifications;
+import com.holis.san01.utils.SpecificationUtils;
 import jakarta.annotation.Nonnull;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static com.holis.san01.model.local.Constantes.STATUS_ATIVO;
 import static com.holis.san01.model.local.Constantes.STATUS_DELETADO;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
-public class TituloApService {
+public class TituloApService implements BaseService<TituloAp, Integer, VwTituloAp> {
 
     private final TituloApRepository tituloApRepository;
     private final VwTituloApRepository vwTituloApRepository;
@@ -39,52 +37,17 @@ public class TituloApService {
     private final EspDocRepository espDocRepository;
     private final ParamService paramService;
 
-    public TituloAp findTituloAp(int id) {
-        return tituloApRepository.findTituloApById(id)
-                .orElseThrow(() -> new NotFoundRequestException("Título não encontrado"));
+    @Override
+    public Optional<TituloAp> findById(Integer id) {
+        return tituloApRepository.findTituloApById(id);
     }
 
-    public Page<VwTituloAp> pageVwTituloAp(@Nonnull FiltroPesquisa filtro) {
-        Specification<VwTituloAp> spec = Specification.where(null);
-
-        if (filtro.getStatus() != null)
-            spec = spec.and(VwTituloApSpecifications.hasStatus(filtro.getStatus()));
-
-        if (filtro.getCodEntd() != null && filtro.getCodEntd() != 0)
-            spec = spec.and(VwTituloApSpecifications.hasCodEntd(filtro.getCodEntd()));
-
-        if (!StringUtils.isBlank(filtro.getCodigo()))
-            spec = spec.and(VwTituloApSpecifications.hasCodEspDoc(filtro.getCodigo()));
-
-        if (filtro.getId() != null && filtro.getId() != 0)
-            spec = spec.and(VwTituloApSpecifications.hasDocId(filtro.getId()));
-
-        if (!StringUtils.isBlank(filtro.getFilterText()))
-            spec = spec.and(VwTituloApSpecifications.hasFiltro(filtro.getFilterText()));
-
-        if (filtro.getDtInicio() != null)
-            spec = spec.and(VwTituloApSpecifications.depoisDe(filtro.getDtInicio()));
-
-        if (filtro.getDtFim() != null)
-            spec = spec.and(VwTituloApSpecifications.antesDe(filtro.getDtFim()));
-
-        Sort sort;
-
-        if (filtro.getSortField().equalsIgnoreCase("")) {
-            sort = Sort.by(
-                    Sort.Order.asc("codEntd"),
-                    Sort.Order.asc("nrPedido")
-            );
-        } else {
-            sort = Sort.by(Sort.Direction.fromString(filtro.getSortDirection()), filtro.getSortField());
+    @Override
+    @Transactional
+    public TituloAp save(@Nonnull TituloAp tituloAp) {
+        if (tituloApRepository.existsById(tituloAp.getId())) {
+            throw new ApiRequestException("Este id já existe!");
         }
-
-        Pageable pageable = PageRequest.of(filtro.getPageIndex(), filtro.getSize(), sort);
-
-        return vwTituloApRepository.findAll(spec, pageable);
-    }
-
-    public TituloAp create(@NotNull TituloAp tituloAp) {
 
         entidadeRepository.findByCodEntd(tituloAp.getCodEntd())
                 .orElseThrow(() -> new NotFoundRequestException("Fornecedor não encontrado"));
@@ -107,44 +70,42 @@ public class TituloApService {
         return tituloApRepository.saveAndFlush(tituloAp);
     }
 
-    /**
-     * Alterar titulo existente
-     */
-    public TituloAp update(@NotNull TituloAp tituloApDto) {
-
-        TituloAp tituloAp = tituloApRepository.findTituloApById(tituloApDto.getId())
+    @Override
+    @Transactional
+    public TituloAp update(@Nonnull TituloAp novoTitulo) {
+        TituloAp tituloAp = tituloApRepository.findTituloApById(novoTitulo.getId())
                 .orElseThrow(() -> new NotFoundRequestException("Título não encontrado"));
 
         // Verificar o emitente do titulo
-        if (!tituloApDto.getCodEntd().equals(tituloAp.getCodEntd())) {
-            entidadeRepository.findByCodEntd(tituloApDto.getCodEntd())
+        if (!novoTitulo.getCodEntd().equals(tituloAp.getCodEntd())) {
+            entidadeRepository.findByCodEntd(novoTitulo.getCodEntd())
                     .orElseThrow(() -> new NotFoundRequestException("Fornecedor não encontrado"));
         }
 
-        if ((!tituloAp.getVlTitulo().equals(tituloApDto.getVlTitulo())) &&
+        if ((!tituloAp.getVlTitulo().equals(novoTitulo.getVlTitulo())) &&
                 (tituloAp.getVlTitulo().equals(BigDecimal.ZERO))) {
-            tituloAp.setVlOriginal(tituloApDto.getVlTitulo());
+            tituloAp.setVlOriginal(novoTitulo.getVlTitulo());
         }
 
         checkEspDoc(tituloAp.getCodEspDoc());
 
-        tituloAp.setNumDoc(tituloApDto.getNumDoc());
-        tituloAp.setVlTitulo(tituloApDto.getVlTitulo());
-        tituloAp.setDescricao(tituloApDto.getDescricao());
-        tituloAp.setStatus(tituloApDto.getStatus());
-        tituloAp.setDtLiquidac(tituloApDto.getDtLiquidac());
-        tituloAp.setDtPrevPag(tituloApDto.getDtPrevPag());
-        tituloAp.setDtVencto(tituloApDto.getDtVencto());
-        tituloAp.setCodEntd(tituloApDto.getCodEntd());
-        tituloAp.setDtVenctoOrigin(tituloApDto.getDtVenctoOrigin());
-        tituloAp.setCodEspDoc(tituloApDto.getCodEspDoc());
-        tituloAp.setObservacao(tituloApDto.getObservacao());
-        tituloAp.setParcelas(tituloApDto.getParcelas());
-        tituloAp.setParcela(tituloApDto.getParcela());
-        tituloAp.setDocId(tituloApDto.getDocId());
-        tituloAp.setSituacao(tituloApDto.getSituacao());
-        tituloAp.setTipoFinId(tituloApDto.getTipoFinId());
-        tituloAp.setVlPago(tituloApDto.getVlPago());
+        tituloAp.setNumDoc(novoTitulo.getNumDoc());
+        tituloAp.setVlTitulo(novoTitulo.getVlTitulo());
+        tituloAp.setDescricao(novoTitulo.getDescricao());
+        tituloAp.setStatus(novoTitulo.getStatus());
+        tituloAp.setDtLiquidac(novoTitulo.getDtLiquidac());
+        tituloAp.setDtPrevPag(novoTitulo.getDtPrevPag());
+        tituloAp.setDtVencto(novoTitulo.getDtVencto());
+        tituloAp.setCodEntd(novoTitulo.getCodEntd());
+        tituloAp.setDtVenctoOrigin(novoTitulo.getDtVenctoOrigin());
+        tituloAp.setCodEspDoc(novoTitulo.getCodEspDoc());
+        tituloAp.setObservacao(novoTitulo.getObservacao());
+        tituloAp.setParcelas(novoTitulo.getParcelas());
+        tituloAp.setParcela(novoTitulo.getParcela());
+        tituloAp.setDocId(novoTitulo.getDocId());
+        tituloAp.setSituacao(novoTitulo.getSituacao());
+        tituloAp.setTipoFinId(novoTitulo.getTipoFinId());
+        tituloAp.setVlPago(novoTitulo.getVlPago());
         tituloAp.setDtAlteracao(LocalDate.now());
 
         if (tituloAp.getVlTitulo().compareTo(tituloAp.getVlPago()) >= 0) {
@@ -152,23 +113,11 @@ public class TituloApService {
         } else {
             tituloAp.setVlSaldo(BigDecimal.ZERO);
         }
-
         return tituloApRepository.saveAndFlush(tituloAp);
     }
 
-    private void checkEspDoc(@NotNull String codEspDoc) {
-
-        espDocRepository.findEspDocByCodEspDoc(codEspDoc)
-                .orElseThrow(() -> new NotFoundRequestException("Espécie de documento não encontrada"));
-    }
-
-    /**
-     * Excluir titulo existente - soft delete
-     * Titulo de despesa avulsa pode ser eliminado mesmo com pagamento (não possui
-     * movto)
-     */
-    public void delete(int id) {
-
+    @Override
+    public void deleteById(@Nonnull Integer id) {
         TituloAp tituloAp = tituloApRepository.findTituloApById(id)
                 .orElseThrow(() -> new NotFoundRequestException("Título não encontrado"));
 
@@ -180,5 +129,25 @@ public class TituloApService {
         tituloAp.setStatus(STATUS_DELETADO);
         tituloAp.setDtDeleted(LocalDate.now());
         tituloApRepository.saveAndFlush(tituloAp);
+    }
+
+    @Override
+    public List<TituloAp> findList(Map<String, String> filters) {
+        Specification<TituloAp> spec = SpecificationUtils.createSpecification(filters);
+        return tituloApRepository.findAll(spec);
+    }
+
+    @Override
+    public Page<VwTituloAp> findPage(Pageable pageable, Map<String, String> filtros) {
+        Specification<VwTituloAp> spec = SpecificationUtils.createSpecification(
+                filtros,                                    // Map com parâmetros da requisição
+                "nome", "descricao"     // campos que serão usados no OR do filterText
+        );
+        return vwTituloApRepository.findAll(spec, pageable);
+    }
+
+    private void checkEspDoc(@NotNull String codEspDoc) {
+        espDocRepository.findByCodEspDoc(codEspDoc)
+                .orElseThrow(() -> new NotFoundRequestException("Espécie de documento não encontrada"));
     }
 }

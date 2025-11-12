@@ -2,7 +2,7 @@ package com.holis.san01.controller;
 
 import com.holis.san01.mapper.PedItemMapper;
 import com.holis.san01.model.PedItem;
-import com.holis.san01.model.PedItemDTO;
+import com.holis.san01.model.PedItemDto;
 import com.holis.san01.model.local.ApiResponse;
 import com.holis.san01.model.local.FiltroPesquisa;
 import com.holis.san01.services.PedItemService;
@@ -31,8 +31,8 @@ public class PedItemController {
     public ResponseEntity<ApiResponse> findPedItemById(
             @RequestParam(name = "id", defaultValue = "0") Integer id) {
 
-        PedItem pedItem = pedIService.findPedItemById(id);
-        return new ResponseEntity<>(new ApiResponse(true, pedIMapper.toDTO(pedItem)), HttpStatus.OK);
+        PedItem pedItem = pedIService.findById(id);
+        return new ResponseEntity<>(new ApiResponse(true, pedIMapper.toDto(pedItem)), HttpStatus.OK);
     }
 
     /**
@@ -62,10 +62,10 @@ public class PedItemController {
      */
     @PostMapping
     public ResponseEntity<ApiResponse> create(
-            @RequestBody @Valid PedItemDTO pedItemDTO) {
+            @RequestBody @Valid PedItemDto pedItemDTO) {
 
         var pedItem = pedIService.create(pedIMapper.toEntity(pedItemDTO));
-        return new ResponseEntity<>(new ApiResponse(true, pedIMapper.toDTO(pedItem)), HttpStatus.CREATED);
+        return new ResponseEntity<>(new ApiResponse(true, pedIMapper.toDto(pedItem)), HttpStatus.CREATED);
     }
 
     /**
@@ -73,10 +73,10 @@ public class PedItemController {
      */
     @PutMapping
     public ResponseEntity<ApiResponse> update(
-            @RequestBody @Valid PedItemDTO pedItemDTO) {
+            @RequestBody @Valid PedItemDto pedItemDTO) {
 
         var pedItem = pedIService.update(pedIMapper.toEntity(pedItemDTO));
-        return new ResponseEntity<>(new ApiResponse(true, pedIMapper.toDTO(pedItem)), HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse(true, pedIMapper.toDto(pedItem)), HttpStatus.OK);
     }
 
     /**

@@ -5,20 +5,21 @@ import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.exceptions.NotFoundRequestException;
 import com.holis.san01.model.PedVenda;
 import com.holis.san01.model.VwPedVenda;
-import com.holis.san01.model.local.FiltroPesquisa;
+import com.holis.san01.repository.EntidadeRepository;
 import com.holis.san01.repository.PedVendaRepository;
 import com.holis.san01.repository.VwPedVendaRepository;
-import com.holis.san01.specs.VwPedVendaSpecifications;
+import com.holis.san01.utils.SpecificationUtils;
 import jakarta.annotation.Nonnull;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static com.holis.san01.model.local.Constantes.*;
 
@@ -27,63 +28,21 @@ import static com.holis.san01.model.local.Constantes.*;
  */
 @Service
 @RequiredArgsConstructor
-public class PedVendaService {
-
-    private final EntidadeService entidadeService;
+public class PedVendaService implements BaseService<PedVenda, Integer, VwPedVenda> {
     private final ParamService paramService;
-
     private final PedVendaRepository pedVRepository;
+    private final EntidadeRepository entidadeRepository;
     private final VwPedVendaRepository vwPedVRepository;
 
-    /**
-     * Ler o pedido de venda pelo numero do pedido
-     */
-    public PedVenda findPedVendaByNrPedido(final int nrPedido) {
-        return pedVRepository.findPedVendaByNrPedido(nrPedido).orElseThrow(() -> new NotFoundRequestException("Pedido de venda não encontrado"));
+    @Override
+    public Optional<PedVenda> findById(final Integer nrPedido) {
+        return pedVRepository.findById(nrPedido);
     }
 
-    public Page<VwPedVenda> pageVwPedVenda(@Nonnull FiltroPesquisa filtro) {
-        Specification<VwPedVenda> spec = Specification.where(null);
-
-        if (filtro.getStatus() != null) {
-            spec = spec.and(VwPedVendaSpecifications.hasStatus(filtro.getStatus()));
-        }
-
-        if (filtro.getCodEntd() != null && filtro.getCodEntd() != 0) {
-            spec = spec.and(VwPedVendaSpecifications.hasCodEntd(filtro.getCodEntd()));
-        }
-
-        if (!StringUtils.isBlank(filtro.getTipo()) && !filtro.getTipo().equalsIgnoreCase("todos")) {
-            if (filtro.getTipo().equalsIgnoreCase("orcamentos")) {
-                spec = spec.and(VwPedVendaSpecifications.hasTpPedido(false));
-            } else if (filtro.getTipo().equalsIgnoreCase("pedidos")) {
-                spec = spec.and(VwPedVendaSpecifications.hasTpPedido(true));
-            }
-        }
-
-        if (!StringUtils.isBlank(filtro.getFilterText()))
-            spec = spec.and(VwPedVendaSpecifications.hasFiltro(filtro.getFilterText()));
-
-        Sort sort;
-
-        if (filtro.getSortField().equalsIgnoreCase("")) {
-            sort = Sort.by(
-                    Sort.Order.asc("codEntd"),
-                    Sort.Order.asc("nrPedido")
-            );
-        } else {
-            sort = Sort.by(Sort.Direction.fromString(filtro.getSortDirection()), filtro.getSortField());
-        }
-
-        Pageable pageable = PageRequest.of(filtro.getPageIndex(), filtro.getSize(), sort);
-
-        return vwPedVRepository.findAll(spec, pageable);
-    }
-
+    @Override
     @Transactional
-    public PedVenda create(@Nonnull final PedVenda pedVenda) {
-
-        entidadeService.findById(pedVenda.getCodEntd());
+    public PedVenda save(@Nonnull PedVenda pedVenda) {
+        entidadeRepository.findById(pedVenda.getCodEntd());
 
         if (pedVenda.getNrPedido() == null || pedVenda.getNrPedido() == 0) {
             var nrPedido = 0;
@@ -102,14 +61,13 @@ public class PedVendaService {
         pedVenda.setTpPedido(ORCAMENTO);
         pedVenda.setSituacao(SituacaoPedidoEnum.ABERTO);
         pedVenda.setStatus(STATUS_ATIVO);
-
         return pedVRepository.saveAndFlush(pedVenda);
     }
 
+    @Override
     @Transactional
     public PedVenda update(@Nonnull PedVenda pedVendaInput) {
-
-        PedVenda pedVenda = pedVRepository.findPedVendaByNrPedido(pedVendaInput.getNrPedido())
+        PedVenda pedVenda = pedVRepository.findById(pedVendaInput.getNrPedido())
                 .orElseThrow(() -> new NotFoundRequestException("Pedido de venda não encontrado"));
 
         pedVenda.setDescricao(pedVendaInput.getDescricao());
@@ -185,28 +143,34 @@ public class PedVendaService {
         pedVenda.setCondPag(pedVendaInput.getCondPag());
         pedVenda.setDtSituacao(pedVendaInput.getDtSituacao());
         pedVenda.setStatus(pedVendaInput.getStatus());
-
         return pedVRepository.saveAndFlush(pedVenda);
     }
 
+    @Override
     @Transactional
-    public void delete(int nrPedido) {
-
-        checkDelete(nrPedido);
+    public void deleteById(@Nonnull Integer nrPedido) {
+        if (!pedVRepository.existsByNrPedido(nrPedido)) throw new ApiRequestException("Pedido de venda não encontrado");
         pedVRepository.deleteById(nrPedido);
     }
 
-    /**
-     * Verificar se o item pode ser deletado
-     */
-    public void checkDelete(int nrPedido) {
-
-        if (!pedVRepository.existsByNrPedido(nrPedido)) throw new ApiRequestException("Pedido de venda não encontrado");
+    @Override
+    public List<PedVenda> findList(Map<String, String> filters) {
+        Specification<PedVenda> spec = SpecificationUtils.createSpecification(filters);
+        return pedVRepository.findAll(spec);
     }
 
-    public PedVenda confirm(int nrPedido) {
+    @Override
+    public Page<VwPedVenda> findPage(Pageable pageable, Map<String, String> filtros) {
+        Specification<VwPedVenda> spec = SpecificationUtils.createSpecification(
+                filtros,                                    // Map com parâmetros da requisição
+                "descricao", "nome"     // campos que serão usados no OR do filterText
+        );
+        return vwPedVRepository.findAll(spec, pageable);
+    }
 
-        PedVenda pedVenda = pedVRepository.findPedVendaByNrPedido(nrPedido).orElseThrow(() -> new ApiRequestException("Pedido de venda não encontrado"));
+    @Transactional
+    public PedVenda confirm(Integer nrPedido) {
+        PedVenda pedVenda = pedVRepository.findById(nrPedido).orElseThrow(() -> new ApiRequestException("Pedido de venda não encontrado"));
 
         if (pedVenda.getTpPedido() == PEDIDO) throw new ApiRequestException("Registro já é um pedido de venda");
 
@@ -217,29 +181,26 @@ public class PedVendaService {
         return pedVRepository.saveAndFlush(pedVenda);
     }
 
-    public void archive(int nrPedido) {
-
-        PedVenda pedVenda = pedVRepository.findPedVendaByNrPedido(nrPedido).orElseThrow(() -> new ApiRequestException("Pedido de venda não encontrado"));
-
+    @Transactional
+    public void archive(Integer nrPedido) {
+        PedVenda pedVenda = pedVRepository.findById(nrPedido).orElseThrow(() -> new ApiRequestException("Pedido de venda não encontrado"));
         pedVenda.setStatus(STATUS_ARQUIVADO);
     }
 
-    public void unarchive(int nrPedido) {
-
-        PedVenda pedVenda = pedVRepository.findPedVendaByNrPedido(nrPedido).orElseThrow(() -> new ApiRequestException("Pedido de venda não encontrado"));
-
+    @Transactional
+    public void unarchive(Integer nrPedido) {
+        PedVenda pedVenda = pedVRepository.findById(nrPedido).orElseThrow(() -> new ApiRequestException("Pedido de venda não encontrado"));
         pedVenda.setStatus(STATUS_ATIVO);
     }
 
-    public PedVenda cancel(int nrPedido) {
-
-        PedVenda pedVenda = pedVRepository.findPedVendaByNrPedido(nrPedido).orElseThrow(() -> new ApiRequestException("Pedido de venda não encontrado"));
+    @Transactional
+    public PedVenda cancel(Integer nrPedido) {
+        PedVenda pedVenda = pedVRepository.findById(nrPedido).orElseThrow(() -> new ApiRequestException("Pedido de venda não encontrado"));
 
         if (pedVenda.getTpPedido()) throw new ApiRequestException("Registro já é um pedido de venda");
 
         pedVenda.setSituacao(SituacaoPedidoEnum.CANCELADO);
         pedVenda.setStatus(STATUS_ARQUIVADO);
-
         return pedVRepository.saveAndFlush(pedVenda);
     }
 }

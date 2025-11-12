@@ -1,6 +1,6 @@
 package com.holis.san01.controller;
 
-import com.holis.san01.model.LoginDTO;
+import com.holis.san01.model.LoginDto;
 import com.holis.san01.model.local.TokenResponse;
 import com.holis.san01.services.LoginService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ public class LoginController {
     private final LoginService loginService;
 
     @PostMapping
-    public ResponseEntity<TokenResponse> login(@RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<TokenResponse> login(@RequestBody LoginDto loginDTO) {
 
         TokenResponse tokenResponse = loginService.login(loginDTO);
         return new ResponseEntity<>(tokenResponse, HttpStatus.OK);

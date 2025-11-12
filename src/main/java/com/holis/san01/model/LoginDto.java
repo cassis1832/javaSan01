@@ -1,14 +1,13 @@
 package com.holis.san01.model;
 
-import lombok.Data;
-
 import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
 
 /**
  * Informações para o login
  */
 @Data
-public class LoginDTO {
+public class LoginDto {
     @NotBlank(message = "Username é obrigatório")
     private String username;
 

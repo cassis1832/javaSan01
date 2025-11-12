@@ -53,6 +53,7 @@ public class EntidadeService implements BaseService<Entidade, Integer, Entidade>
         return entidadeRepository.saveAndFlush(entidade);
     }
 
+    @Override
     @Transactional
     public Entidade update(@Nonnull final Entidade entidadeInput) {
         Entidade entidade = entidadeRepository.findByCodEntd(entidadeInput.getCodEntd())

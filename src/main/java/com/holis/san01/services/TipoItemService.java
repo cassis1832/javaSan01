@@ -17,7 +17,6 @@ public class TipoItemService {
     private final TipoItemRepository tipoItemRepository;
 
     public List<TipoItem> listTipoItem() {
-
         return tipoItemRepository.listTipoItem();
     }
 }

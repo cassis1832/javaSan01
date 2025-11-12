@@ -2,7 +2,7 @@ package com.holis.san01.controller;
 
 import com.holis.san01.mapper.EntidadeMapper;
 import com.holis.san01.model.Entidade;
-import com.holis.san01.model.EntidadeDTO;
+import com.holis.san01.model.EntidadeDto;
 import com.holis.san01.model.local.ApiResponse;
 import com.holis.san01.model.local.ApiResponse02;
 import com.holis.san01.services.EntidadeService;
@@ -24,7 +24,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/entds", produces = MediaType.APPLICATION_JSON_VALUE)
-public class EntidadeController implements BaseController<EntidadeDTO, Integer, Entidade> {
+public class EntidadeController implements BaseController<EntidadeDto, Integer, Entidade> {
 
     private final EntidadeService entidadeService;
     private final EntidadeMapper entidadeMapper;
@@ -34,7 +34,7 @@ public class EntidadeController implements BaseController<EntidadeDTO, Integer, 
      */
     @Override
     @GetMapping
-    public ResponseEntity<ApiResponse02<EntidadeDTO>> buscarPorId(
+    public ResponseEntity<ApiResponse02<EntidadeDto>> buscarPorId(
             @RequestParam(name = "id") Integer id) {
         return entidadeService.findById(id)
                 .map(entidade -> ResponseEntity.ok(ApiResponse02.success(entidadeMapper.toDto(entidade))))
@@ -43,19 +43,19 @@ public class EntidadeController implements BaseController<EntidadeDTO, Integer, 
 
     @Override
     @PostMapping
-    public ResponseEntity<ApiResponse02<EntidadeDTO>> criar(
-            @RequestBody @Valid EntidadeDTO dto) {
+    public ResponseEntity<ApiResponse02<EntidadeDto>> criar(
+            @RequestBody @Valid EntidadeDto dto) {
         Entidade salvo = entidadeService.save(entidadeMapper.toEntity(dto));
-        EntidadeDTO salvoDTO = entidadeMapper.toDto(salvo);
+        EntidadeDto salvoDTO = entidadeMapper.toDto(salvo);
         return ResponseEntity.ok(ApiResponse02.success(salvoDTO, "Item criado com sucesso"));
     }
 
     @Override
     @PutMapping
-    public ResponseEntity<ApiResponse02<EntidadeDTO>> alterar(
-            @RequestBody @Valid EntidadeDTO dto) {
+    public ResponseEntity<ApiResponse02<EntidadeDto>> alterar(
+            @RequestBody @Valid EntidadeDto dto) {
         Entidade salvo = entidadeService.update(entidadeMapper.toEntity(dto));
-        EntidadeDTO salvoDTO = entidadeMapper.toDto(salvo);
+        EntidadeDto salvoDTO = entidadeMapper.toDto(salvo);
         return ResponseEntity.ok(ApiResponse02.success(salvoDTO, "Item alterado com sucesso"));
     }
 
@@ -69,10 +69,10 @@ public class EntidadeController implements BaseController<EntidadeDTO, Integer, 
 
     @Override
     @GetMapping("/list")
-    public ResponseEntity<ApiResponse02<List<EntidadeDTO>>> buscarLista(
+    public ResponseEntity<ApiResponse02<List<EntidadeDto>>> buscarLista(
             @RequestParam(required = false) Map<String, String> filtros) {
         List<Entidade> entidades = entidadeService.findList(filtros);
-        List<EntidadeDTO> dtos = entidadeMapper.toDtoList(entidades);
+        List<EntidadeDto> dtos = entidadeMapper.toDtoList(entidades);
         return ResponseEntity.ok(ApiResponse02.success(dtos, "Lista de Itens"));
     }
 

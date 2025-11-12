@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Data
-public class PedVendaDTO {
+public class PedVendaDto {
 
     private Integer nrPedido;
 

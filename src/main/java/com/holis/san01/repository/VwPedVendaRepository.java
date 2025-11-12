@@ -7,6 +7,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 @Immutable
 public interface VwPedVendaRepository extends JpaRepository<VwPedVenda, Integer>, JpaSpecificationExecutor<VwPedVenda> {
-
 }
 

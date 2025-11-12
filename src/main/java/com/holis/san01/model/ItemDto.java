@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
-public class ItemDTO {
+public class ItemDto {
 
     @NotBlank(message = "Código do item é obrigatório")
     @Size(max = 15, message = "O código deve ter até 15 caracteres")

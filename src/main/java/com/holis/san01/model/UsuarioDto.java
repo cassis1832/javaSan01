@@ -1,12 +1,12 @@
 package com.holis.san01.model;
 
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
-import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 
 @Data
-public class UsuarioDTO {
+public class UsuarioDto {
     private Integer id;
 
     @NotBlank(message = "Nome do usuário é obrigatório")

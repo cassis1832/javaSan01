@@ -30,8 +30,7 @@ public class NcmController {
     @GetMapping
     public ResponseEntity<Ncm> ler(
             @RequestParam(name = "codNcm", defaultValue = "") String codNcm) {
-
-        return ResponseEntity.status(HttpStatus.OK).body(ncmService.ler(codNcm));
+        return ResponseEntity.status(HttpStatus.OK).body(ncmService.findById(codNcm));
     }
 
     /**

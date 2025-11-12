@@ -35,10 +35,8 @@ public class PedItemService {
     /**
      * Ler um item do pedido de venda por ID
      */
-    public PedItem findPedItemById(
-            final Integer id) {
-
-        return pedIRepository.findPedItemById(id)
+    public PedItem findById(final Integer id) {
+        return pedIRepository.findById(id)
                 .orElseThrow(() -> new ApiRequestException("Item do pedido não encontrado"));
     }
 

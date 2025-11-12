@@ -2,10 +2,10 @@ package com.holis.san01.services;
 
 import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.mapper.UsuarioMapper;
-import com.holis.san01.model.LoginDTO;
-import com.holis.san01.model.local.TokenResponse;
+import com.holis.san01.model.LoginDto;
 import com.holis.san01.model.Usuario;
-import com.holis.san01.model.UsuarioDTO;
+import com.holis.san01.model.UsuarioDto;
+import com.holis.san01.model.local.TokenResponse;
 import com.holis.san01.repository.UsuarioRepository;
 import com.holis.san01.security.JwtGenerator;
 import jakarta.transaction.Transactional;
@@ -33,13 +33,13 @@ public class LoginService {
 //    private final JavaMailSender mailSender;
 
     @Transactional
-    public TokenResponse login(final LoginDTO loginDTO) {
+    public TokenResponse login(final LoginDto loginDTO) {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        Usuario usuario = usuarioRepository.findUsuarioByEmail(loginDTO.getUsername())
+        Usuario usuario = usuarioRepository.findByEmail(loginDTO.getUsername())
                 .orElseThrow(() -> new ApiRequestException("Usuário não encontrado"));
 
         return jwtGenerator.generateToken(authentication, usuario);
@@ -48,11 +48,11 @@ public class LoginService {
     /**
      * Ler o usuario ativo por email
      */
-    public UsuarioDTO lerUsuarioPorEmail(final String email) {
+    public UsuarioDto lerUsuarioPorEmail(final String email) {
 
-        Usuario usuario = usuarioRepository.findUsuarioByEmail(email)
+        Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new ApiRequestException("Usuário não encontrado"));
-        return usuarioMapper.toDTO(usuario);
+        return usuarioMapper.toDto(usuario);
     }
 
     /**
@@ -62,7 +62,7 @@ public class LoginService {
     @Transactional
     public void enviarNovaSenha(final String email) {
 
-        Optional<Usuario> opt = usuarioRepository.findUsuarioByEmail(email);
+        Optional<Usuario> opt = usuarioRepository.findByEmail(email);
 
         if (opt.isEmpty())
             throw new ApiRequestException("Email não encontrado no sistema!");

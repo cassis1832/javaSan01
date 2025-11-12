@@ -20,9 +20,8 @@ public class SituacaoService {
 
     private final SituacaoRepository situacaoRepository;
 
-    public Situacao findSituacaoBySituacao(@NotNull final String objeto, @NotNull final Integer codSit) {
-
-        return situacaoRepository.findSituacaoBySituacao(objeto, codSit)
+    public Situacao findBySituacao(@NotNull final String objeto, @NotNull final Integer codSit) {
+        return situacaoRepository.findBySituacao(objeto, codSit)
                 .orElseThrow(() -> new ApiRequestException("Situação não encontrada"));
     }
 

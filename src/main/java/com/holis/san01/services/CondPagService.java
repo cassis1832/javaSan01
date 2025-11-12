@@ -1,87 +1,50 @@
 package com.holis.san01.services;
 
 import com.holis.san01.exceptions.ApiRequestException;
-import com.holis.san01.exceptions.NotFoundRequestException;
 import com.holis.san01.model.CondPag;
-import com.holis.san01.model.local.ApiResponse;
-import com.holis.san01.model.local.FiltroPesquisa;
 import com.holis.san01.repository.CondPagRepository;
-import com.holis.san01.specs.CondPagSpecifications;
+import com.holis.san01.utils.SpecificationUtils;
+import jakarta.annotation.Nonnull;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Service para tratamento da tabela de condição de pagamento
  */
 @Service
 @RequiredArgsConstructor
-public class CondPagService {
+public class CondPagService implements BaseService<CondPag, String, CondPag> {
 
     private final CondPagRepository condPagRepository;
 
-    public ApiResponse listCondPag() {
-        List<CondPag> condPags = condPagRepository.listCondPag();
-        return new ApiResponse(true, condPags);
+    @Override
+    public Optional<CondPag> findById(String codCondPag) {
+        return condPagRepository.findByCodCondPag(codCondPag);
     }
 
-    public ApiResponse findCondPag(final String condCondPag) {
-        CondPag condPag = condPagRepository.findCondPagByCodCondPag(condCondPag)
-                .orElseThrow(() -> new NotFoundRequestException("Condição de pagamento não encontrada"));
-        return new ApiResponse(true, condPag);
-    }
-
-    public Page<CondPag> pageCondPag(FiltroPesquisa filtro) {
-
-        Specification<CondPag> spec = Specification.where(null);
-
-        if (filtro.getStatus() != null)
-            spec = spec.and(CondPagSpecifications.hasStatus(filtro.getStatus()));
-
-        if (!StringUtils.isBlank(filtro.getFilterText()))
-            spec = spec.and(CondPagSpecifications.hasFiltro(filtro.getFilterText()));
-
-        if (filtro.getTipo().equalsIgnoreCase("nenhum"))
-            spec = spec.and(CondPagSpecifications.nenhumTipo());
-
-        if (filtro.getTipo().equalsIgnoreCase("todos"))
-            spec = spec.and(CondPagSpecifications.ambos());
-
-        if (filtro.getTipo().equalsIgnoreCase("pagar"))
-            spec = spec.and(CondPagSpecifications.pagar());
-
-        if (filtro.getTipo().equalsIgnoreCase("receber"))
-            spec = spec.and(CondPagSpecifications.receber());
-
-        Sort sort = Sort.by(Sort.Direction.fromString(filtro.getSortDirection()), filtro.getSortField());
-
-        Pageable pageable = PageRequest.of(filtro.getPageIndex(), filtro.getSize(), sort);
-        return condPagRepository.findAll(spec, pageable);
-    }
-
+    @Override
     @Transactional
-    public CondPag create(@Valid CondPag condPagNew) {
-
-        if (condPagRepository.existsByCodCondPag(condPagNew.getCodCondPag())) {
+    public CondPag save(@Nonnull CondPag condPag) {
+        if (condPagRepository.existsByCodCondPag(condPag.getCodCondPag())) {
             throw new ApiRequestException("Este código de condição de pagamento já existe!");
         }
 
-        condPagNew.setStatus(0);
-        return condPagRepository.saveAndFlush(condPagNew);
+        condPag.setStatus(0);
+        return condPagRepository.saveAndFlush(condPag);
     }
 
+    @Override
     @Transactional
-    public CondPag update(@Valid CondPag condPagNew) {
-        CondPag condPag = condPagRepository.findCondPagByCodCondPag(condPagNew.getCodCondPag())
+    public CondPag update(@Nonnull CondPag condPagNew) {
+        CondPag condPag = condPagRepository.findByCodCondPag(condPagNew.getCodCondPag())
                 .orElseThrow(() -> new ApiRequestException("Condição de pagamento não encontrada"));
 
         condPag.setDescricao(condPagNew.getDescricao());
@@ -91,10 +54,25 @@ public class CondPagService {
         return condPagRepository.saveAndFlush(condPag);
     }
 
-    @Transactional
-    public void delete(String codCondPag) {
+    @Override
+    public void deleteById(@Nonnull String codCondPag) {
         checkDelete(codCondPag);
-        condPagRepository.deleteById(codCondPag);
+        condPagRepository.deleteByCodCondPag(codCondPag);
+    }
+
+    @Override
+    public List<CondPag> findList(Map<String, String> filters) {
+        Specification<CondPag> spec = SpecificationUtils.createSpecification(filters);
+        return condPagRepository.findAll(spec);
+    }
+
+    @Override
+    public Page<CondPag> findPage(Pageable pageable, Map<String, String> filtros) {
+        Specification<CondPag> spec = SpecificationUtils.createSpecification(
+                filtros,                                    // Map com parâmetros da requisição
+                "descricao", "codCondPag"     // campos que serão usados no OR do filterText
+        );
+        return condPagRepository.findAll(spec, pageable);
     }
 
     public void checkDelete(String codCondPag) {
@@ -103,4 +81,3 @@ public class CondPagService {
         }
     }
 }
-

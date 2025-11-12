@@ -1,18 +1,19 @@
 package com.holis.san01.repository;
 
 import com.holis.san01.model.TituloAp;
+import jakarta.annotation.Nonnull;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
-public interface TituloApRepository extends JpaRepository<TituloAp, Integer> {
-
-    boolean existsByCodEntd(Integer codEntd);
-
-    boolean existsByNumDoc(Integer numnDoc);
+public interface TituloApRepository extends JpaRepository<TituloAp, Integer>, JpaSpecificationExecutor<TituloAp> {
 
     @Query("select t from TituloAp t where t.id = ?1 and t.status <> 9")
-    Optional<TituloAp> findTituloApById(Integer id);
+    Optional<TituloAp> findTituloApById(@Nonnull Integer id);
 
+    boolean existsByCodEntd(@Nonnull Integer codEntd);
+
+    boolean existsByNumDoc(@Nonnull Integer numnDoc);
 }

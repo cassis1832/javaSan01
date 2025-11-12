@@ -10,6 +10,6 @@ import java.util.Optional;
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
-    @Query("select u from Usuario u where upper(email) = upper(?1) and status = 0 ")
-    Optional<Usuario> findUsuarioByEmail(String email);
+    @Query("select u from Usuario u where lower(email) = lower(?1) and status = 0 ")
+    Optional<Usuario> findByEmail(String email);
 }

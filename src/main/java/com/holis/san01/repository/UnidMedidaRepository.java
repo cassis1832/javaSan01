@@ -14,7 +14,7 @@ public interface UnidMedidaRepository extends JpaRepository<UnidMedida, String> 
     boolean existsBycodUniMed(String codUniMed);
 
     @Query("select u from UnidMedida u Where upper(u.codUniMed) =  upper(?1)")
-    Optional<UnidMedida> findUniMedByCodUniMed(String codUniMed);
+    Optional<UnidMedida> findByCodUniMed(String codUniMed);
 
     @Query("select u from UnidMedida u Where u.status =  ?1 order by u.sequencia, u.codUniMed")
     List<UnidMedida> listUniMed(int status);

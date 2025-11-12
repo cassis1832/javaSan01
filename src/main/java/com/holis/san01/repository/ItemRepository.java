@@ -20,6 +20,9 @@ public interface ItemRepository extends JpaRepository<Item, String>, JpaSpecific
     @Query("SELECT i FROM Item i WHERE LOWER(i.codItem) = LOWER(:codItem)")
     Optional<Item> findByCodItem(@Param("codItem") String codItem);
 
+    @Query("DELETE FROM Item i WHERE LOWER(i.codItem) = LOWER(:codItem)")
+    void deleteByCodItem(@Param("codItem") String codItem);
+
     @Query("SELECT DISTINCT i.codFamilia FROM Item i WHERE i.codFamilia <> '' ORDER BY i.codFamilia")
     List<String> listFamilias();
 

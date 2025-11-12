@@ -7,7 +7,7 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Data // @Getter, @Setter, @ToString, @EqualsAndHashCode e @RequiredArgsConstructor
-public class EntidadeDTO {
+public class EntidadeDto {
 
     private int codEntd;
     @NotNull(message = "Nome da entidade é obrigatório")
