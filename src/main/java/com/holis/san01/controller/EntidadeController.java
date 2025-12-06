@@ -3,14 +3,12 @@ package com.holis.san01.controller;
 import com.holis.san01.mapper.EntidadeMapper;
 import com.holis.san01.model.Entidade;
 import com.holis.san01.model.EntidadeDto;
-import com.holis.san01.model.local.ApiResponse;
 import com.holis.san01.model.local.ApiResponse02;
 import com.holis.san01.services.EntidadeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -63,7 +61,7 @@ public class EntidadeController implements BaseController<EntidadeDto, Integer, 
     @DeleteMapping
     public ResponseEntity<ApiResponse02<Void>> excluir(
             @RequestParam(name = "id") Integer id) {
-        entidadeService.deleteById(id);
+        entidadeService.delete(id);
         return ResponseEntity.ok(ApiResponse02.success("Item excluído sucesso"));
     }
 
@@ -85,11 +83,10 @@ public class EntidadeController implements BaseController<EntidadeDto, Integer, 
         return ResponseEntity.ok(ApiResponse02.success(pagina, "Pagina de Entidades"));
     }
 
-    @GetMapping("/checkDelete")
-    public ResponseEntity<ApiResponse> checkDelete(
-            @RequestParam(name = "codEntd") Integer codEntd) {
-
-        entidadeService.checkDelete(codEntd);
-        return new ResponseEntity<>(new ApiResponse(true, "Entidade pode ser excluído"), HttpStatus.OK);
+    @Override
+    @PutMapping("/archive")
+    public ResponseEntity<ApiResponse02<Void>> arquivar(@RequestParam(name = "id") Integer id, @RequestParam(name = "status") Boolean status) {
+        entidadeService.archive(id, status);
+        return ResponseEntity.ok(ApiResponse02.success("Arquivado com sucesso"));
     }
 }

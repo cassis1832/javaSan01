@@ -7,6 +7,7 @@ import com.holis.san01.model.VwItem;
 import com.holis.san01.repository.ItemRepository;
 import com.holis.san01.repository.PedItemRepository;
 import com.holis.san01.repository.VwItemRepository;
+import com.holis.san01.security.JwtToken;
 import com.holis.san01.utils.SpecificationUtils;
 import jakarta.annotation.Nonnull;
 import jakarta.transaction.Transactional;
@@ -29,23 +30,26 @@ import static com.holis.san01.model.local.Constantes.STATUS_ATIVO;
  */
 @Service
 @RequiredArgsConstructor
-public class ItemService implements BaseService<Item, String, VwItem> {
-
+public class ItemService implements BaseService<Item, Integer, VwItem> {
+    private final JwtToken jwtToken;
     private final ItemRepository itemRepository;
     private final VwItemRepository vwItemRepository;
     private final PedItemRepository pedItemRepository;
 
     @Override
-    public Optional<Item> findById(String id) {
-        return itemRepository.findByCodItem(id);
+    public Optional<Item> findById(Integer id) {
+        return itemRepository.findById(jwtToken.getEmpresa(), id);
+    }
+
+    public Optional<Item> findByCodItem(String codItem) {
+        return itemRepository.findByCodItem(jwtToken.getEmpresa(), codItem);
     }
 
     @Override
     @Transactional
     public Item save(@Nonnull Item item) {
-        if (itemRepository.existsByCodItem(item.getCodItem())) {
+        if (itemRepository.existsByCodItem(jwtToken.getEmpresa(), item.getCodItem()))
             throw new ApiRequestException("Este código de item já existe!");
-        }
 
         item.setStatus(0);
         item.setDtCriacao(LocalDate.now());
@@ -55,7 +59,7 @@ public class ItemService implements BaseService<Item, String, VwItem> {
     @Override
     @Transactional
     public Item update(@Nonnull final Item itemInput) {
-        Item item = itemRepository.findByCodItem(itemInput.getCodItem())
+        Item item = itemRepository.findById(jwtToken.getEmpresa(), itemInput.getId())
                 .orElseThrow(() -> new NotFoundRequestException("Item não cadastrado"));
 
         item.setCodItem(itemInput.getCodItem());
@@ -104,9 +108,14 @@ public class ItemService implements BaseService<Item, String, VwItem> {
 
     @Override
     @Transactional
-    public void deleteById(@Nonnull String codItem) {
-        checkDelete(codItem);
-        itemRepository.deleteByCodItem(codItem);
+    public void delete(@Nonnull Integer id) {
+        if (!itemRepository.existsById(jwtToken.getEmpresa(), id))
+            throw new NotFoundRequestException("Item não cadastrado");
+
+        if (pedItemRepository.existsById(jwtToken.getEmpresa(), id))
+            throw new ApiRequestException("Exclusão inválida, existem pedidos para o item");
+
+        itemRepository.deleteById(jwtToken.getEmpresa(), id);
     }
 
     @Override
@@ -125,37 +134,25 @@ public class ItemService implements BaseService<Item, String, VwItem> {
         return vwItemRepository.findAll(spec, pageable);
     }
 
-    public void checkDelete(String codItem) {
-        if (!itemRepository.existsByCodItem(codItem))
-            throw new NotFoundRequestException("Item não cadastrado");
-
-        if (pedItemRepository.existsByCodItem(codItem))
-            throw new ApiRequestException("Exclusão inválida, existem pedidos para o item");
-    }
-
+    @Override
     @Transactional
-    public void archive(String codItem) {
-        Item item = itemRepository.findByCodItem(codItem)
+    public void archive(@Nonnull Integer id, Boolean status) {
+        Item item = itemRepository.findById(jwtToken.getEmpresa(), id)
                 .orElseThrow(() -> new NotFoundRequestException("Item não cadastrado"));
 
-        item.setStatus(STATUS_ARQUIVADO);
-        itemRepository.saveAndFlush(item);
-    }
+        if (status)
+            item.setStatus(STATUS_ARQUIVADO);
+        else
+            item.setStatus(STATUS_ATIVO);
 
-    @Transactional
-    public void unarchive(String codItem) {
-        Item item = itemRepository.findByCodItem(codItem)
-                .orElseThrow(() -> new NotFoundRequestException("Item não cadastrado"));
-
-        item.setStatus(STATUS_ATIVO);
         itemRepository.saveAndFlush(item);
     }
 
     public List<String> listFamilia() {
-        return itemRepository.listFamilias();
+        return itemRepository.listFamilias(jwtToken.getEmpresa());
     }
 
     public List<String> listSituacao() {
-        return itemRepository.listSituacoes();
+        return itemRepository.listSituacoes(jwtToken.getEmpresa());
     }
 }

@@ -15,6 +15,12 @@ import java.time.LocalTime;
 public class PedVenda {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(nullable = false)
+    private Integer empresa;
+
     @Column(name = "nr_pedido", nullable = false)
     private Integer nrPedido;
 

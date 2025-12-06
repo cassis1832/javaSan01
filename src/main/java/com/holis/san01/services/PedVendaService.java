@@ -8,6 +8,7 @@ import com.holis.san01.model.VwPedVenda;
 import com.holis.san01.repository.EntidadeRepository;
 import com.holis.san01.repository.PedVendaRepository;
 import com.holis.san01.repository.VwPedVendaRepository;
+import com.holis.san01.security.JwtToken;
 import com.holis.san01.utils.SpecificationUtils;
 import jakarta.annotation.Nonnull;
 import jakarta.transaction.Transactional;
@@ -29,14 +30,15 @@ import static com.holis.san01.model.local.Constantes.*;
 @Service
 @RequiredArgsConstructor
 public class PedVendaService implements BaseService<PedVenda, Integer, VwPedVenda> {
+    private final JwtToken jwtToken;
     private final ParamService paramService;
     private final PedVendaRepository pedVRepository;
     private final EntidadeRepository entidadeRepository;
     private final VwPedVendaRepository vwPedVRepository;
 
     @Override
-    public Optional<PedVenda> findById(final Integer nrPedido) {
-        return pedVRepository.findById(nrPedido);
+    public Optional<PedVenda> findById(final Integer id) {
+        return pedVRepository.findById(jwtToken.getEmpresa(), id);
     }
 
     @Override
@@ -49,11 +51,11 @@ public class PedVendaService implements BaseService<PedVenda, Integer, VwPedVend
 
             do {
                 nrPedido = paramService.getNextSequence("seq_ped_venda");
-            } while (pedVRepository.existsByNrPedido(nrPedido));
+            } while (pedVRepository.existsByNrPedido(jwtToken.getEmpresa(), nrPedido));
 
             pedVenda.setNrPedido(nrPedido);
         } else {
-            if (pedVRepository.existsByNrPedido(pedVenda.getNrPedido())) {
+            if (pedVRepository.existsByNrPedido(jwtToken.getEmpresa(), pedVenda.getNrPedido())) {
                 throw new NotFoundRequestException("Número de pedido de venda já existe");
             }
         }
@@ -148,9 +150,10 @@ public class PedVendaService implements BaseService<PedVenda, Integer, VwPedVend
 
     @Override
     @Transactional
-    public void deleteById(@Nonnull Integer nrPedido) {
-        if (!pedVRepository.existsByNrPedido(nrPedido)) throw new ApiRequestException("Pedido de venda não encontrado");
-        pedVRepository.deleteById(nrPedido);
+    public void delete(@Nonnull Integer id) {
+        if (!pedVRepository.existsById(jwtToken.getEmpresa(), id))
+            throw new ApiRequestException("Pedido de venda não encontrado");
+        pedVRepository.deleteById(jwtToken.getEmpresa(), id);
     }
 
     @Override
@@ -181,16 +184,18 @@ public class PedVendaService implements BaseService<PedVenda, Integer, VwPedVend
         return pedVRepository.saveAndFlush(pedVenda);
     }
 
+    @Override
     @Transactional
-    public void archive(Integer nrPedido) {
-        PedVenda pedVenda = pedVRepository.findById(nrPedido).orElseThrow(() -> new ApiRequestException("Pedido de venda não encontrado"));
-        pedVenda.setStatus(STATUS_ARQUIVADO);
-    }
+    public void archive(@Nonnull Integer id, Boolean status) {
+        PedVenda pedVenda = pedVRepository.findById(jwtToken.getEmpresa(), id)
+                .orElseThrow(() -> new NotFoundRequestException("Item não cadastrado"));
 
-    @Transactional
-    public void unarchive(Integer nrPedido) {
-        PedVenda pedVenda = pedVRepository.findById(nrPedido).orElseThrow(() -> new ApiRequestException("Pedido de venda não encontrado"));
-        pedVenda.setStatus(STATUS_ATIVO);
+        if (status)
+            pedVenda.setStatus(STATUS_ARQUIVADO);
+        else
+            pedVenda.setStatus(STATUS_ATIVO);
+
+        pedVRepository.saveAndFlush(pedVenda);
     }
 
     @Transactional

@@ -25,7 +25,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/items", produces = MediaType.APPLICATION_JSON_VALUE)
-public class ItemController implements BaseController<ItemDto, String, VwItem> {
+public class ItemController implements BaseController<ItemDto, Integer, VwItem> {
 
     private final ItemService itemService;
     private final TipoItemService tipoItemService;
@@ -33,17 +33,22 @@ public class ItemController implements BaseController<ItemDto, String, VwItem> {
 
     @Override
     @GetMapping
-    public ResponseEntity<ApiResponse02<ItemDto>> buscarPorId(
-            @RequestParam(name = "id") String id) {
+    public ResponseEntity<ApiResponse02<ItemDto>> buscarPorId(@RequestParam(name = "id") Integer id) {
         return itemService.findById(id)
+                .map(entidade -> ResponseEntity.ok(ApiResponse02.success(itemMapper.toDto(entidade))))
+                .orElse(ResponseEntity.status(200).body(ApiResponse02.errorMessage("Item não encontrado")));
+    }
+
+    @GetMapping("/codItem")
+    public ResponseEntity<ApiResponse02<ItemDto>> buscarPorCodItem(@RequestParam(name = "codItem") String codItem) {
+        return itemService.findByCodItem(codItem)
                 .map(entidade -> ResponseEntity.ok(ApiResponse02.success(itemMapper.toDto(entidade))))
                 .orElse(ResponseEntity.status(200).body(ApiResponse02.errorMessage("Item não encontrado")));
     }
 
     @Override
     @PostMapping
-    public ResponseEntity<ApiResponse02<ItemDto>> criar(
-            @RequestBody @Valid ItemDto dto) {
+    public ResponseEntity<ApiResponse02<ItemDto>> criar(@RequestBody @Valid ItemDto dto) {
         Item salvo = itemService.save(itemMapper.toEntity(dto));
         ItemDto salvoDTO = itemMapper.toDto(salvo);
         return ResponseEntity.ok(ApiResponse02.success(salvoDTO, "Item criado com sucesso"));
@@ -51,8 +56,7 @@ public class ItemController implements BaseController<ItemDto, String, VwItem> {
 
     @Override
     @PutMapping
-    public ResponseEntity<ApiResponse02<ItemDto>> alterar(
-            @RequestBody @Valid ItemDto dto) {
+    public ResponseEntity<ApiResponse02<ItemDto>> alterar(@RequestBody @Valid ItemDto dto) {
         Item salvo = itemService.update(itemMapper.toEntity(dto));
         ItemDto salvoDTO = itemMapper.toDto(salvo);
         return ResponseEntity.ok(ApiResponse02.success(salvoDTO, "Item alterado com sucesso"));
@@ -60,16 +64,14 @@ public class ItemController implements BaseController<ItemDto, String, VwItem> {
 
     @Override
     @DeleteMapping
-    public ResponseEntity<ApiResponse02<Void>> excluir(
-            @RequestParam(name = "id") String id) {
-        itemService.deleteById(id);
+    public ResponseEntity<ApiResponse02<Void>> excluir(@RequestParam(name = "id") Integer id) {
+        itemService.delete(id);
         return ResponseEntity.ok(ApiResponse02.success("Item excluído sucesso"));
     }
 
     @Override
     @GetMapping("/list")
-    public ResponseEntity<ApiResponse02<List<ItemDto>>> buscarLista(
-            @RequestParam(required = false) Map<String, String> filtros) {
+    public ResponseEntity<ApiResponse02<List<ItemDto>>> buscarLista(@RequestParam(required = false) Map<String, String> filtros) {
         List<Item> entidades = itemService.findList(filtros);
         List<ItemDto> dtos = itemMapper.toDtoList(entidades);
         return ResponseEntity.ok(ApiResponse02.success(dtos, "Lista de Itens"));
@@ -77,32 +79,16 @@ public class ItemController implements BaseController<ItemDto, String, VwItem> {
 
     @Override
     @GetMapping("/page")
-    public ResponseEntity<ApiResponse02<Page<VwItem>>> buscarPagina(
-            Pageable pageable,
-            @RequestParam(required = false) Map<String, String> filtros) {
+    public ResponseEntity<ApiResponse02<Page<VwItem>>> buscarPagina(Pageable pageable, @RequestParam(required = false) Map<String, String> filtros) {
         Page<VwItem> pagina = itemService.findPage(pageable, filtros);
         return ResponseEntity.ok(ApiResponse02.success(pagina, "Pagina de VwItem"));
     }
 
+    @Override
     @PutMapping("/archive")
-    public ResponseEntity<ApiResponse02<Void>> arquivar(
-            @RequestParam(name = "codItem", defaultValue = "") String codItem) {
-        itemService.archive(codItem);
+    public ResponseEntity<ApiResponse02<Void>> arquivar(@RequestParam(name = "id") Integer id, @RequestParam(name = "status") Boolean status) {
+        itemService.archive(id, status);
         return ResponseEntity.ok(ApiResponse02.success("Item arquivado com sucesso"));
-    }
-
-    @PutMapping("/unarchive")
-    public ResponseEntity<ApiResponse02<Void>> desarquivar(
-            @RequestParam(name = "codItem", defaultValue = "") String codItem) {
-        itemService.unarchive(codItem);
-        return ResponseEntity.ok(ApiResponse02.success("Item desarquivado com sucesso"));
-    }
-
-    @GetMapping("/checkDelete")
-    public ResponseEntity<ApiResponse02<Void>> checkExcluir(
-            @RequestParam(name = "codItem") String codItem) {
-        itemService.checkDelete(codItem);
-        return ResponseEntity.ok(ApiResponse02.success("Item pode ser excluído"));
     }
 
     @GetMapping("/tpItems")

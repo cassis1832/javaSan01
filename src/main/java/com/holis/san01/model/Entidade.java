@@ -11,13 +11,21 @@ import java.time.LocalDate;
 public class Entidade {
 
     @Id
-    @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(nullable = false)
+    private Integer empresa;
+
+    @Column(nullable = false)
     private int codEntd;
+
     @Column(nullable = false)
     private String nome;
+
     @Column(nullable = false)
     private String razaoSocial;
+
     private Boolean indCliente;
     private Boolean indFornec;
     private Boolean indTransp;

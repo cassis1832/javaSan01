@@ -1,9 +1,6 @@
 package com.holis.san01.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 
@@ -16,6 +13,12 @@ import java.time.LocalDate;
 public class Item {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(nullable = false)
+    private Integer empresa;
+
     @Column(length = 15, nullable = false)
     private String codItem;
 

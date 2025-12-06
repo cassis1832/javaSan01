@@ -2,7 +2,6 @@ package com.holis.san01.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -23,13 +22,32 @@ import java.util.Arrays;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final JwtAuthEntryPoint authEntryPoint;
+    private final JwtToken jwtToken;
+    private final JwtGenerator jwtGenerator;
+    private final JwtAuthEntryPoint jwtAuthEntryPoint;
+    private final CustomUserDetailsService customUserDetailsService;
 
-    private final CustomUserDetailsService userDetailsService;
+    public SecurityConfig(CustomUserDetailsService userDetailsService, JwtAuthEntryPoint authEntryPoint, JwtToken jwtToken, JwtGenerator jwtGenerator) {
+        this.jwtToken = jwtToken;
+        this.jwtGenerator = jwtGenerator;
+        this.jwtAuthEntryPoint = authEntryPoint;
+        this.customUserDetailsService = userDetailsService;
+    }
 
-    public SecurityConfig(CustomUserDetailsService userDetailsService, JwtAuthEntryPoint authEntryPoint) {
-        this.userDetailsService = userDetailsService;
-        this.authEntryPoint = authEntryPoint;
+    @Bean
+    public static PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public static CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("*"));
+        configuration.setAllowedMethods(Arrays.asList("*"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     @Bean
@@ -38,7 +56,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults()) // Usa o bean corsConfigurationSource
                 .csrf(csrf -> csrf.disable())     // Desabilitado para uso com JWT
                 .exceptionHandling(exceptions -> exceptions
-                        .authenticationEntryPoint(authEntryPoint)
+                        .authenticationEntryPoint(jwtAuthEntryPoint)
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -60,35 +78,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public static PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public static CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("*"));
-        configuration.setAllowedMethods(Arrays.asList("*"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
-
-    @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter();
-    }
-
-    @EnableSpringDataWebSupport(pageSerializationMode = EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO)
-    public class JacksonConfig {
-//        @Bean
-//        @Primary
-//        public ObjectMapper objectMapper(Jackson2ObjectMapperBuilder builder) {
-//            ObjectMapper mapper = new ObjectMapper();
-//            mapper.registerModule(new JSR310Module());
-//            mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-//            return mapper;
-//        }
+        return new JwtAuthenticationFilter(jwtToken, jwtGenerator, customUserDetailsService);
     }
 }

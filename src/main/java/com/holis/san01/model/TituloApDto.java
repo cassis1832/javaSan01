@@ -16,7 +16,7 @@ public class TituloApDto {
     private Integer codFilial;
 
     @NotBlank(message = "Fornecedor é obrigatório")
-    private Integer codEntd;
+    private Integer entdId;
 
     @NotBlank(message = "Espécie de documento é obrigatório")
     private String codEspDoc;

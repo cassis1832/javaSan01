@@ -38,4 +38,8 @@ public interface BaseController<DTO, ID, VIEW> {
     ResponseEntity<ApiResponse02<Page<VIEW>>> buscarPagina(
             Pageable pageable,
             @RequestParam(required = false) Map<String, String> filtros);
+
+    ResponseEntity<ApiResponse02<Void>> arquivar(
+            @RequestParam(name = "id") ID id,
+            @RequestParam(name = "status") Boolean status);
 }

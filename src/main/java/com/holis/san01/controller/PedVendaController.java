@@ -60,7 +60,7 @@ public class PedVendaController implements BaseController<PedVendaDto, Integer, 
     @DeleteMapping
     public ResponseEntity<ApiResponse02<Void>> excluir(
             @RequestParam(name = "id") Integer id) {
-        pedVService.deleteById(id);
+        pedVService.delete(id);
         return ResponseEntity.ok(ApiResponse02.success("Item excluído sucesso"));
     }
 
@@ -82,17 +82,13 @@ public class PedVendaController implements BaseController<PedVendaDto, Integer, 
         return ResponseEntity.ok(ApiResponse02.success(pagina, "Pagina de VwPedVenda"));
     }
 
+    @Override
     @PutMapping("/archive")
     public ResponseEntity<ApiResponse02<Void>> arquivar(
-            @RequestParam(name = "nrPedido", defaultValue = "") Integer nrPedido) {
-        pedVService.archive(nrPedido);
-        return ResponseEntity.ok(ApiResponse02.success("Item arquivado com sucesso"));
-    }
+            @RequestParam(name = "id") Integer id,
+            @RequestParam(name = "status") Boolean status) {
 
-    @PutMapping("/unarchive")
-    public ResponseEntity<ApiResponse02<Void>> desarquivar(
-            @RequestParam(name = "nrPedido", defaultValue = "") Integer nrPedido) {
-        pedVService.unarchive(nrPedido);
-        return ResponseEntity.ok(ApiResponse02.success("Item desarquivado com sucesso"));
+        pedVService.archive(id, status);
+        return ResponseEntity.ok(ApiResponse02.success("Pedido arquivado com sucesso"));
     }
 }

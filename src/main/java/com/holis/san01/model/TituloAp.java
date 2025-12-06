@@ -16,10 +16,10 @@ public class TituloAp {
     private Integer id;
 
     @Column(nullable = false)
-    private Integer codFilial;
+    private Integer empresa;
 
     @Column(nullable = false)
-    private Integer codEntd;
+    private Integer entdId;
 
     @Column(nullable = false, length = 3)
     private String codEspDoc;

@@ -23,7 +23,9 @@ public interface BaseService<ENTITY, ID, VIEW> {
 
     ENTITY update(@Nonnull final ENTITY entity);
 
-    void deleteById(@Nonnull ID id);
+    void delete(@Nonnull ID id);
+
+    void archive(@Nonnull ID id, Boolean status);
 
     List<ENTITY> findList(Map<String, String> filters);
 

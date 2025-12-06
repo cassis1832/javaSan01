@@ -1,9 +1,6 @@
 package com.holis.san01.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -12,7 +9,14 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "ncm")
 public class Ncm {
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(nullable = false)
+    private Integer empresa;
+
     @Column(nullable = false)
     private String codNcm;
 

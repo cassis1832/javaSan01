@@ -3,14 +3,12 @@ package com.holis.san01.controller;
 import com.holis.san01.mapper.CondPagMapper;
 import com.holis.san01.model.CondPag;
 import com.holis.san01.model.CondPagDto;
-import com.holis.san01.model.local.ApiResponse;
 import com.holis.san01.model.local.ApiResponse02;
 import com.holis.san01.services.CondPagService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +22,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/condpags", produces = MediaType.APPLICATION_JSON_VALUE)
-public class CondPagController implements BaseController<CondPagDto, String, CondPag> {
+public class CondPagController implements BaseController<CondPagDto, Integer, CondPag> {
 
     private final CondPagService condPagService;
     private final CondPagMapper condPagMapper;
@@ -32,7 +30,7 @@ public class CondPagController implements BaseController<CondPagDto, String, Con
     @Override
     @GetMapping
     public ResponseEntity<ApiResponse02<CondPagDto>> buscarPorId(
-            @RequestParam(name = "id") String id) {
+            @RequestParam(name = "id") Integer id) {
         return condPagService.findById(id)
                 .map(entidade -> ResponseEntity.ok(ApiResponse02.success(condPagMapper.toDto(entidade))))
                 .orElse(ResponseEntity.status(200).body(ApiResponse02.errorMessage("Item não encontrado")));
@@ -60,8 +58,8 @@ public class CondPagController implements BaseController<CondPagDto, String, Con
     @Override
     @DeleteMapping
     public ResponseEntity<ApiResponse02<Void>> excluir(
-            @RequestParam(name = "id") String id) {
-        condPagService.deleteById(id);
+            @RequestParam(name = "id") Integer id) {
+        condPagService.delete(id);
         return ResponseEntity.ok(ApiResponse02.success("Item excluído sucesso"));
     }
 
@@ -83,11 +81,9 @@ public class CondPagController implements BaseController<CondPagDto, String, Con
         return ResponseEntity.ok(ApiResponse02.success(pagina, "Pagina de VwItem"));
     }
 
-    @GetMapping("/checkDelete")
-    public ResponseEntity<ApiResponse> checkDelete(
-            @RequestParam(name = "codCondPag") String codCondPag) {
-
-        condPagService.checkDelete(codCondPag);
-        return new ResponseEntity<>(new ApiResponse(true, "Condição de pagamento pode ser excluída"), HttpStatus.OK);
+    @Override
+    @GetMapping("/archive")
+    public ResponseEntity<ApiResponse02<Void>> arquivar(Integer id, Boolean status) {
+        return null;
     }
 }

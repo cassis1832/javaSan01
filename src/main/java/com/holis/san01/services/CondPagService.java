@@ -1,8 +1,10 @@
 package com.holis.san01.services;
 
 import com.holis.san01.exceptions.ApiRequestException;
+import com.holis.san01.exceptions.NotFoundRequestException;
 import com.holis.san01.model.CondPag;
 import com.holis.san01.repository.CondPagRepository;
+import com.holis.san01.security.JwtToken;
 import com.holis.san01.utils.SpecificationUtils;
 import jakarta.annotation.Nonnull;
 import jakarta.transaction.Transactional;
@@ -16,26 +18,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.holis.san01.model.local.Constantes.STATUS_ARQUIVADO;
+import static com.holis.san01.model.local.Constantes.STATUS_ATIVO;
+
 /**
  * Service para tratamento da tabela de condição de pagamento
  */
 @Service
 @RequiredArgsConstructor
-public class CondPagService implements BaseService<CondPag, String, CondPag> {
+public class CondPagService implements BaseService<CondPag, Integer, CondPag> {
 
+    private final JwtToken jwtToken;
     private final CondPagRepository condPagRepository;
 
     @Override
-    public Optional<CondPag> findById(String codCondPag) {
-        return condPagRepository.findByCodCondPag(codCondPag);
+    public Optional<CondPag> findById(Integer id) {
+        return condPagRepository.findById(jwtToken.getEmpresa(), id);
     }
 
     @Override
     @Transactional
     public CondPag save(@Nonnull CondPag condPag) {
-        if (condPagRepository.existsByCodCondPag(condPag.getCodCondPag())) {
+        if (condPagRepository.existsByCodCondPag(jwtToken.getEmpresa(), condPag.getCodCondPag()))
             throw new ApiRequestException("Este código de condição de pagamento já existe!");
-        }
 
         condPag.setStatus(0);
         return condPagRepository.saveAndFlush(condPag);
@@ -44,7 +49,7 @@ public class CondPagService implements BaseService<CondPag, String, CondPag> {
     @Override
     @Transactional
     public CondPag update(@Nonnull CondPag condPagNew) {
-        CondPag condPag = condPagRepository.findByCodCondPag(condPagNew.getCodCondPag())
+        CondPag condPag = condPagRepository.findByCodCondPag(jwtToken.getEmpresa(), condPagNew.getCodCondPag())
                 .orElseThrow(() -> new ApiRequestException("Condição de pagamento não encontrada"));
 
         condPag.setDescricao(condPagNew.getDescricao());
@@ -55,9 +60,11 @@ public class CondPagService implements BaseService<CondPag, String, CondPag> {
     }
 
     @Override
-    public void deleteById(@Nonnull String codCondPag) {
-        checkDelete(codCondPag);
-        condPagRepository.deleteByCodCondPag(codCondPag);
+    public void delete(@Nonnull Integer id) {
+        if (!condPagRepository.existsById(jwtToken.getEmpresa(), id))
+            throw new ApiRequestException("Condição de pagamento não encontrada para exclusão");
+
+        condPagRepository.deleteById(jwtToken.getEmpresa(), id);
     }
 
     @Override
@@ -75,9 +82,17 @@ public class CondPagService implements BaseService<CondPag, String, CondPag> {
         return condPagRepository.findAll(spec, pageable);
     }
 
-    public void checkDelete(String codCondPag) {
-        if (!condPagRepository.existsByCodCondPag(codCondPag)) {
-            throw new ApiRequestException("Condição de pagamento não encontrada para exclusão");
-        }
+    @Override
+    @Transactional
+    public void archive(@Nonnull Integer id, Boolean status) {
+        CondPag condPag = condPagRepository.findById(jwtToken.getEmpresa(), id)
+                .orElseThrow(() -> new NotFoundRequestException("Condição não cadastrado"));
+
+        if (status)
+            condPag.setStatus(STATUS_ARQUIVADO);
+        else
+            condPag.setStatus(STATUS_ATIVO);
+
+        condPagRepository.saveAndFlush(condPag);
     }
 }

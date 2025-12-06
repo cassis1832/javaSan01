@@ -1,9 +1,6 @@
 package com.holis.san01.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -12,9 +9,15 @@ import java.time.LocalDate;
 @Data // @Getter, @Setter, @ToString, @EqualsAndHashCode e @RequiredArgsConstructor
 @Entity
 @Table(name = "parametro")
-public class Param {
+public class Parametro {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(nullable = false)
+    private Integer empresa;
+
     @Column(nullable = false)
     private String codParam;
 

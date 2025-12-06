@@ -1,10 +1,12 @@
 package com.holis.san01.services;
 
 import com.holis.san01.exceptions.ApiRequestException;
+import com.holis.san01.exceptions.NotFoundRequestException;
 import com.holis.san01.model.Entidade;
 import com.holis.san01.repository.EntidadeRepository;
 import com.holis.san01.repository.PedVendaRepository;
 import com.holis.san01.repository.TituloApRepository;
+import com.holis.san01.security.JwtToken;
 import com.holis.san01.utils.SpecificationUtils;
 import jakarta.annotation.Nonnull;
 import jakarta.transaction.Transactional;
@@ -20,26 +22,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.holis.san01.model.local.Constantes.STATUS_ARQUIVADO;
+import static com.holis.san01.model.local.Constantes.STATUS_ATIVO;
+
 /**
  * Service para tratamento de Entidade
  */
 @Service
 @RequiredArgsConstructor
 public class EntidadeService implements BaseService<Entidade, Integer, Entidade> {
-
+    private final JwtToken jwtToken;
     private final EntidadeRepository entidadeRepository;
     private final PedVendaRepository pedVendaRepository;
     private final TituloApRepository tituloApRepository;
 
     @Override
     public Optional<Entidade> findById(Integer id) {
-        return entidadeRepository.findByCodEntd(id);
+        return entidadeRepository.findById(jwtToken.getEmpresa(), id);
     }
 
     @Override
     @Transactional
     public Entidade save(@Nonnull Entidade entidade) {
-        if (entidadeRepository.existsByCodEntd(entidade.getCodEntd())) {
+        if (entidadeRepository.existsByCodEntd(jwtToken.getEmpresa(), entidade.getCodEntd())) {
             throw new ApiRequestException("Este código de item já existe!");
         }
 
@@ -56,7 +61,7 @@ public class EntidadeService implements BaseService<Entidade, Integer, Entidade>
     @Override
     @Transactional
     public Entidade update(@Nonnull final Entidade entidadeInput) {
-        Entidade entidade = entidadeRepository.findByCodEntd(entidadeInput.getCodEntd())
+        Entidade entidade = entidadeRepository.findById(jwtToken.getEmpresa(), entidadeInput.getId())
                 .orElseThrow(() -> new ApiRequestException("Entidade não encontrado"));
 
         entidade.setNome(entidadeInput.getNome());
@@ -101,9 +106,18 @@ public class EntidadeService implements BaseService<Entidade, Integer, Entidade>
 
     @Override
     @Transactional
-    public void deleteById(@Nonnull final Integer codEntd) {
-        checkDelete(codEntd);
-        entidadeRepository.deleteById(codEntd);
+    public void delete(@Nonnull final Integer id) {
+        if (!entidadeRepository.existsByCodEntd(jwtToken.getEmpresa(), id))
+            throw new ApiRequestException("Cliente/fornecedor não encontrado para exclusão");
+
+        //  Verifica se há pedido de venda relacionado
+        if (pedVendaRepository.existsByCodEntd(jwtToken.getEmpresa(), id))
+            throw new ApiRequestException("Não é possível excluir o cliente. Existem pedidos de vendas associados.");
+
+        //  Verifica se há titulos de contas a pagar relacionados ao cliente
+        if (tituloApRepository.existsByCodEntd(jwtToken.getEmpresa(), id))
+            throw new ApiRequestException("Não é possível excluir o cliente. Existem títulos financeiros.");
+        entidadeRepository.deleteById(jwtToken.getEmpresa(), id);
     }
 
     @Override
@@ -122,16 +136,17 @@ public class EntidadeService implements BaseService<Entidade, Integer, Entidade>
         return entidadeRepository.findAll(spec, pageable);
     }
 
-    public void checkDelete(Integer codEntd) {
-        if (!entidadeRepository.existsByCodEntd(codEntd))
-            throw new ApiRequestException("Cliente/fornecedor não encontrado para exclusão");
+    @Override
+    @Transactional
+    public void archive(@Nonnull Integer id, Boolean status) {
+        Entidade entidade = entidadeRepository.findById(jwtToken.getEmpresa(), id)
+                .orElseThrow(() -> new NotFoundRequestException("Item não cadastrado"));
 
-        //  Verifica se há pedido de venda relacionado
-        if (pedVendaRepository.existsByCodEntd(codEntd))
-            throw new ApiRequestException("Não é possível excluir o cliente. Existem pedidos de vendas associados.");
+        if (status)
+            entidade.setStatus(STATUS_ARQUIVADO);
+        else
+            entidade.setStatus(STATUS_ATIVO);
 
-        //  Verifica se há titulos de contas a pagar relacionados ao cliente
-        if (tituloApRepository.existsByCodEntd(codEntd))
-            throw new ApiRequestException("Não é possível excluir o cliente. Existem títulos financeiros.");
+        entidadeRepository.saveAndFlush(entidade);
     }
 }
