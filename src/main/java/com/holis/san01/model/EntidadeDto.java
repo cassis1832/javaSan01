@@ -1,6 +1,5 @@
 package com.holis.san01.model;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -10,22 +9,13 @@ import java.time.LocalDate;
 @Data // @Getter, @Setter, @ToString, @EqualsAndHashCode e @RequiredArgsConstructor
 public class EntidadeDto {
 
-    private Integer id;
-
-    @NotNull(message = "Empresa é obrigatória")
-    private Integer empresa;
-
-    @NotNull(message = "Código da entidade é obrigatória")
     private int codEntd;
-
-    @NotBlank(message = "Nome da entidade é obrigatório")
+    @NotNull(message = "Nome da entidade é obrigatório")
     @Size(max = 20, message = "O nome deve ter até 20 caracteres")
     private String nome;
-
-    @NotBlank(message = "Razão Social é obrigatório")
     @Size(max = 80, message = "A razão social deve ter até 80 caracteres")
+    @NotNull(message = "Razão Social é obrigatório")
     private String razaoSocial;
-
     private Boolean indCliente;
     private Boolean indFornec;
     private Boolean indTransp;
@@ -76,16 +66,12 @@ public class EntidadeDto {
     private String obsEntrega;
     private String observacoes;
     private String situacao;
-
     @NotNull(message = "Situação de compra é obrigatória")
     private Boolean libCompra;
-
     @NotNull(message = "Situação de venda é obrigatória")
     private Boolean libVenda;
-
     @NotNull(message = "Situação de pagamento é obrigatória")
     private Boolean libPagamento;
-
     private LocalDate dtCriacao;
     private int status;
 }

@@ -3,7 +3,6 @@ package com.holis.san01.services;
 import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.model.Ncm;
 import com.holis.san01.repository.NcmRepository;
-import com.holis.san01.security.JwtToken;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -20,11 +19,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class NcmService {
 
-    private final JwtToken jwtToken;
     private final NcmRepository ncmRepository;
 
     public Ncm findById(final String codNcm) {
-        return ncmRepository.findByCodNcm(jwtToken.getEmpresa(), codNcm)
+        return ncmRepository.findByCodNcm(codNcm)
                 .orElseThrow(() -> new ApiRequestException("NCM não encontrada"));
     }
 
@@ -32,9 +30,9 @@ public class NcmService {
         Page<Ncm> ncms;
 
         if (StringUtils.isBlank(filterText)) {
-            ncms = ncmRepository.listNcm(jwtToken.getEmpresa(), status, pageable);
+            ncms = ncmRepository.listNcm(status, pageable);
         } else {
-            ncms = ncmRepository.listNcm(jwtToken.getEmpresa(), status, filterText, pageable);
+            ncms = ncmRepository.listNcm(status, filterText, pageable);
         }
 
         return ncms;
@@ -43,7 +41,7 @@ public class NcmService {
     @Transactional
     public Ncm incluir(final Ncm dto) {
 
-        Optional<Ncm> opt = ncmRepository.findByCodNcm(jwtToken.getEmpresa(), dto.getCodNcm());
+        Optional<Ncm> opt = ncmRepository.findByCodNcm(dto.getCodNcm());
 
         if (opt.isPresent()) {
             throw new ApiRequestException("Este código de ncm já existe!");
@@ -54,7 +52,8 @@ public class NcmService {
 
     @Transactional
     public Ncm alterar(final Ncm dto) {
-        Ncm ncm = ncmRepository.findByCodNcm(jwtToken.getEmpresa(), dto.getCodNcm())
+
+        Ncm ncm = ncmRepository.findByCodNcm(dto.getCodNcm())
                 .orElseThrow(() -> new ApiRequestException("Ncm não encontrado"));
 
         ncm.setCodNcm(dto.getCodNcm());
@@ -66,8 +65,9 @@ public class NcmService {
 
     @Transactional
     public void excluir(final String codNcm) {
-        Ncm ncm = ncmRepository.findByCodNcm(jwtToken.getEmpresa(), codNcm)
+
+        Ncm ncm = ncmRepository.findByCodNcm(codNcm)
                 .orElseThrow(() -> new ApiRequestException("Ncm não encontrado"));
-        ncmRepository.deleteByCodNcm(jwtToken.getEmpresa(), ncm.getCodNcm());
+        ncmRepository.deleteById(ncm.getCodNcm());
     }
 }

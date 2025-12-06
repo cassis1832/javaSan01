@@ -1,6 +1,9 @@
 package com.holis.san01.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Data;
 
 @Data // @Getter, @Setter, @ToString, @EqualsAndHashCode e @RequiredArgsConstructor
@@ -9,12 +12,6 @@ import lombok.Data;
 public class UnidMedida {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
-    @Column(nullable = false)
-    private Integer empresa;
-
     @Column(nullable = false)
     private String codUniMed;
 

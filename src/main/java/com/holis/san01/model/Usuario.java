@@ -10,13 +10,10 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "usuario")
 public class Usuario {
-
     @Id
+    @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    @Column(nullable = false)
-    private Integer empresa;
 
     @Column(length = 60, nullable = false)
     private String nome;

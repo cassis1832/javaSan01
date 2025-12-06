@@ -8,7 +8,6 @@ import com.holis.san01.repository.EntidadeRepository;
 import com.holis.san01.repository.EspDocRepository;
 import com.holis.san01.repository.TituloApRepository;
 import com.holis.san01.repository.VwTituloApRepository;
-import com.holis.san01.security.JwtToken;
 import com.holis.san01.utils.SpecificationUtils;
 import jakarta.annotation.Nonnull;
 import jakarta.transaction.Transactional;
@@ -25,13 +24,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.holis.san01.model.local.Constantes.*;
+import static com.holis.san01.model.local.Constantes.STATUS_ATIVO;
+import static com.holis.san01.model.local.Constantes.STATUS_DELETADO;
 
 @Service
 @RequiredArgsConstructor
 public class TituloApService implements BaseService<TituloAp, Integer, VwTituloAp> {
 
-    private final JwtToken jwtToken;
     private final TituloApRepository tituloApRepository;
     private final VwTituloApRepository vwTituloApRepository;
     private final EntidadeRepository entidadeRepository;
@@ -40,7 +39,7 @@ public class TituloApService implements BaseService<TituloAp, Integer, VwTituloA
 
     @Override
     public Optional<TituloAp> findById(Integer id) {
-        return tituloApRepository.findById(jwtToken.getEmpresa(), id);
+        return tituloApRepository.findTituloApById(id);
     }
 
     @Override
@@ -50,7 +49,7 @@ public class TituloApService implements BaseService<TituloAp, Integer, VwTituloA
             throw new ApiRequestException("Este id já existe!");
         }
 
-        entidadeRepository.findById(jwtToken.getEmpresa(), tituloAp.getEntdId())
+        entidadeRepository.findByCodEntd(tituloAp.getCodEntd())
                 .orElseThrow(() -> new NotFoundRequestException("Fornecedor não encontrado"));
 
         if (tituloAp.getNumDoc() == null || tituloAp.getNumDoc().equals(0)) {
@@ -58,7 +57,7 @@ public class TituloApService implements BaseService<TituloAp, Integer, VwTituloA
 
             do {
                 numDoc = paramService.getNextSequence("seq_titulo_ap");
-            } while (tituloApRepository.existsByNumDoc(jwtToken.getEmpresa(), numDoc));
+            } while (tituloApRepository.existsByNumDoc(numDoc));
 
             tituloAp.setNumDoc(numDoc);
         }
@@ -74,12 +73,12 @@ public class TituloApService implements BaseService<TituloAp, Integer, VwTituloA
     @Override
     @Transactional
     public TituloAp update(@Nonnull TituloAp novoTitulo) {
-        TituloAp tituloAp = tituloApRepository.findById(jwtToken.getEmpresa(), novoTitulo.getId())
+        TituloAp tituloAp = tituloApRepository.findTituloApById(novoTitulo.getId())
                 .orElseThrow(() -> new NotFoundRequestException("Título não encontrado"));
 
         // Verificar o emitente do titulo
-        if (!novoTitulo.getEntdId().equals(tituloAp.getEntdId())) {
-            entidadeRepository.findById(jwtToken.getEmpresa(), novoTitulo.getEntdId())
+        if (!novoTitulo.getCodEntd().equals(tituloAp.getCodEntd())) {
+            entidadeRepository.findByCodEntd(novoTitulo.getCodEntd())
                     .orElseThrow(() -> new NotFoundRequestException("Fornecedor não encontrado"));
         }
 
@@ -97,7 +96,7 @@ public class TituloApService implements BaseService<TituloAp, Integer, VwTituloA
         tituloAp.setDtLiquidac(novoTitulo.getDtLiquidac());
         tituloAp.setDtPrevPag(novoTitulo.getDtPrevPag());
         tituloAp.setDtVencto(novoTitulo.getDtVencto());
-        tituloAp.setEntdId(novoTitulo.getEntdId());
+        tituloAp.setCodEntd(novoTitulo.getCodEntd());
         tituloAp.setDtVenctoOrigin(novoTitulo.getDtVenctoOrigin());
         tituloAp.setCodEspDoc(novoTitulo.getCodEspDoc());
         tituloAp.setObservacao(novoTitulo.getObservacao());
@@ -118,8 +117,8 @@ public class TituloApService implements BaseService<TituloAp, Integer, VwTituloA
     }
 
     @Override
-    public void delete(@Nonnull Integer id) {
-        TituloAp tituloAp = tituloApRepository.findById(jwtToken.getEmpresa(), id)
+    public void deleteById(@Nonnull Integer id) {
+        TituloAp tituloAp = tituloApRepository.findTituloApById(id)
                 .orElseThrow(() -> new NotFoundRequestException("Título não encontrado"));
 
         if (!tituloAp.getCodEspDoc().equals("DA")) {
@@ -148,21 +147,7 @@ public class TituloApService implements BaseService<TituloAp, Integer, VwTituloA
     }
 
     private void checkEspDoc(@NotNull String codEspDoc) {
-        espDocRepository.findByCodEspDoc(jwtToken.getEmpresa(), codEspDoc)
+        espDocRepository.findByCodEspDoc(codEspDoc)
                 .orElseThrow(() -> new NotFoundRequestException("Espécie de documento não encontrada"));
-    }
-
-    @Override
-    @Transactional
-    public void archive(@Nonnull Integer id, Boolean status) {
-        TituloAp tituloAp = tituloApRepository.findById(jwtToken.getEmpresa(), id)
-                .orElseThrow(() -> new NotFoundRequestException("Titulo não cadastrado"));
-
-        if (status)
-            tituloAp.setStatus(STATUS_ARQUIVADO);
-        else
-            tituloAp.setStatus(STATUS_ATIVO);
-
-        tituloApRepository.saveAndFlush(tituloAp);
     }
 }

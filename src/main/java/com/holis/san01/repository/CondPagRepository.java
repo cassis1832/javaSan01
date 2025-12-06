@@ -10,22 +10,15 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface CondPagRepository extends JpaRepository<CondPag, Integer>, JpaSpecificationExecutor<CondPag> {
+public interface CondPagRepository extends JpaRepository<CondPag, String>, JpaSpecificationExecutor<CondPag> {
 
     @Query("SELECT CASE WHEN COUNT(i) > 0 THEN true ELSE false END " +
-            "FROM CondPag i WHERE i.empresa = :empresa AND i.id = :id")
-    boolean existsById(@Param("empresa") Integer empresa, @Param("id") Integer id);
+            "FROM CondPag i WHERE LOWER(i.codCondPag) = LOWER(:codCondPag)")
+    boolean existsByCodCondPag(@Param("codCondPag") String codCondPag);
 
-    @Query("SELECT CASE WHEN COUNT(i) > 0 THEN true ELSE false END " +
-            "FROM CondPag i WHERE i.empresa = :empresa AND LOWER(i.codCondPag) = LOWER(:codCondPag)")
-    boolean existsByCodCondPag(@Param("empresa") Integer empresa, @Param("codCondPag") String codCondPag);
+    @Query("SELECT e FROM CondPag e WHERE LOWER(codCondPag) = LOWER(?1)")
+    Optional<CondPag> findByCodCondPag(String codCondPag);
 
-    @Query("SELECT e FROM CondPag e WHERE e.empresa = :empresa AND e.id = :id")
-    Optional<CondPag> findById(@Param("empresa") Integer empresa, @Param("id") Integer id);
-
-    @Query("SELECT e FROM CondPag e WHERE e.empresa = :empresa AND LOWER(e.codCondPag) = LOWER(:codCondPag)")
-    Optional<CondPag> findByCodCondPag(@Param("empresa") Integer empresa, @Param("codCondPag") String codCondPag);
-
-    @Query("DELETE FROM CondPag i WHERE i.empresa = :empresa AND i.id = :id")
-    void deleteById(@Param("empresa") Integer empresa, @Param("id") Integer id);
+    @Query("DELETE FROM CondPag i WHERE LOWER(i.codCondPag) = LOWER(:codCondPag)")
+    void deleteByCodCondPag(@Param("codCondPag") String codCondPag);
 }

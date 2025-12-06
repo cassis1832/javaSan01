@@ -15,10 +15,8 @@ public class PedItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
     @Column(nullable = false)
-    private Integer empresa;
+    private Integer id;
 
     @Column(nullable = false)
     private Integer nrPedido;

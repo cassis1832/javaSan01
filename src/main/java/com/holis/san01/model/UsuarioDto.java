@@ -1,18 +1,13 @@
 package com.holis.san01.model;
 
 import jakarta.validation.constraints.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.time.LocalDate;
 
-@Getter
-@Setter
+@Data
 public class UsuarioDto {
     private Integer id;
-
-    @NotBlank(message = "Empresa é obrigatório")
-    private Integer empresa;
 
     @NotBlank(message = "Nome do usuário é obrigatório")
     @Size(max = 60, message = "O nome deve ter até 60 caracteres")

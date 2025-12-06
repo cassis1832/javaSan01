@@ -10,9 +10,7 @@ import org.springframework.stereotype.Repository;
 public interface PedItemRepository extends JpaRepository<PedItem, Integer> {
 
     @Query("SELECT CASE WHEN COUNT(p) > 0 THEN true ELSE false END " +
-            "FROM PedItem p WHERE p.empresa = :empresa AND LOWER(p.codItem) = LOWER(:codItem)")
-    boolean existsByCodItem(@Param("empresa") Integer empresa, @Param("codItem") String codItem);
-
-    boolean existsById(Integer empresa, Integer id);
+            "FROM PedItem p WHERE LOWER(p.codItem) = LOWER(:codItem)")
+    boolean existsByCodItem(@Param("codItem") String codItem);
 }
 

@@ -11,14 +11,9 @@ import java.time.LocalDate;
 @Data
 public class ItemDto {
 
-    private Integer id;
-
-    @NotNull(message = "Empresa é obrigatória")
-    private Integer empresa;
-
     @NotBlank(message = "Código do item é obrigatório")
     @Size(max = 15, message = "O código deve ter até 15 caracteres")
-    private Integer codItem;
+    private String codItem;
 
     @NotBlank(message = "Descrição do item é obrigatória")
     @Size(max = 60, message = "A descrição deve ter até 60 caracteres")

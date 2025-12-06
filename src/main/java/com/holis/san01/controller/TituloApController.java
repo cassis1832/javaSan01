@@ -58,7 +58,7 @@ public class TituloApController implements BaseController<TituloApDto, Integer, 
     @DeleteMapping
     public ResponseEntity<ApiResponse02<Void>> excluir(
             @RequestParam(name = "id") Integer id) {
-        tituloApService.delete(id);
+        tituloApService.deleteById(id);
         return ResponseEntity.ok(ApiResponse02.success("Item excluído sucesso"));
     }
 
@@ -78,11 +78,5 @@ public class TituloApController implements BaseController<TituloApDto, Integer, 
             @RequestParam(required = false) Map<String, String> filtros) {
         Page<VwTituloAp> pagina = tituloApService.findPage(pageable, filtros);
         return ResponseEntity.ok(ApiResponse02.success(pagina, "Pagina de VwItem"));
-    }
-
-    @Override
-    @GetMapping("/archive")
-    public ResponseEntity<ApiResponse02<Void>> arquivar(Integer integer, Boolean status) {
-        return null;
     }
 }

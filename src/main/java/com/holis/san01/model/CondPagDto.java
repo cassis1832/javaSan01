@@ -1,22 +1,16 @@
 package com.holis.san01.model;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
-@Data
+@Data // @Getter, @Setter, @ToString, @EqualsAndHashCode e @RequiredArgsConstructor
 public class CondPagDto {
 
-    private Integer id;
-
-    @NotNull(message = "Empresa é obrigatória")
-    private Integer empresa;
-
-    @NotBlank(message = "O código da condição de pagamento é obrigatório")
+    @NotNull(message = "O código da condição de pagamento é obrigatório")
     private String codCondPag;
 
-    @NotBlank(message = "A descrição é obrigatória")
+    @NotNull(message = "A descrição é obrigatória")
     @Size(max = 60, message = "A descrição deve ter até 60 caracteres")
     private String descricao;
 

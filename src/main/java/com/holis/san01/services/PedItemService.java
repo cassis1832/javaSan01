@@ -7,7 +7,6 @@ import com.holis.san01.model.local.FiltroPesquisa;
 import com.holis.san01.repository.ItemRepository;
 import com.holis.san01.repository.PedItemRepository;
 import com.holis.san01.repository.VwPedItemRepository;
-import com.holis.san01.security.JwtToken;
 import com.holis.san01.specs.VwPedItemSpecifications;
 import jakarta.annotation.Nonnull;
 import jakarta.transaction.Transactional;
@@ -29,10 +28,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PedItemService {
 
-    private final JwtToken jwtToken;
-    private final ItemRepository itemRepository;
     private final PedItemRepository pedIRepository;
     private final VwPedItemRepository vwPedIRepository;
+    private final ItemRepository itemRepository;
 
     /**
      * Ler um item do pedido de venda por ID
@@ -100,7 +98,7 @@ public class PedItemService {
     public PedItem create(
             @Nonnull final PedItem pedItem) {
 
-        itemRepository.findById(jwtToken.getEmpresa(), pedItem.getId());
+        itemRepository.findById(pedItem.getCodItem());
         return pedIRepository.saveAndFlush(pedItem);
     }
 
@@ -125,6 +123,6 @@ public class PedItemService {
     }
 
     public boolean existsByCoditem(String codItem) {
-        return pedIRepository.existsByCodItem(jwtToken.getEmpresa(), codItem);
+        return pedIRepository.existsByCodItem(codItem);
     }
 }
