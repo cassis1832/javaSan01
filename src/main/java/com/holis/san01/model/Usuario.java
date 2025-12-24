@@ -47,9 +47,6 @@ public class Usuario {
 
     private LocalDate dtAltSenha;
 
-    @Column(length = 1)
-    private String tipoMenu;
-
     @Column(length = 20)
     private String situacao;
 
