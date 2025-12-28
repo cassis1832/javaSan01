@@ -1,6 +1,7 @@
 package com.holis.san01.services;
 
 import com.holis.san01.exceptions.ApiRequestException;
+import com.holis.san01.exceptions.NotFoundRequestException;
 import com.holis.san01.model.Entidade;
 import com.holis.san01.repository.EntidadeRepository;
 import com.holis.san01.repository.PedVendaRepository;
@@ -15,10 +16,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Service para tratamento de Entidade
@@ -32,14 +32,15 @@ public class EntidadeService implements BaseService<Entidade, Integer, Entidade>
     private final TituloApRepository tituloApRepository;
 
     @Override
-    public Optional<Entidade> findById(Integer id) {
-        return entidadeRepository.findByCodEntd(id);
+    public Entidade findById(@Nonnull Integer id) {
+        return entidadeRepository.findById(id)
+                .orElseThrow(() -> new NotFoundRequestException("Cliente/fornecedor não cadastrado"));
     }
 
     @Override
     @Transactional
     public Entidade save(@Nonnull Entidade entidade) {
-        if (entidadeRepository.existsByCodEntd(entidade.getCodEntd())) {
+        if (entidadeRepository.existsById(entidade.getCodEntd())) {
             throw new ApiRequestException("Este código de item já existe!");
         }
 
@@ -48,7 +49,7 @@ public class EntidadeService implements BaseService<Entidade, Integer, Entidade>
             entidade.setCodCondPag(null);
         }
 
-        entidade.setDtCriacao(LocalDate.now());
+        entidade.setDtCriacao(Instant.now());
         entidade.setStatus(0);
         return entidadeRepository.saveAndFlush(entidade);
     }
@@ -56,7 +57,7 @@ public class EntidadeService implements BaseService<Entidade, Integer, Entidade>
     @Override
     @Transactional
     public Entidade update(@Nonnull final Entidade entidadeInput) {
-        Entidade entidade = entidadeRepository.findByCodEntd(entidadeInput.getCodEntd())
+        Entidade entidade = entidadeRepository.findById(entidadeInput.getCodEntd())
                 .orElseThrow(() -> new ApiRequestException("Entidade não encontrado"));
 
         entidade.setNome(entidadeInput.getNome());
@@ -101,9 +102,9 @@ public class EntidadeService implements BaseService<Entidade, Integer, Entidade>
 
     @Override
     @Transactional
-    public void deleteById(@Nonnull final Integer codEntd) {
-        checkDelete(codEntd);
-        entidadeRepository.deleteById(codEntd);
+    public void deleteById(@Nonnull final Integer id) {
+        checkDelete(id);
+        entidadeRepository.deleteById(id);
     }
 
     @Override
@@ -122,16 +123,26 @@ public class EntidadeService implements BaseService<Entidade, Integer, Entidade>
         return entidadeRepository.findAll(spec, pageable);
     }
 
-    public void checkDelete(Integer codEntd) {
-        if (!entidadeRepository.existsByCodEntd(codEntd))
+    @Override
+    public void archive(@Nonnull Integer id) {
+
+    }
+
+    @Override
+    public void unarchive(@Nonnull Integer id) {
+
+    }
+
+    public void checkDelete(Integer id) {
+        if (!entidadeRepository.existsById(id))
             throw new ApiRequestException("Cliente/fornecedor não encontrado para exclusão");
 
         //  Verifica se há pedido de venda relacionado
-        if (pedVendaRepository.existsByCodEntd(codEntd))
-            throw new ApiRequestException("Não é possível excluir o cliente. Existem pedidos de vendas associados.");
+        if (pedVendaRepository.existsByCodEntd(id))
+            throw new ApiRequestException("Não é possível delete o cliente. Existem pedidos de vendas associados.");
 
         //  Verifica se há titulos de contas a pagar relacionados ao cliente
-        if (tituloApRepository.existsByCodEntd(codEntd))
-            throw new ApiRequestException("Não é possível excluir o cliente. Existem títulos financeiros.");
+        if (tituloApRepository.existsByCodEntd(id))
+            throw new ApiRequestException("Não é possível delete o cliente. Existem títulos financeiros.");
     }
 }

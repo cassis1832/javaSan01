@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 
 @Data
@@ -129,7 +130,7 @@ public class ItemDto {
     @NotNull(message = "Situação de produção é obrigatoria")
     private Boolean libProducao;
 
-    private LocalDate dtCriacao;
+    private Instant dtCriacao;
 
     @NotNull(message = "O status é obrigatório")
     private int status;

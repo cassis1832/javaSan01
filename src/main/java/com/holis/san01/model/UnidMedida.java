@@ -22,8 +22,8 @@ public class UnidMedida {
     private Integer sequencia;
 
     @Column(nullable = false)
-    private String fraciona;
+    private Boolean fraciona;
 
     @Column(nullable = false)
-    private int status;
+    private Integer status;
 }

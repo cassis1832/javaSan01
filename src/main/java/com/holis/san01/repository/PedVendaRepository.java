@@ -1,6 +1,7 @@
 package com.holis.san01.repository;
 
 import com.holis.san01.model.PedVenda;
+import jakarta.annotation.Nonnull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -10,5 +11,5 @@ public interface PedVendaRepository extends JpaRepository<PedVenda, Integer>, Jp
 
     boolean existsByCodEntd(Integer codEntd);
 
-    boolean existsByNrPedido(Integer nrPedido);
+    boolean existsById(@Nonnull Integer nrPedido);
 }

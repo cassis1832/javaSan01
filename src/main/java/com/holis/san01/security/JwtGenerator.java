@@ -1,6 +1,6 @@
 package com.holis.san01.security;
 
-import com.holis.san01.model.local.TokenResponse;
+import com.holis.san01.dto.TokenResponse;
 import com.holis.san01.model.Usuario;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

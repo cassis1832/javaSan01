@@ -1,9 +1,9 @@
-package com.holis.san01.model.local;
+package com.holis.san01.utils;
 
 public class Constantes {
 
     /**
-     * Status
+     * Status de registros
      */
     public static final int STATUS_ATIVO = 0;
     public static final int STATUS_ARQUIVADO = 1;

@@ -21,20 +21,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtTokenUtil jwtTokenUtil;
     private final CustomUserDetailsService customUserDetailsService;
 
-    public JwtAuthFilter(
-            JwtGenerator tokenGenerator,
-            JwtTokenUtil jwtTokenUtil,
-            CustomUserDetailsService customUserDetailsService) {
+    public JwtAuthFilter(JwtGenerator tokenGenerator,
+                         JwtTokenUtil jwtTokenUtil,
+                         CustomUserDetailsService customUserDetailsService) {
         this.tokenGenerator = tokenGenerator;
         this.jwtTokenUtil = jwtTokenUtil;
         this.customUserDetailsService = customUserDetailsService;
     }
 
     @Override
-    protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain)
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
             throws ServletException, IOException {
 
         if (request.getServletPath().equals("/api/login") || request.getServletPath().equals("/api/refreshtoken")) {

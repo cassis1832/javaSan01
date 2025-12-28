@@ -8,6 +8,7 @@ import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 
 @Data
@@ -131,7 +132,7 @@ public class Item {
     private Boolean libProducao;
 
     @CreatedDate
-    private LocalDate dtCriacao;
+    private Instant dtCriacao;
 
     @Column(nullable = false)
     private int status;

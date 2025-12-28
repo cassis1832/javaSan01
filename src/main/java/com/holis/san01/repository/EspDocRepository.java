@@ -1,6 +1,7 @@
 package com.holis.san01.repository;
 
 import com.holis.san01.model.EspDoc;
+import jakarta.annotation.Nonnull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -11,6 +12,7 @@ import java.util.Optional;
 @Repository
 public interface EspDocRepository extends JpaRepository<EspDoc, String>, JpaSpecificationExecutor<EspDoc> {
 
+    @Nonnull
     @Query("select e from EspDoc e Where upper(codEspDoc) = upper(?1)")
-    Optional<EspDoc> findByCodEspDoc(String codEspDoc);
+    Optional<EspDoc> findById(@Nonnull String codEspDoc);
 }

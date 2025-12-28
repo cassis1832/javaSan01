@@ -31,9 +31,8 @@ public class SpecificationUtils {
      * Permite definir um campo especial 'filterText' que aplica OR-LIKE
      * automaticamente em vários campos definidos na aplicação.
      */
-    public static <T> Specification<T> createSpecification(
-            Map<String, String> filters,
-            String... camposFilterText
+    public static <T> Specification<T> createSpecification(Map<String, String> filters,
+                                                           String... camposFilterText
     ) {
         return (root, query, cb) -> {
 
@@ -58,10 +57,9 @@ public class SpecificationUtils {
         };
     }
 
-    private static <T> Predicate buildOrLikePredicate(
-            String termo,
-            jakarta.persistence.criteria.Root<T> root,
-            CriteriaBuilder cb, String... campos) {
+    private static <T> Predicate buildOrLikePredicate(String termo,
+                                                      jakarta.persistence.criteria.Root<T> root,
+                                                      CriteriaBuilder cb, String... campos) {
 
         if (termo == null || termo.isBlank()) {
             return cb.conjunction();
@@ -77,10 +75,9 @@ public class SpecificationUtils {
         return cb.or(likes);
     }
 
-    private static Predicate buildPredicate(
-            Path<?> path,
-            String rawValue,
-            CriteriaBuilder cb) {
+    private static Predicate buildPredicate(Path<?> path,
+                                            String rawValue,
+                                            CriteriaBuilder cb) {
         Class<?> type = path.getJavaType();
         Matcher matcher = OPERATOR_PATTERN.matcher(rawValue);
 
@@ -159,9 +156,8 @@ public class SpecificationUtils {
         return cb.equal(path, value);
     }
 
-    private static Number parseNumber(
-            String value,
-            Class<?> type) {
+    private static Number parseNumber(String value,
+                                      Class<?> type) {
         if (type.equals(Integer.class) || type.equals(int.class)) return Integer.parseInt(value);
         if (type.equals(Long.class) || type.equals(long.class)) return Long.parseLong(value);
         if (type.equals(Double.class) || type.equals(double.class)) return Double.parseDouble(value);

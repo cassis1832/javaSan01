@@ -1,11 +1,11 @@
 package com.holis.san01.services;
 
+import com.holis.san01.dto.LoginRequest;
+import com.holis.san01.dto.TokenResponse;
 import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.mapper.UsuarioMapper;
-import com.holis.san01.model.LoginDto;
 import com.holis.san01.model.Usuario;
 import com.holis.san01.model.UsuarioDto;
-import com.holis.san01.model.local.TokenResponse;
 import com.holis.san01.repository.UsuarioRepository;
 import com.holis.san01.security.JwtGenerator;
 import jakarta.transaction.Transactional;
@@ -17,7 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -33,13 +33,13 @@ public class LoginService {
 //    private final JavaMailSender mailSender;
 
     @Transactional
-    public TokenResponse login(final LoginDto loginDTO) {
+    public TokenResponse login(final LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword()));
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        Usuario usuario = usuarioRepository.findByEmail(loginDTO.getUsername())
+        Usuario usuario = usuarioRepository.findByEmail(loginRequest.getUsername())
                 .orElseThrow(() -> new ApiRequestException("Usuário não encontrado"));
 
         return jwtGenerator.generateToken(authentication, usuario);
@@ -75,7 +75,7 @@ public class LoginService {
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         usr.setNovaSenha(encoder.encode(numeroStr));
-        usr.setDtRecuperacao(LocalDate.now());
+        usr.setDtRecup(Instant.now());
 
         var conteudo = "Use a senha abaixo em seu próximo Login.<br/>";
         conteudo = conteudo + numeroStr;

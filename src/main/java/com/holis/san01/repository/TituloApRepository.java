@@ -10,8 +10,9 @@ import java.util.Optional;
 
 public interface TituloApRepository extends JpaRepository<TituloAp, Integer>, JpaSpecificationExecutor<TituloAp> {
 
+    @Nonnull
     @Query("select t from TituloAp t where t.id = ?1 and t.status <> 9")
-    Optional<TituloAp> findTituloApById(@Nonnull Integer id);
+    Optional<TituloAp> findById(@Nonnull Integer id);
 
     boolean existsByCodEntd(@Nonnull Integer codEntd);
 

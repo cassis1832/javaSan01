@@ -19,13 +19,13 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
-import static com.holis.san01.model.local.Constantes.STATUS_ATIVO;
-import static com.holis.san01.model.local.Constantes.STATUS_DELETADO;
+import static com.holis.san01.utils.Constantes.STATUS_ATIVO;
+import static com.holis.san01.utils.Constantes.STATUS_DELETADO;
 
 @Service
 @RequiredArgsConstructor
@@ -38,8 +38,10 @@ public class TituloApService implements BaseService<TituloAp, Integer, VwTituloA
     private final ParamService paramService;
 
     @Override
-    public Optional<TituloAp> findById(Integer id) {
-        return tituloApRepository.findTituloApById(id);
+    public TituloAp findById(@Nonnull Integer id) {
+        return tituloApRepository.findById(id)
+                .orElseThrow(() -> new NotFoundRequestException("Título não cadastrado"));
+
     }
 
     @Override
@@ -49,7 +51,7 @@ public class TituloApService implements BaseService<TituloAp, Integer, VwTituloA
             throw new ApiRequestException("Este id já existe!");
         }
 
-        entidadeRepository.findByCodEntd(tituloAp.getCodEntd())
+        entidadeRepository.findById(tituloAp.getCodEntd())
                 .orElseThrow(() -> new NotFoundRequestException("Fornecedor não encontrado"));
 
         if (tituloAp.getNumDoc() == null || tituloAp.getNumDoc().equals(0)) {
@@ -66,19 +68,19 @@ public class TituloApService implements BaseService<TituloAp, Integer, VwTituloA
 
         tituloAp.setId(null);
         tituloAp.setStatus(STATUS_ATIVO);
-        tituloAp.setDtCriacao(LocalDate.now());
+        tituloAp.setDtCriacao(Instant.now());
         return tituloApRepository.saveAndFlush(tituloAp);
     }
 
     @Override
     @Transactional
     public TituloAp update(@Nonnull TituloAp novoTitulo) {
-        TituloAp tituloAp = tituloApRepository.findTituloApById(novoTitulo.getId())
+        TituloAp tituloAp = tituloApRepository.findById(novoTitulo.getId())
                 .orElseThrow(() -> new NotFoundRequestException("Título não encontrado"));
 
         // Verificar o emitente do titulo
         if (!novoTitulo.getCodEntd().equals(tituloAp.getCodEntd())) {
-            entidadeRepository.findByCodEntd(novoTitulo.getCodEntd())
+            entidadeRepository.findById(novoTitulo.getCodEntd())
                     .orElseThrow(() -> new NotFoundRequestException("Fornecedor não encontrado"));
         }
 
@@ -106,7 +108,7 @@ public class TituloApService implements BaseService<TituloAp, Integer, VwTituloA
         tituloAp.setSituacao(novoTitulo.getSituacao());
         tituloAp.setTipoFinId(novoTitulo.getTipoFinId());
         tituloAp.setVlPago(novoTitulo.getVlPago());
-        tituloAp.setDtAlteracao(LocalDate.now());
+        tituloAp.setDtAlteracao(Instant.now());
 
         if (tituloAp.getVlTitulo().compareTo(tituloAp.getVlPago()) >= 0) {
             tituloAp.setVlSaldo(tituloAp.getVlTitulo().subtract(tituloAp.getVlPago()));
@@ -118,7 +120,7 @@ public class TituloApService implements BaseService<TituloAp, Integer, VwTituloA
 
     @Override
     public void deleteById(@Nonnull Integer id) {
-        TituloAp tituloAp = tituloApRepository.findTituloApById(id)
+        TituloAp tituloAp = tituloApRepository.findById(id)
                 .orElseThrow(() -> new NotFoundRequestException("Título não encontrado"));
 
         if (!tituloAp.getCodEspDoc().equals("DA")) {
@@ -146,8 +148,18 @@ public class TituloApService implements BaseService<TituloAp, Integer, VwTituloA
         return vwTituloApRepository.findAll(spec, pageable);
     }
 
+    @Override
+    public void archive(@Nonnull Integer integer) {
+
+    }
+
+    @Override
+    public void unarchive(@Nonnull Integer integer) {
+
+    }
+
     private void checkEspDoc(@NotNull String codEspDoc) {
-        espDocRepository.findByCodEspDoc(codEspDoc)
+        espDocRepository.findById(codEspDoc)
                 .orElseThrow(() -> new NotFoundRequestException("Espécie de documento não encontrada"));
     }
 }

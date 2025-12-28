@@ -3,6 +3,7 @@ package com.holis.san01.model;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
+import java.time.Instant;
 import java.time.LocalDate;
 
 @Data
@@ -26,13 +27,13 @@ public class UsuarioDto {
     private LocalDate dtTermino;
 
     @PastOrPresent
-    private LocalDate dtUltLogin;
+    private Instant dtUltLogin;
 
     @PastOrPresent
-    private LocalDate dtAltSenha;
+    private Instant dtAltSenha;
 
     @PastOrPresent
-    private LocalDate dtRecuperacao;
+    private Instant dtRecup;
 
     @Size(max = 1, message = "O tipo de meun deve ter 1 caracter")
     private String tipoMenu;
@@ -43,7 +44,7 @@ public class UsuarioDto {
     @Size(max = 20, message = "A situação deve ter até 20 caracteres")
     private String situacao;
 
-    private LocalDate dtCriacao;
+    private Instant dtCriacao;
 
     @NotNull(message = "O status é obrigatório")
     private int status;

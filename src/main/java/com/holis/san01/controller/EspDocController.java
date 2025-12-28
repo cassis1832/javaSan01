@@ -1,6 +1,6 @@
 package com.holis.san01.controller;
 
-import com.holis.san01.model.local.ApiResponse;
+import com.holis.san01.dto.ApiResponse;
 import com.holis.san01.services.EspDocService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

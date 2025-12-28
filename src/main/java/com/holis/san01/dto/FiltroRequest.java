@@ -1,4 +1,4 @@
-package com.holis.san01.model.local;
+package com.holis.san01.dto;
 
 import lombok.Data;
 
@@ -8,7 +8,7 @@ import java.time.LocalDate;
  * Classe usada para parametos de pesquisa com paginação
  */
 @Data
-public class FiltroPesquisa {
+public class FiltroRequest {
 
     private Integer status;
     private String filterText;

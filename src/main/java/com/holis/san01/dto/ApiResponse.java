@@ -1,4 +1,4 @@
-package com.holis.san01.model.local;
+package com.holis.san01.dto;
 
 import lombok.Data;
 

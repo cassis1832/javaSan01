@@ -1,10 +1,10 @@
 package com.holis.san01.controller;
 
+import com.holis.san01.dto.ApiResponse;
+import com.holis.san01.dto.FiltroRequest;
 import com.holis.san01.mapper.PedItemMapper;
 import com.holis.san01.model.PedItem;
 import com.holis.san01.model.PedItemDto;
-import com.holis.san01.model.local.ApiResponse;
-import com.holis.san01.model.local.FiltroPesquisa;
 import com.holis.san01.services.PedItemService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -40,9 +40,9 @@ public class PedItemController {
      */
     @GetMapping("/list")
     public ResponseEntity<ApiResponse> listVwPedItem(
-            @ModelAttribute FiltroPesquisa filtroPesquisa) {
+            @ModelAttribute FiltroRequest filtroRequest) {
 
-        var list = pedIService.listVwPedItem(filtroPesquisa);
+        var list = pedIService.listVwPedItem(filtroRequest);
         return new ResponseEntity<>(new ApiResponse(true, list), HttpStatus.OK);
     }
 
@@ -51,9 +51,9 @@ public class PedItemController {
      */
     @GetMapping("/page")
     public ResponseEntity<ApiResponse> pageVwPedItem(
-            @ModelAttribute FiltroPesquisa filtroPesquisa) {
+            @ModelAttribute FiltroRequest filtroRequest) {
 
-        var page = pedIService.pageVwPedItem(filtroPesquisa);
+        var page = pedIService.pageVwPedItem(filtroRequest);
         return new ResponseEntity<>(new ApiResponse(true, page), HttpStatus.OK);
     }
 

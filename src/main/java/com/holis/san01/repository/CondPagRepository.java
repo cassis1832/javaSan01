@@ -1,6 +1,7 @@
 package com.holis.san01.repository;
 
 import com.holis.san01.model.CondPag;
+import jakarta.annotation.Nonnull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -14,11 +15,12 @@ public interface CondPagRepository extends JpaRepository<CondPag, String>, JpaSp
 
     @Query("SELECT CASE WHEN COUNT(i) > 0 THEN true ELSE false END " +
             "FROM CondPag i WHERE LOWER(i.codCondPag) = LOWER(:codCondPag)")
-    boolean existsByCodCondPag(@Param("codCondPag") String codCondPag);
+    boolean existsById(@Nonnull @Param("codCondPag") String codCondPag);
 
+    @Nonnull
     @Query("SELECT e FROM CondPag e WHERE LOWER(codCondPag) = LOWER(?1)")
-    Optional<CondPag> findByCodCondPag(String codCondPag);
+    Optional<CondPag> findById(@Nonnull String codCondPag);
 
     @Query("DELETE FROM CondPag i WHERE LOWER(i.codCondPag) = LOWER(:codCondPag)")
-    void deleteByCodCondPag(@Param("codCondPag") String codCondPag);
+    void deleteById(@Nonnull @Param("codCondPag") String codCondPag);
 }

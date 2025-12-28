@@ -1,10 +1,10 @@
 package com.holis.san01.controller;
 
+import com.holis.san01.dto.ApiResponse02;
 import com.holis.san01.mapper.TituloApMapper;
 import com.holis.san01.model.TituloAp;
 import com.holis.san01.model.TituloApDto;
 import com.holis.san01.model.VwTituloAp;
-import com.holis.san01.model.local.ApiResponse02;
 import com.holis.san01.services.TituloApService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,54 +29,68 @@ public class TituloApController implements BaseController<TituloApDto, Integer, 
 
     @Override
     @GetMapping
-    public ResponseEntity<ApiResponse02<TituloApDto>> buscarPorId(
-            @RequestParam(name = "id") Integer id) {
-        return tituloApService.findById(id)
-                .map(entidade -> ResponseEntity.ok(ApiResponse02.success(tituloApMapper.toDto(entidade))))
-                .orElse(ResponseEntity.status(200).body(ApiResponse02.errorMessage("Item não encontrado")));
+    public ResponseEntity<ApiResponse02<TituloApDto>> getById(@PathVariable Integer id) {
+        TituloAp tituloAp = tituloApService.findById(id);
+        return ResponseEntity.ok(
+                ApiResponse02.success(tituloApMapper.toDto(tituloAp)));
     }
 
     @Override
     @PostMapping
-    public ResponseEntity<ApiResponse02<TituloApDto>> criar(
-            @RequestBody @Valid TituloApDto dto) {
+    public ResponseEntity<ApiResponse02<TituloApDto>> create(@RequestBody @Valid TituloApDto dto) {
         TituloAp salvo = tituloApService.save(tituloApMapper.toEntity(dto));
         TituloApDto salvoDTO = tituloApMapper.toDto(salvo);
-        return ResponseEntity.ok(ApiResponse02.success(salvoDTO, "Item criado com sucesso"));
+        return ResponseEntity.ok(
+                ApiResponse02.success(salvoDTO, "Título criado com sucesso")
+        );
     }
 
     @Override
     @PutMapping
-    public ResponseEntity<ApiResponse02<TituloApDto>> alterar(
-            @RequestBody @Valid TituloApDto dto) {
+    public ResponseEntity<ApiResponse02<TituloApDto>> update(@RequestBody @Valid TituloApDto dto) {
         TituloAp salvo = tituloApService.update(tituloApMapper.toEntity(dto));
         TituloApDto salvoDTO = tituloApMapper.toDto(salvo);
-        return ResponseEntity.ok(ApiResponse02.success(salvoDTO, "Item alterado com sucesso"));
+        return ResponseEntity.ok(
+                ApiResponse02.success(salvoDTO, "Título alterado com sucesso")
+        );
     }
 
     @Override
     @DeleteMapping
-    public ResponseEntity<ApiResponse02<Void>> excluir(
-            @RequestParam(name = "id") Integer id) {
+    public ResponseEntity<ApiResponse02<Void>> delete(@PathVariable Integer id) {
         tituloApService.deleteById(id);
-        return ResponseEntity.ok(ApiResponse02.success("Item excluído sucesso"));
+        return ResponseEntity.ok(
+                ApiResponse02.success("Título excluído sucesso")
+        );
     }
 
     @Override
     @GetMapping("/list")
-    public ResponseEntity<ApiResponse02<List<TituloApDto>>> buscarLista(
-            @RequestParam(required = false) Map<String, String> filtros) {
+    public ResponseEntity<ApiResponse02<List<TituloApDto>>> getList(@RequestParam(required = false) Map<String, String> filtros) {
         List<TituloAp> entidades = tituloApService.findList(filtros);
         List<TituloApDto> dtos = tituloApMapper.toDtoList(entidades);
-        return ResponseEntity.ok(ApiResponse02.success(dtos, "Lista de Itens"));
+        return ResponseEntity.ok(
+                ApiResponse02.success(dtos, "Lista de títulos")
+        );
     }
 
     @Override
     @GetMapping("/page")
-    public ResponseEntity<ApiResponse02<Page<VwTituloAp>>> buscarPagina(
-            Pageable pageable,
-            @RequestParam(required = false) Map<String, String> filtros) {
+    public ResponseEntity<ApiResponse02<Page<VwTituloAp>>> getPage(Pageable pageable,
+                                                                   @RequestParam(required = false) Map<String, String> filtros) {
         Page<VwTituloAp> pagina = tituloApService.findPage(pageable, filtros);
-        return ResponseEntity.ok(ApiResponse02.success(pagina, "Pagina de VwItem"));
+        return ResponseEntity.ok(
+                ApiResponse02.success(pagina, "Pagina de títulos")
+        );
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse02<Void>> archive(Integer integer) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse02<Void>> unarchive(Integer integer) {
+        return null;
     }
 }

@@ -19,9 +19,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
-import static com.holis.san01.model.local.Constantes.*;
+import static com.holis.san01.utils.Constantes.*;
 
 /**
  * Service para tratamento de pedidos de vendas
@@ -35,8 +34,9 @@ public class PedVendaService implements BaseService<PedVenda, Integer, VwPedVend
     private final VwPedVendaRepository vwPedVRepository;
 
     @Override
-    public Optional<PedVenda> findById(final Integer nrPedido) {
-        return pedVRepository.findById(nrPedido);
+    public PedVenda findById(@Nonnull final Integer nrPedido) {
+        return pedVRepository.findById(nrPedido)
+                .orElseThrow(() -> new NotFoundRequestException("Pedido não cadastrado"));
     }
 
     @Override
@@ -49,11 +49,11 @@ public class PedVendaService implements BaseService<PedVenda, Integer, VwPedVend
 
             do {
                 nrPedido = paramService.getNextSequence("seq_ped_venda");
-            } while (pedVRepository.existsByNrPedido(nrPedido));
+            } while (pedVRepository.existsById(nrPedido));
 
             pedVenda.setNrPedido(nrPedido);
         } else {
-            if (pedVRepository.existsByNrPedido(pedVenda.getNrPedido())) {
+            if (pedVRepository.existsById(pedVenda.getNrPedido())) {
                 throw new NotFoundRequestException("Número de pedido de venda já existe");
             }
         }
@@ -149,7 +149,7 @@ public class PedVendaService implements BaseService<PedVenda, Integer, VwPedVend
     @Override
     @Transactional
     public void deleteById(@Nonnull Integer nrPedido) {
-        if (!pedVRepository.existsByNrPedido(nrPedido)) throw new ApiRequestException("Pedido de venda não encontrado");
+        if (!pedVRepository.existsById(nrPedido)) throw new ApiRequestException("Pedido de venda não encontrado");
         pedVRepository.deleteById(nrPedido);
     }
 
@@ -182,13 +182,13 @@ public class PedVendaService implements BaseService<PedVenda, Integer, VwPedVend
     }
 
     @Transactional
-    public void archive(Integer nrPedido) {
+    public void archive(@Nonnull Integer nrPedido) {
         PedVenda pedVenda = pedVRepository.findById(nrPedido).orElseThrow(() -> new ApiRequestException("Pedido de venda não encontrado"));
         pedVenda.setStatus(STATUS_ARQUIVADO);
     }
 
     @Transactional
-    public void unarchive(Integer nrPedido) {
+    public void unarchive(@Nonnull Integer nrPedido) {
         PedVenda pedVenda = pedVRepository.findById(nrPedido).orElseThrow(() -> new ApiRequestException("Pedido de venda não encontrado"));
         pedVenda.setStatus(STATUS_ATIVO);
     }

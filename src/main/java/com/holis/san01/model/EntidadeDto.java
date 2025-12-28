@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
-import java.time.LocalDate;
+import java.time.Instant;
 
 @Data // @Getter, @Setter, @ToString, @EqualsAndHashCode e @RequiredArgsConstructor
 public class EntidadeDto {
@@ -72,6 +72,6 @@ public class EntidadeDto {
     private Boolean libVenda;
     @NotNull(message = "Situação de pagamento é obrigatória")
     private Boolean libPagamento;
-    private LocalDate dtCriacao;
-    private int status;
+    private Instant dtCriacao;
+    private Integer status;
 }

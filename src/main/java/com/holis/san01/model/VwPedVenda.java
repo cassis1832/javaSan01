@@ -48,7 +48,6 @@ public class VwPedVenda {
     private BigDecimal vlDescontoTotal;
     private BigDecimal descValorPed;
     private String condPag;
-    private String situacao;
     private String situacaoDescricao;
     private LocalDate dtSituacao;
     private Integer status;

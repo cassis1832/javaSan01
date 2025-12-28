@@ -1,7 +1,7 @@
 package com.holis.san01.controller;
 
-import com.holis.san01.model.LoginDto;
-import com.holis.san01.model.local.TokenResponse;
+import com.holis.san01.dto.LoginRequest;
+import com.holis.san01.dto.TokenResponse;
 import com.holis.san01.services.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,9 +16,8 @@ public class LoginController {
     private final LoginService loginService;
 
     @PostMapping
-    public ResponseEntity<TokenResponse> login(@RequestBody LoginDto loginDTO) {
-
-        TokenResponse tokenResponse = loginService.login(loginDTO);
+    public ResponseEntity<TokenResponse> login(@RequestBody LoginRequest loginRequest) {
+        TokenResponse tokenResponse = loginService.login(loginRequest);
         return new ResponseEntity<>(tokenResponse, HttpStatus.OK);
     }
 
@@ -27,7 +26,6 @@ public class LoginController {
      */
     @GetMapping("/enviarSenha")
     public ResponseEntity<String> enviarSenha(@RequestParam(name = "email") String email) {
-
         loginService.enviarNovaSenha(email);
         return new ResponseEntity<>("Ok", HttpStatus.OK);
     }

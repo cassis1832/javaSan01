@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Base Service
@@ -17,7 +16,7 @@ import java.util.Optional;
  */
 public interface BaseService<ENTITY, ID, VIEW> {
 
-    Optional<ENTITY> findById(ID id);
+    ENTITY findById(@Nonnull ID id);
 
     ENTITY save(@Nonnull ENTITY entity);
 
@@ -28,4 +27,8 @@ public interface BaseService<ENTITY, ID, VIEW> {
     List<ENTITY> findList(Map<String, String> filters);
 
     Page<VIEW> findPage(Pageable pageable, Map<String, String> filtros);
+
+    void archive(@Nonnull ID id);
+
+    void unarchive(@Nonnull ID id);
 }

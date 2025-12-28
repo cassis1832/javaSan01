@@ -3,7 +3,7 @@ package com.holis.san01.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDate;
+import java.time.Instant;
 
 @Data // @Getter, @Setter, @ToString, @EqualsAndHashCode e @RequiredArgsConstructor
 @Entity
@@ -75,7 +75,7 @@ public class Entidade {
     private Boolean libVenda;
     @Column(nullable = false)
     private Boolean libPagamento;
-    private LocalDate dtCriacao;
+    private Instant dtCriacao;
     @Column(nullable = false)
-    private int status;
+    private Integer status;
 }

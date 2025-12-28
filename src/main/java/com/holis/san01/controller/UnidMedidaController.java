@@ -1,7 +1,7 @@
 package com.holis.san01.controller;
 
+import com.holis.san01.dto.ApiResponse;
 import com.holis.san01.model.UnidMedida;
-import com.holis.san01.model.local.ApiResponse;
 import com.holis.san01.services.UnidMedidaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

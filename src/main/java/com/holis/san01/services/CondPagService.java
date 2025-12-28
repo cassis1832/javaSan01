@@ -1,6 +1,7 @@
 package com.holis.san01.services;
 
 import com.holis.san01.exceptions.ApiRequestException;
+import com.holis.san01.exceptions.NotFoundRequestException;
 import com.holis.san01.model.CondPag;
 import com.holis.san01.repository.CondPagRepository;
 import com.holis.san01.utils.SpecificationUtils;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Service para tratamento da tabela de condição de pagamento
@@ -26,14 +26,16 @@ public class CondPagService implements BaseService<CondPag, String, CondPag> {
     private final CondPagRepository condPagRepository;
 
     @Override
-    public Optional<CondPag> findById(String codCondPag) {
-        return condPagRepository.findByCodCondPag(codCondPag);
+    public CondPag findById(@Nonnull String codCondPag) {
+
+        return condPagRepository.findById(codCondPag)
+                .orElseThrow(() -> new NotFoundRequestException("Condição de pagamento não cadastrada"));
     }
 
     @Override
     @Transactional
     public CondPag save(@Nonnull CondPag condPag) {
-        if (condPagRepository.existsByCodCondPag(condPag.getCodCondPag())) {
+        if (condPagRepository.existsById(condPag.getCodCondPag())) {
             throw new ApiRequestException("Este código de condição de pagamento já existe!");
         }
 
@@ -44,7 +46,7 @@ public class CondPagService implements BaseService<CondPag, String, CondPag> {
     @Override
     @Transactional
     public CondPag update(@Nonnull CondPag condPagNew) {
-        CondPag condPag = condPagRepository.findByCodCondPag(condPagNew.getCodCondPag())
+        CondPag condPag = condPagRepository.findById(condPagNew.getCodCondPag())
                 .orElseThrow(() -> new ApiRequestException("Condição de pagamento não encontrada"));
 
         condPag.setDescricao(condPagNew.getDescricao());
@@ -57,7 +59,7 @@ public class CondPagService implements BaseService<CondPag, String, CondPag> {
     @Override
     public void deleteById(@Nonnull String codCondPag) {
         checkDelete(codCondPag);
-        condPagRepository.deleteByCodCondPag(codCondPag);
+        condPagRepository.deleteById(codCondPag);
     }
 
     @Override
@@ -75,8 +77,18 @@ public class CondPagService implements BaseService<CondPag, String, CondPag> {
         return condPagRepository.findAll(spec, pageable);
     }
 
+    @Override
+    public void archive(@Nonnull String s) {
+
+    }
+
+    @Override
+    public void unarchive(@Nonnull String s) {
+
+    }
+
     public void checkDelete(String codCondPag) {
-        if (!condPagRepository.existsByCodCondPag(codCondPag)) {
+        if (!condPagRepository.existsById(codCondPag)) {
             throw new ApiRequestException("Condição de pagamento não encontrada para exclusão");
         }
     }

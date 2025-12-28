@@ -1,8 +1,8 @@
 package com.holis.san01.services;
 
+import com.holis.san01.dto.ApiResponse;
 import com.holis.san01.exceptions.NotFoundRequestException;
 import com.holis.san01.model.EspDoc;
-import com.holis.san01.model.local.ApiResponse;
 import com.holis.san01.repository.EspDocRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ public class EspDocService {
     private final EspDocRepository espDocRepository;
 
     public ApiResponse findById(final String codEspDoc) {
-        EspDoc espDoc = espDocRepository.findByCodEspDoc(codEspDoc)
+        EspDoc espDoc = espDocRepository.findById(codEspDoc)
                 .orElseThrow(() -> new NotFoundRequestException("Espécie de documento não encontrada"));
         return new ApiResponse(true, espDoc);
     }

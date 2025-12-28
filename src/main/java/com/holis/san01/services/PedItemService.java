@@ -1,9 +1,9 @@
 package com.holis.san01.services;
 
+import com.holis.san01.dto.FiltroRequest;
 import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.model.PedItem;
 import com.holis.san01.model.VwPedItem;
-import com.holis.san01.model.local.FiltroPesquisa;
 import com.holis.san01.repository.ItemRepository;
 import com.holis.san01.repository.PedItemRepository;
 import com.holis.san01.repository.VwPedItemRepository;
@@ -41,7 +41,7 @@ public class PedItemService {
     }
 
     public List<VwPedItem> listVwPedItem(
-            FiltroPesquisa filtro) {
+            FiltroRequest filtro) {
 
         var spec = PreparaSpec(filtro);
 
@@ -53,7 +53,7 @@ public class PedItemService {
     }
 
     public Page<VwPedItem> pageVwPedItem(
-            FiltroPesquisa filtro) {
+            FiltroRequest filtro) {
 
         var spec = PreparaSpec(filtro);
 
@@ -64,7 +64,7 @@ public class PedItemService {
     }
 
     private Specification<VwPedItem> PreparaSpec(
-            @Nonnull FiltroPesquisa filtro) {
+            @Nonnull FiltroRequest filtro) {
 
         Specification<VwPedItem> spec = Specification.where(null);
 

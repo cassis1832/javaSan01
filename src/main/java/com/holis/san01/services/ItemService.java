@@ -16,13 +16,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
-import static com.holis.san01.model.local.Constantes.STATUS_ARQUIVADO;
-import static com.holis.san01.model.local.Constantes.STATUS_ATIVO;
+import static com.holis.san01.utils.Constantes.STATUS_ARQUIVADO;
+import static com.holis.san01.utils.Constantes.STATUS_ATIVO;
 
 /**
  * Service para tratamento da tabela itens
@@ -36,77 +35,78 @@ public class ItemService implements BaseService<Item, String, VwItem> {
     private final PedItemRepository pedItemRepository;
 
     @Override
-    public Optional<Item> findById(String id) {
-        return itemRepository.findByCodItem(id);
+    public Item findById(@Nonnull String id) {
+        return itemRepository.findById(id)
+                .orElseThrow(() -> new NotFoundRequestException("Item não cadastrado"));
     }
 
     @Override
     @Transactional
     public Item save(@Nonnull Item item) {
-        if (itemRepository.existsByCodItem(item.getCodItem())) {
+        if (itemRepository.existsById(item.getCodItem())) {
             throw new ApiRequestException("Este código de item já existe!");
         }
 
         item.setStatus(0);
-        item.setDtCriacao(LocalDate.now());
+        item.setDtCriacao(Instant.now());
         return itemRepository.saveAndFlush(item);
     }
 
     @Override
     @Transactional
-    public Item update(@Nonnull final Item itemInput) {
-        Item item = itemRepository.findByCodItem(itemInput.getCodItem())
+    public Item update(@Nonnull final Item item) {
+        Item existing = itemRepository.findById(item.getCodItem())
                 .orElseThrow(() -> new NotFoundRequestException("Item não cadastrado"));
 
-        item.setCodItem(itemInput.getCodItem());
-        item.setStatus(itemInput.getStatus());
-        item.setCodTipoItem(itemInput.getCodTipoItem());
-        item.setAliquotaIpi(itemInput.getAliquotaIpi());
-        item.setGtin(itemInput.getGtin());
-        item.setCodLocaliz(itemInput.getCodLocaliz());
-        item.setCodOrigem(itemInput.getCodOrigem());
-        item.setIndComprado((itemInput.getIndComprado()));
-        item.setDescricao(itemInput.getDescricao());
-        item.setPrecoVenda(itemInput.getPrecoVenda());
-        item.setDtPrecoVenda(itemInput.getDtPrecoVenda());
-        item.setDtPrecoCompra(itemInput.getDtPrecoCompra());
-        item.setPrecoCompra(itemInput.getPrecoCompra());
-        item.setDtObsol(itemInput.getDtObsol());
-        item.setDtLiberac(itemInput.getDtLiberac());
-        item.setDtUltEnt(itemInput.getDtUltEnt());
-        item.setCodFamilia(itemInput.getCodFamilia());
-        item.setFraciona(itemInput.getFraciona());
-        item.setGtin(itemInput.getGtin());
-        item.setIndItemFat(itemInput.getIndItemFat());
-        item.setLoteEcon(itemInput.getLoteEcon());
-        item.setLoteMinCpa(itemInput.getLoteMinCpa());
-        item.setLoteMinVda(itemInput.getLoteMinVda());
-        item.setLoteMulven(itemInput.getLoteMulven());
-        item.setNarrativa(itemInput.getNarrativa());
-        item.setCodNcm(itemInput.getCodNcm());
-        item.setOrigem(itemInput.getOrigem());
-        item.setPesoBruto(itemInput.getPesoBruto());
-        item.setPesoLiquido(itemInput.getPesoLiquido());
-        item.setPrazoEntrega(itemInput.getPrazoEntrega());
-        item.setPrecoUltEnt(itemInput.getPrecoUltEnt());
-        item.setQuantPacote(itemInput.getQuantPacote());
-        item.setResCompra(itemInput.getResCompra());
-        item.setResFabric(itemInput.getResFabric());
-        item.setTempoRessup(itemInput.getTempoRessup());
-        item.setCodUniMed(itemInput.getCodUniMed());
-        item.setUsuarioObsol(itemInput.getUsuarioObsol());
-        item.setSituacao(itemInput.getSituacao());
-        item.setLibCompra(itemInput.getLibCompra());
-        item.setLibVenda(itemInput.getLibVenda());
-        item.setLibProducao(itemInput.getLibProducao());
+        existing.setCodItem(item.getCodItem());
+        existing.setStatus(item.getStatus());
+        existing.setCodTipoItem(item.getCodTipoItem());
+        existing.setAliquotaIpi(item.getAliquotaIpi());
+        existing.setGtin(item.getGtin());
+        existing.setCodLocaliz(item.getCodLocaliz());
+        existing.setCodOrigem(item.getCodOrigem());
+        existing.setIndComprado((item.getIndComprado()));
+        existing.setDescricao(item.getDescricao());
+        existing.setPrecoVenda(item.getPrecoVenda());
+        existing.setDtPrecoVenda(item.getDtPrecoVenda());
+        existing.setDtPrecoCompra(item.getDtPrecoCompra());
+        existing.setPrecoCompra(item.getPrecoCompra());
+        existing.setDtObsol(item.getDtObsol());
+        existing.setDtLiberac(item.getDtLiberac());
+        existing.setDtUltEnt(item.getDtUltEnt());
+        existing.setCodFamilia(item.getCodFamilia());
+        existing.setFraciona(item.getFraciona());
+        existing.setGtin(item.getGtin());
+        existing.setIndItemFat(item.getIndItemFat());
+        existing.setLoteEcon(item.getLoteEcon());
+        existing.setLoteMinCpa(item.getLoteMinCpa());
+        existing.setLoteMinVda(item.getLoteMinVda());
+        existing.setLoteMulven(item.getLoteMulven());
+        existing.setNarrativa(item.getNarrativa());
+        existing.setCodNcm(item.getCodNcm());
+        existing.setOrigem(item.getOrigem());
+        existing.setPesoBruto(item.getPesoBruto());
+        existing.setPesoLiquido(item.getPesoLiquido());
+        existing.setPrazoEntrega(item.getPrazoEntrega());
+        existing.setPrecoUltEnt(item.getPrecoUltEnt());
+        existing.setQuantPacote(item.getQuantPacote());
+        existing.setResCompra(item.getResCompra());
+        existing.setResFabric(item.getResFabric());
+        existing.setTempoRessup(item.getTempoRessup());
+        existing.setCodUniMed(item.getCodUniMed());
+        existing.setUsuarioObsol(item.getUsuarioObsol());
+        existing.setSituacao(item.getSituacao());
+        existing.setLibCompra(item.getLibCompra());
+        existing.setLibVenda(item.getLibVenda());
+        existing.setLibProducao(item.getLibProducao());
         return itemRepository.saveAndFlush(item);
     }
 
     @Override
     @Transactional
-    public void deleteById(@Nonnull String codItem) {
-        checkDelete(codItem);
-        itemRepository.deleteByCodItem(codItem);
+    public void deleteById(@Nonnull String id) {
+        checkDelete(id);
+        itemRepository.deleteById(id);
     }
 
     @Override
@@ -126,29 +126,29 @@ public class ItemService implements BaseService<Item, String, VwItem> {
     }
 
     public void checkDelete(String codItem) {
-        if (!itemRepository.existsByCodItem(codItem))
+        if (!itemRepository.existsById(codItem))
             throw new NotFoundRequestException("Item não cadastrado");
 
         if (pedItemRepository.existsByCodItem(codItem))
             throw new ApiRequestException("Exclusão inválida, existem pedidos para o item");
     }
 
+    @Override
     @Transactional
-    public void archive(String codItem) {
-        Item item = itemRepository.findByCodItem(codItem)
+    public void archive(@Nonnull String id) {
+        Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new NotFoundRequestException("Item não cadastrado"));
 
-        item.setStatus(STATUS_ARQUIVADO);
-        itemRepository.saveAndFlush(item);
+        itemRepository.archive(item.getCodItem(), STATUS_ARQUIVADO);
     }
 
+    @Override
     @Transactional
-    public void unarchive(String codItem) {
-        Item item = itemRepository.findByCodItem(codItem)
+    public void unarchive(@Nonnull String id) {
+        Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new NotFoundRequestException("Item não cadastrado"));
 
-        item.setStatus(STATUS_ATIVO);
-        itemRepository.saveAndFlush(item);
+        itemRepository.archive(item.getCodItem(), STATUS_ATIVO);
     }
 
     public List<String> listFamilia() {

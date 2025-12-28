@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 
+import java.time.Instant;
 import java.time.LocalDate;
 
 @Data
@@ -35,27 +36,24 @@ public class Usuario {
 
     private LocalDate dtTermino;
 
-    private LocalDate dtUltLogin;
+    private Instant dtUltLogin;
 
     @Column(length = 100)
     private String novaSenha;
 
     @Column(length = 6)
-    private String codRecuperacao;
+    private String codRecup;
 
-    private LocalDate dtRecuperacao;
+    private Instant dtRecup;
 
-    private LocalDate dtAltSenha;
+    private Instant dtAltSenha;
 
     @Column(length = 20)
     private String situacao;
 
     @CreatedDate
-    private LocalDate dtCriacao;
+    private Instant dtCriacao;
 
     @Column(nullable = false)
-    private int status;
-
-    @Column(nullable = false)
-    private boolean deleted;
+    private Integer status;
 }

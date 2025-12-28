@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 
 @Data // @Getter, @Setter, @ToString, @EqualsAndHashCode e @RequiredArgsConstructor
@@ -87,11 +88,11 @@ public class TituloAp {
     private String observacao;
 
     @Column(nullable = false)
-    private LocalDate dtCriacao;
+    private Instant dtCriacao;
 
     private String usrCriacao;
 
-    private LocalDate dtAlteracao;
+    private Instant dtAlteracao;
 
     private String usrAlteracao;
 

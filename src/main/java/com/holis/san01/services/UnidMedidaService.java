@@ -1,8 +1,8 @@
 package com.holis.san01.services;
 
+import com.holis.san01.dto.ApiResponse;
 import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.model.UnidMedida;
-import com.holis.san01.model.local.ApiResponse;
 import com.holis.san01.repository.UnidMedidaRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
@@ -19,7 +19,7 @@ public class UnidMedidaService {
     private final UnidMedidaRepository unidMedidaRepository;
 
     public UnidMedida findByCodUnimed(@NotNull final String codUniMed) {
-        return unidMedidaRepository.findByCodUniMed(codUniMed)
+        return unidMedidaRepository.findById(codUniMed)
                 .orElseThrow(() -> new ApiRequestException("Unidade de medida não encontrada"));
     }
 
@@ -39,7 +39,7 @@ public class UnidMedidaService {
     @Transactional
     public UnidMedida update(@NotNull final UnidMedida dto) {
 
-        UnidMedida unidMedida = unidMedidaRepository.findByCodUniMed(dto.getCodUniMed())
+        UnidMedida unidMedida = unidMedidaRepository.findById(dto.getCodUniMed())
                 .orElseThrow(() -> new ApiRequestException("Unidade de medida não encontrada!"));
 
         unidMedida.setDescricao(dto.getDescricao());

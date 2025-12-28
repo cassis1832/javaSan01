@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 
 @Data // @Getter, @Setter, @ToString, @EqualsAndHashCode e @RequiredArgsConstructor
@@ -15,7 +16,7 @@ public class TituloApMov {
     private Integer id;
 
     @Column(nullable = false)
-    private Integer titApId;
+    private Integer tituloApId;
 
     @Column(length = 10)
     private String tpMovto;
@@ -99,9 +100,9 @@ public class TituloApMov {
     @Column(precision = 12, scale = 2)
     private BigDecimal vlJurosCalc = BigDecimal.ZERO;
 
-    private Integer logRecuperPerda = 0;
+    private Boolean logRecuperPerda = false;
 
-    private Integer logRetencImptoLiq = 0;
+    private Boolean logRetencImptoLiq = false;
 
     @Column(precision = 11, scale = 2)
     private BigDecimal vlRetencPis = BigDecimal.ZERO;
@@ -121,5 +122,5 @@ public class TituloApMov {
     private Integer antecTituloId;
 
     @Column(nullable = false)
-    private LocalDate dtCriacao;
+    private Instant dtCriacao;
 }

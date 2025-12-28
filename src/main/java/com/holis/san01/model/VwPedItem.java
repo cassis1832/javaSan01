@@ -29,8 +29,7 @@ public class VwPedItem {
     private BigDecimal qtAtendida;
     private BigDecimal qtPendente;
     private BigDecimal vlTotitem;
-    private Integer situacao;
     private Integer status;
     private Integer statusPedVenda;
-    private String situacaoPedVenda;
+
 }
