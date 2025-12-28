@@ -1,6 +1,6 @@
 package com.holis.san01.controller;
 
-import com.holis.san01.dto.ApiResponse02;
+import com.holis.san01.dto.ApiResponse;
 import com.holis.san01.mapper.ItemMapper;
 import com.holis.san01.model.Item;
 import com.holis.san01.model.ItemDto;
@@ -33,99 +33,99 @@ public class ItemController implements BaseController<ItemDto, String, VwItem> {
 
     @Override
     @GetMapping
-    public ResponseEntity<ApiResponse02<ItemDto>> getById(@PathVariable String id) {
+    public ResponseEntity<ApiResponse<ItemDto>> getById(@PathVariable String id) {
         Item item = itemService.findById(id);
         return ResponseEntity.ok(
-                ApiResponse02.success(itemMapper.toDto(item))
+                ApiResponse.success(itemMapper.toDto(item))
         );
     }
 
     @Override
     @PostMapping
-    public ResponseEntity<ApiResponse02<ItemDto>> create(@RequestBody @Valid ItemDto dto) {
-        Item item = itemService.save(itemMapper.toEntity(dto));
+    public ResponseEntity<ApiResponse<ItemDto>> create(@RequestBody @Valid ItemDto dto) {
+        Item item = itemService.create(itemMapper.toEntity(dto));
         ItemDto itemDto = itemMapper.toDto(item);
         return ResponseEntity.ok(
-                ApiResponse02.success(itemDto, "Item criado com sucesso")
+                ApiResponse.success(itemDto, "Item criado com sucesso")
         );
     }
 
     @Override
     @PutMapping
-    public ResponseEntity<ApiResponse02<ItemDto>> update(@RequestBody @Valid ItemDto dto) {
+    public ResponseEntity<ApiResponse<ItemDto>> update(@RequestBody @Valid ItemDto dto) {
         Item salvo = itemService.update(itemMapper.toEntity(dto));
         ItemDto salvoDTO = itemMapper.toDto(salvo);
         return ResponseEntity.ok(
-                ApiResponse02.success(salvoDTO, "Item alterado com sucesso")
+                ApiResponse.success(salvoDTO, "Item alterado com sucesso")
         );
     }
 
     @Override
     @DeleteMapping
-    public ResponseEntity<ApiResponse02<Void>> delete(@PathVariable String id) {
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable String id) {
         itemService.deleteById(id);
         return ResponseEntity.ok(
-                ApiResponse02.success("Item excluído sucesso")
+                ApiResponse.success("Item excluído sucesso")
         );
     }
 
     @Override
     @GetMapping("/list")
-    public ResponseEntity<ApiResponse02<List<ItemDto>>> getList(@RequestParam(required = false) Map<String, String> filtros) {
+    public ResponseEntity<ApiResponse<List<ItemDto>>> getList(@RequestParam(required = false) Map<String, String> filtros) {
         List<Item> entidades = itemService.findList(filtros);
         List<ItemDto> dtos = itemMapper.toDtoList(entidades);
         return ResponseEntity.ok(
-                ApiResponse02.success(dtos, "Lista de Itens")
+                ApiResponse.success(dtos, "Lista de Itens")
         );
     }
 
     @Override
     @GetMapping("/page")
-    public ResponseEntity<ApiResponse02<Page<VwItem>>> getPage(Pageable pageable,
-                                                               @RequestParam(required = false) Map<String, String> filtros) {
+    public ResponseEntity<ApiResponse<Page<VwItem>>> getPage(Pageable pageable,
+                                                             @RequestParam(required = false) Map<String, String> filtros) {
         Page<VwItem> pagina = itemService.findPage(pageable, filtros);
         return ResponseEntity.ok(
-                ApiResponse02.success(pagina, "Pagina de VwItem")
+                ApiResponse.success(pagina, "Pagina de VwItem")
         );
     }
 
     @PutMapping("/archive")
-    public ResponseEntity<ApiResponse02<Void>> archive(@PathVariable String id) {
+    public ResponseEntity<ApiResponse<Void>> archive(@PathVariable String id) {
         itemService.archive(id);
         return ResponseEntity.ok(
-                ApiResponse02.success("Item arquivado com sucesso")
+                ApiResponse.success("Item arquivado com sucesso")
         );
     }
 
     @PutMapping("/unarchive")
-    public ResponseEntity<ApiResponse02<Void>> unarchive(@PathVariable String id) {
+    public ResponseEntity<ApiResponse<Void>> unarchive(@PathVariable String id) {
         itemService.unarchive(id);
         return ResponseEntity.ok(
-                ApiResponse02.success("Item desarquivado com sucesso")
+                ApiResponse.success("Item desarquivado com sucesso")
         );
     }
 
     @GetMapping("/tpItems")
-    public ResponseEntity<ApiResponse02<List<TipoItem>>> listTipoItem() {
+    public ResponseEntity<ApiResponse<List<TipoItem>>> listTipoItem() {
         List<TipoItem> tipoItems = tipoItemService.listTipoItem();
         return ResponseEntity.ok(
-                ApiResponse02.success(tipoItems, "Lista de tipos de itens")
+                ApiResponse.success(tipoItems, "Lista de tipos de itens")
         );
     }
 
     @GetMapping("/familias")
-    public ResponseEntity<ApiResponse02<List<String>>> listFamilia() {
+    public ResponseEntity<ApiResponse<List<String>>> listFamilia() {
         List<String> familias = itemService.listFamilia();
         return ResponseEntity.ok(
-                ApiResponse02.success(familias, "Lista de familias")
+                ApiResponse.success(familias, "Lista de familias")
         );
     }
 
     @GetMapping("/situacoes")
-    public ResponseEntity<ApiResponse02<List<String>>> listSituacao() {
+    public ResponseEntity<ApiResponse<List<String>>> listSituacao() {
         List<String> situacoes = itemService.listSituacao();
         return ResponseEntity.ok(
-                ApiResponse02.success(situacoes, "Lista de situações")
+                ApiResponse.success(situacoes, "Lista de situações")
         );
     }
 }

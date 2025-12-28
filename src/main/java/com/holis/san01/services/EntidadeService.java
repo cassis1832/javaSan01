@@ -20,6 +20,9 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
+import static com.holis.san01.utils.Constantes.STATUS_ARQUIVADO;
+import static com.holis.san01.utils.Constantes.STATUS_ATIVO;
+
 /**
  * Service para tratamento de Entidade
  */
@@ -39,7 +42,7 @@ public class EntidadeService implements BaseService<Entidade, Integer, Entidade>
 
     @Override
     @Transactional
-    public Entidade save(@Nonnull Entidade entidade) {
+    public Entidade create(@Nonnull Entidade entidade) {
         if (entidadeRepository.existsById(entidade.getCodEntd())) {
             throw new ApiRequestException("Este código de item já existe!");
         }
@@ -125,12 +128,18 @@ public class EntidadeService implements BaseService<Entidade, Integer, Entidade>
 
     @Override
     public void archive(@Nonnull Integer id) {
+        Entidade entidade = entidadeRepository.findById(id)
+                .orElseThrow(() -> new NotFoundRequestException("Cliente/fornecedor não cadastrado"));
 
+        entidadeRepository.archive(entidade.getCodEntd(), STATUS_ARQUIVADO);
     }
 
     @Override
     public void unarchive(@Nonnull Integer id) {
+        Entidade entidade = entidadeRepository.findById(id)
+                .orElseThrow(() -> new NotFoundRequestException("Cliente/fornecedor não cadastrado"));
 
+        entidadeRepository.archive(entidade.getCodEntd(), STATUS_ATIVO);
     }
 
     public void checkDelete(Integer id) {

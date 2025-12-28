@@ -3,14 +3,16 @@ package com.holis.san01.controller;
 import com.holis.san01.dto.ApiResponse;
 import com.holis.san01.model.Situacao;
 import com.holis.san01.services.SituacaoService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Controller para tratamento de Situações
@@ -18,48 +20,47 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/situacaos", produces = MediaType.APPLICATION_JSON_VALUE)
-public class SituacaoController {
+public class SituacaoController implements BaseController<Situacao, Integer, Situacao> {
 
     private final SituacaoService situacaoService;
 
-    /**
-     * Ler um determinado registro
-     */
-    @GetMapping
-    public ResponseEntity<ApiResponse> findSituacaoBySituacao(
-            @RequestParam(name = "objeto", defaultValue = "") String objeto,
-            @RequestParam(name = "situacao", defaultValue = "") Integer codSit) {
-
-        Situacao situacao = situacaoService.findBySituacao(objeto, codSit);
-        return new ResponseEntity<>(new ApiResponse(true, situacao), HttpStatus.OK);
-
+    @Override
+    public ResponseEntity<ApiResponse<Situacao>> getById(Integer integer) {
+        return null;
     }
 
-    @GetMapping("/list")
-    public ResponseEntity<ApiResponse> listSituacao(
-            @RequestParam(name = "objeto", defaultValue = "") String objeto) {
-
-        List<Situacao> situacoes = situacaoService.listSituacao(objeto);
-        return new ResponseEntity<>(new ApiResponse(true, situacoes), HttpStatus.OK);
+    @Override
+    public ResponseEntity<ApiResponse<Situacao>> create(Situacao situacao) {
+        return null;
     }
 
-    /**
-     * Incluir um novo registro
-     */
-    @PostMapping
-    public ResponseEntity<ApiResponse> create(@RequestBody @Valid Situacao situacao) {
-
-        situacao = situacaoService.create(situacao);
-        return new ResponseEntity<>(new ApiResponse(true, situacao), HttpStatus.OK);
+    @Override
+    public ResponseEntity<ApiResponse<Situacao>> update(Situacao situacao) {
+        return null;
     }
 
-    /**
-     * Alterar um registro existente
-     */
-    @PutMapping
-    public ResponseEntity<ApiResponse> update(@RequestBody @Valid Situacao situacao) {
+    @Override
+    public ResponseEntity<ApiResponse<Void>> delete(Integer integer) {
+        return null;
+    }
 
-        situacao = situacaoService.update(situacao);
-        return new ResponseEntity<>(new ApiResponse(true, situacao), HttpStatus.OK);
+    @Override
+    public ResponseEntity<ApiResponse<Void>> archive(Integer integer) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse<Void>> unarchive(Integer integer) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse<List<Situacao>>> getList(Map<String, String> filtros) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse<Page<Situacao>>> getPage(Pageable pageable, Map<String, String> filtros) {
+        return null;
     }
 }

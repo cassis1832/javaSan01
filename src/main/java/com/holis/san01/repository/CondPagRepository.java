@@ -23,4 +23,7 @@ public interface CondPagRepository extends JpaRepository<CondPag, String>, JpaSp
 
     @Query("DELETE FROM CondPag i WHERE LOWER(i.codCondPag) = LOWER(:codCondPag)")
     void deleteById(@Nonnull @Param("codCondPag") String codCondPag);
+
+    @Query("UPDATE CondPag SET status = :status WHERE LOWER(codCondPag) = LOWER(:codCondPag)")
+    void archive(@Param("codCondPag") String codCondPag, @Param("status") Integer status);
 }

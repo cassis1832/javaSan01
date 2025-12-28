@@ -16,6 +16,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 
+import static com.holis.san01.utils.Constantes.STATUS_ARQUIVADO;
+import static com.holis.san01.utils.Constantes.STATUS_ATIVO;
+
 /**
  * Service para tratamento da tabela de condição de pagamento
  */
@@ -34,7 +37,7 @@ public class CondPagService implements BaseService<CondPag, String, CondPag> {
 
     @Override
     @Transactional
-    public CondPag save(@Nonnull CondPag condPag) {
+    public CondPag create(@Nonnull CondPag condPag) {
         if (condPagRepository.existsById(condPag.getCodCondPag())) {
             throw new ApiRequestException("Este código de condição de pagamento já existe!");
         }
@@ -78,13 +81,21 @@ public class CondPagService implements BaseService<CondPag, String, CondPag> {
     }
 
     @Override
-    public void archive(@Nonnull String s) {
+    @Transactional
+    public void archive(@Nonnull String id) {
+        CondPag condPag = condPagRepository.findById(id)
+                .orElseThrow(() -> new NotFoundRequestException("Item não cadastrado"));
 
+        condPagRepository.archive(condPag.getCodCondPag(), STATUS_ARQUIVADO);
     }
 
     @Override
-    public void unarchive(@Nonnull String s) {
+    @Transactional
+    public void unarchive(@Nonnull String id) {
+        CondPag condPag = condPagRepository.findById(id)
+                .orElseThrow(() -> new NotFoundRequestException("Item não cadastrado"));
 
+        condPagRepository.archive(condPag.getCodCondPag(), STATUS_ATIVO);
     }
 
     public void checkDelete(String codCondPag) {

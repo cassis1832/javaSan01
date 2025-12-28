@@ -1,7 +1,6 @@
 package com.holis.san01.exceptions;
 
 import com.holis.san01.dto.ApiResponse;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,7 +17,7 @@ public class GlobalExceptionHandler {
      * Devolve HTTPSTATUS.OK para não subir excessão nem dar erro na console do Angular
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ApiResponse<Map<String, String>>> handleValidationExceptions(MethodArgumentNotValidException ex) {
 
         Map<String, String> erros = new HashMap<>();
 
@@ -28,14 +27,7 @@ public class GlobalExceptionHandler {
             erros.put(fieldName, errorMessage);
         });
 
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new ApiResponse(
-                        false,
-                        "Erros @Valid",
-                        "map",
-                        erros
-                ));
+        return ResponseEntity.ok(ApiResponse.errorValid(erros));
     }
 
     /**
@@ -43,14 +35,8 @@ public class GlobalExceptionHandler {
      * Devolve HTTPSTATUS.OK para não subir excessão nem dar erro na console do Angular
      */
     @ExceptionHandler(ApiRequestException.class)
-    public ResponseEntity<ApiResponse> ApiHandler(ApiRequestException ex) {
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new ApiResponse(
-                        false,
-                        ex.getMessage()
-                ));
+    public ResponseEntity<ApiResponse<Void>> ApiHandler(ApiRequestException ex) {
+        return ResponseEntity.ok(ApiResponse.success(ex.getMessage()));
     }
 
     /**
@@ -58,13 +44,7 @@ public class GlobalExceptionHandler {
      * Devolve HTTPSTATUS.OK para não subir excessão nem dar erro na console do Angular
      */
     @ExceptionHandler(NotFoundRequestException.class)
-    public ResponseEntity<ApiResponse> NotFoundException(NotFoundRequestException ex) {
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new ApiResponse(
-                        false,
-                        ex.getMessage()
-                ));
+    public ResponseEntity<ApiResponse<Void>> NotFoundException(NotFoundRequestException ex) {
+        return ResponseEntity.ok(ApiResponse.errorMessage(ex.getMessage()));
     }
 }

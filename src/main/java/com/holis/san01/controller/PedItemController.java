@@ -1,17 +1,21 @@
 package com.holis.san01.controller;
 
 import com.holis.san01.dto.ApiResponse;
-import com.holis.san01.dto.FiltroRequest;
 import com.holis.san01.mapper.PedItemMapper;
 import com.holis.san01.model.PedItem;
 import com.holis.san01.model.PedItemDto;
+import com.holis.san01.model.VwPedItem;
 import com.holis.san01.services.PedItemService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Controller para tratamento dos itens do pedido de venda
@@ -19,85 +23,83 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/pedis", produces = MediaType.APPLICATION_JSON_VALUE)
-public class PedItemController {
+public class PedItemController implements BaseController<PedItemDto, Integer, VwPedItem> {
 
-    private final PedItemService pedIService;
-    private final PedItemMapper pedIMapper;
+    private final PedItemService pedItemService;
+    private final PedItemMapper pedItemMapper;
 
-    /**
-     * Ler um determinado item do pedido de venda pelo id
-     */
+    @Override
     @GetMapping
-    public ResponseEntity<ApiResponse> findPedItemById(
-            @RequestParam(name = "id", defaultValue = "0") Integer id) {
-
-        PedItem pedItem = pedIService.findById(id);
-        return new ResponseEntity<>(new ApiResponse(true, pedIMapper.toDto(pedItem)), HttpStatus.OK);
+    public ResponseEntity<ApiResponse<PedItemDto>> getById(@PathVariable Integer id) {
+        PedItem pedItem = pedItemService.findById(id);
+        return ResponseEntity.ok(
+                ApiResponse.success(pedItemMapper.toDto(pedItem))
+        );
     }
 
-    /**
-     * Listar as linhas do pedido de vendas
-     */
-    @GetMapping("/list")
-    public ResponseEntity<ApiResponse> listVwPedItem(
-            @ModelAttribute FiltroRequest filtroRequest) {
-
-        var list = pedIService.listVwPedItem(filtroRequest);
-        return new ResponseEntity<>(new ApiResponse(true, list), HttpStatus.OK);
-    }
-
-    /**
-     * Listar a view de linhas do pedido de vendas
-     */
-    @GetMapping("/page")
-    public ResponseEntity<ApiResponse> pageVwPedItem(
-            @ModelAttribute FiltroRequest filtroRequest) {
-
-        var page = pedIService.pageVwPedItem(filtroRequest);
-        return new ResponseEntity<>(new ApiResponse(true, page), HttpStatus.OK);
-    }
-
-    /**
-     * Incluir um novo registro PEDITEM
-     */
+    @Override
     @PostMapping
-    public ResponseEntity<ApiResponse> create(
-            @RequestBody @Valid PedItemDto pedItemDTO) {
-
-        var pedItem = pedIService.create(pedIMapper.toEntity(pedItemDTO));
-        return new ResponseEntity<>(new ApiResponse(true, pedIMapper.toDto(pedItem)), HttpStatus.CREATED);
+    public ResponseEntity<ApiResponse<PedItemDto>> create(@RequestBody @Valid PedItemDto dto) {
+        PedItem pedItem = pedItemService.create(pedItemMapper.toEntity(dto));
+        PedItemDto pedItemDto = pedItemMapper.toDto(pedItem);
+        return ResponseEntity.ok(
+                ApiResponse.success(pedItemDto, "Item criado com sucesso")
+        );
     }
 
-    /**
-     * Alterar um registro existente PEDITEM
-     */
+    @Override
     @PutMapping
-    public ResponseEntity<ApiResponse> update(
-            @RequestBody @Valid PedItemDto pedItemDTO) {
-
-        var pedItem = pedIService.update(pedIMapper.toEntity(pedItemDTO));
-        return new ResponseEntity<>(new ApiResponse(true, pedIMapper.toDto(pedItem)), HttpStatus.OK);
+    public ResponseEntity<ApiResponse<PedItemDto>> update(@RequestBody @Valid PedItemDto dto) {
+        PedItem pedItem = pedItemService.update(pedItemMapper.toEntity(dto));
+        PedItemDto pedItemDto = pedItemMapper.toDto(pedItem);
+        return ResponseEntity.ok(
+                ApiResponse.success(pedItemDto, "Item alterado com sucesso")
+        );
     }
 
-    /**
-     * Verificar se o item pode ser deletado
-     */
-    @GetMapping("/checkDelete")
-    public ResponseEntity<ApiResponse> checkDelete(
-            @RequestParam(name = "id") int id) {
-
-        pedIService.checkDelete(id);
-        return new ResponseEntity<>(new ApiResponse(true, "Exclusão pode ser efetuada"), HttpStatus.OK);
-    }
-
-    /**
-     * Excluir uma linha do pedido de venda
-     */
+    @Override
     @DeleteMapping
-    public ResponseEntity<ApiResponse> delete(
-            @RequestParam(name = "id") Integer id) {
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Integer id) {
+        pedItemService.deleteById(id);
+        return ResponseEntity.ok(
+                ApiResponse.success("Item excluído sucesso")
+        );
+    }
 
-        pedIService.delete(id);
-        return new ResponseEntity<>(new ApiResponse(true, "Item do pedido foi excluído com sucesso"), HttpStatus.OK);
+    @Override
+    @GetMapping("/list")
+    public ResponseEntity<ApiResponse<List<PedItemDto>>> getList(@RequestParam(required = false)
+                                                                 Map<String, String> filtros) {
+        List<PedItem> pedIs = pedItemService.findList(filtros);
+        List<PedItemDto> dtos = pedItemMapper.toDtoList(pedIs);
+        return ResponseEntity.ok(
+                ApiResponse.success(dtos, "Lista de Itens")
+        );
+    }
+
+    @Override
+    @GetMapping("/page")
+    public ResponseEntity<ApiResponse<Page<VwPedItem>>> getPage(Pageable pageable,
+                                                                @RequestParam(required = false) Map<String, String> filtros) {
+        Page<VwPedItem> pagina = pedItemService.findPage(pageable, filtros);
+        return ResponseEntity.ok(
+                ApiResponse.success(pagina, "Pagina de PedItems")
+        );
+    }
+
+    @PutMapping("/archive")
+    public ResponseEntity<ApiResponse<Void>> archive(@PathVariable Integer id) {
+        pedItemService.archive(id);
+        return ResponseEntity.ok(
+                ApiResponse.success("Cliente/fornecedor arquivado com sucesso")
+        );
+    }
+
+    @PutMapping("/unarchive")
+    public ResponseEntity<ApiResponse<Void>> unarchive(@PathVariable Integer id) {
+        pedItemService.unarchive(id);
+        return ResponseEntity.ok(
+                ApiResponse.success("Cliente/fornecedor desarquivado com sucesso")
+        );
     }
 }

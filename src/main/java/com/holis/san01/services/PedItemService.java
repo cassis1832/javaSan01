@@ -1,128 +1,91 @@
 package com.holis.san01.services;
 
-import com.holis.san01.dto.FiltroRequest;
 import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.model.PedItem;
 import com.holis.san01.model.VwPedItem;
 import com.holis.san01.repository.ItemRepository;
 import com.holis.san01.repository.PedItemRepository;
 import com.holis.san01.repository.VwPedItemRepository;
-import com.holis.san01.specs.VwPedItemSpecifications;
+import com.holis.san01.utils.SpecificationUtils;
 import jakarta.annotation.Nonnull;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Service para tratamento de pedidos de vendas
  */
 @Service
 @RequiredArgsConstructor
-public class PedItemService {
+public class PedItemService implements BaseService<PedItem, Integer, VwPedItem> {
 
-    private final PedItemRepository pedIRepository;
-    private final VwPedItemRepository vwPedIRepository;
+    private final PedItemRepository pedItemRepository;
+    private final VwPedItemRepository vwPedItemRepository;
     private final ItemRepository itemRepository;
 
-    /**
-     * Ler um item do pedido de venda por ID
-     */
-    public PedItem findById(final Integer id) {
-        return pedIRepository.findById(id)
+    @Override
+    public PedItem findById(@Nonnull final Integer id) {
+        return pedItemRepository.findById(id)
                 .orElseThrow(() -> new ApiRequestException("Item do pedido não encontrado"));
     }
 
-    public List<VwPedItem> listVwPedItem(
-            FiltroRequest filtro) {
+    @Override
+    @Transactional
+    public PedItem create(@Nonnull final PedItem pedItem) {
+        itemRepository.findById(pedItem.getCodItem());
+        return pedItemRepository.saveAndFlush(pedItem);
+    }
 
-        var spec = PreparaSpec(filtro);
+    @Transactional
+    public PedItem update(@Nonnull final PedItem pedItem) {
+        return pedItemRepository.saveAndFlush(pedItem);
+    }
 
-        Sort sort = Sort.by(
-                Sort.Order.asc("codItem")
+    @Override
+    public void deleteById(@Nonnull Integer id) {
+        checkDelete(id);
+        pedItemRepository.deleteById(id);
+    }
+
+    @Override
+    public List<PedItem> findList(Map<String, String> filters) {
+        Specification<PedItem> spec = SpecificationUtils.createSpecification(filters);
+        return pedItemRepository.findAll(spec);
+    }
+
+    @Override
+    public Page<VwPedItem> findPage(Pageable pageable, Map<String, String> filtros) {
+        Specification<VwPedItem> spec = SpecificationUtils.createSpecification(
+                filtros,                                    // Map com parâmetros da requisição
+                "nome", "descricao"     // campos que serão usados no OR do filterText
         );
 
-        return vwPedIRepository.findAll(spec, sort);
+        return vwPedItemRepository.findAll(spec, pageable);
     }
 
-    public Page<VwPedItem> pageVwPedItem(
-            FiltroRequest filtro) {
+    @Override
+    public void archive(@Nonnull Integer integer) {
 
-        var spec = PreparaSpec(filtro);
-
-        Sort sort = Sort.by(Sort.Direction.fromString(filtro.getSortDirection()), filtro.getSortField());
-        Pageable pageable = PageRequest.of(filtro.getPageIndex(), filtro.getSize(), sort);
-
-        return vwPedIRepository.findAll(spec, pageable);
     }
 
-    private Specification<VwPedItem> PreparaSpec(
-            @Nonnull FiltroRequest filtro) {
+    @Override
+    public void unarchive(@Nonnull Integer integer) {
 
-        Specification<VwPedItem> spec = Specification.where(null);
-
-        if (filtro.getStatus() != null)
-            spec = spec.and(VwPedItemSpecifications.hasStatus(filtro.getStatus()));
-
-        if (filtro.getCodEntd() != null && filtro.getCodEntd() != 0)
-            spec = spec.and(VwPedItemSpecifications.hasCodEntd(filtro.getCodEntd()));
-
-        if (!StringUtils.isBlank(filtro.getCodItem()))
-            spec = spec.and(VwPedItemSpecifications.hasCodItem(filtro.getCodItem()));
-
-        if (filtro.getNumero() != null && filtro.getNumero() != 0)
-            spec = spec.and(VwPedItemSpecifications.hasNrPedido(filtro.getNumero()));
-
-        if (!StringUtils.isBlank(filtro.getTipo())) {
-            if (filtro.getTipo().equalsIgnoreCase("orcamentos"))
-                spec = spec.and(VwPedItemSpecifications.hasTpPedido(false));
-
-            if (filtro.getTipo().equalsIgnoreCase("pedidos"))
-                spec = spec.and(VwPedItemSpecifications.hasTpPedido(true));
-        }
-
-        if (!StringUtils.isBlank(filtro.getFilterText()))
-            spec = spec.and(VwPedItemSpecifications.hasFiltro(filtro.getFilterText()));
-
-        return spec;
-    }
-
-    @Transactional
-    public PedItem create(
-            @Nonnull final PedItem pedItem) {
-
-        itemRepository.findById(pedItem.getCodItem());
-        return pedIRepository.saveAndFlush(pedItem);
-    }
-
-    @Transactional
-    public PedItem update(
-            final PedItem pedItem) {
-
-        return pedIRepository.saveAndFlush(pedItem);
-    }
-
-    @Transactional
-    public void delete(int id) {
-
-        checkDelete(id);
-        pedIRepository.deleteById(id);
     }
 
     public void checkDelete(int id) {
-
-        if (!pedIRepository.existsById(id))
+        if (!pedItemRepository.existsById(id))
             throw new ApiRequestException("Item do pedido de venda não encontrado");
     }
 
     public boolean existsByCoditem(String codItem) {
-        return pedIRepository.existsByCodItem(codItem);
+        return pedItemRepository.existsByCodItem(codItem);
     }
+
 }

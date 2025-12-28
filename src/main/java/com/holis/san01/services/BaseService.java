@@ -18,7 +18,7 @@ public interface BaseService<ENTITY, ID, VIEW> {
 
     ENTITY findById(@Nonnull ID id);
 
-    ENTITY save(@Nonnull ENTITY entity);
+    ENTITY create(@Nonnull ENTITY entity);
 
     ENTITY update(@Nonnull final ENTITY entity);
 

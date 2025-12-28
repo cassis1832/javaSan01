@@ -41,7 +41,7 @@ public class PedVendaService implements BaseService<PedVenda, Integer, VwPedVend
 
     @Override
     @Transactional
-    public PedVenda save(@Nonnull PedVenda pedVenda) {
+    public PedVenda create(@Nonnull PedVenda pedVenda) {
         entidadeRepository.findById(pedVenda.getCodEntd());
 
         if (pedVenda.getNrPedido() == null || pedVenda.getNrPedido() == 0) {

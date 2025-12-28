@@ -1,51 +1,38 @@
 package com.holis.san01.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Data
-public class ApiResponse {
+@NoArgsConstructor
+@AllArgsConstructor
+public class ApiResponse<T> {
 
     private boolean success;
-    private String code;
     private String message;
-    private Object data;
+    private T data;
+    private LocalDateTime timestamp;
 
-    // Mensagens de @Valid
-    public ApiResponse(boolean success, String message, String code, Object data) {
-
-        this.success = success;
-        this.message = message;
-        this.code = code;
-        this.data = data;
+    public static <T> ApiResponse<T> success(String message) {
+        return new ApiResponse<>(true, message, null, LocalDateTime.now());
     }
 
-    // Apenas uma mensagem
-    public ApiResponse(boolean success, String message) {
-
-        this.success = success;
-        this.message = message;
-        this.code = "msg";
-        this.data = null;
+    public static <T> ApiResponse<T> success(T data) {
+        return new ApiResponse<>(true, null, data, LocalDateTime.now());
     }
 
-    // Retorno de dados
-    public ApiResponse(boolean success, Object data) {
-
-        this.success = success;
-        this.message = null;
-        this.code = "obj";
-        this.data = data;
+    public static <T> ApiResponse<T> success(T data, String message) {
+        return new ApiResponse<>(true, message, data, LocalDateTime.now());
     }
 
-    public static ApiResponse success(Object data) {
-        return new ApiResponse(true, "Operação realizada com sucesso", "ok", data);
+    public static <T> ApiResponse<T> errorMessage(String message) {
+        return new ApiResponse<>(false, message, null, LocalDateTime.now());
     }
 
-    public static ApiResponse errorValid(Object data) {
-        return new ApiResponse(false, "", "valid", data);
-    }
-
-    public static ApiResponse errorMessage(String message) {
-        return new ApiResponse(false, message, "error", null);
+    public static <T> ApiResponse<T> errorValid(T data) {
+        return new ApiResponse<>(false, "errorValid", data, LocalDateTime.now());
     }
 }

@@ -5,10 +5,14 @@ import com.holis.san01.model.UnidMedida;
 import com.holis.san01.services.UnidMedidaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Controller para tratamento de Unidades de Medidas
@@ -16,54 +20,75 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/unimeds", produces = MediaType.APPLICATION_JSON_VALUE)
-public class UnidMedidaController {
+public class UnidMedidaController implements BaseController<UnidMedida, String, UnidMedida> {
 
     private final UnidMedidaService unidMedidaService;
 
-    /**
-     * Ler um determinado registro pelo código
-     */
+    @Override
     @GetMapping
-    public ResponseEntity<UnidMedida> findUnidMedidaByCodUnimed(
-            @RequestParam(name = "codUniMed", defaultValue = "") String codUniMed) {
-        return ResponseEntity.status(HttpStatus.OK).body(unidMedidaService.findByCodUnimed(codUniMed));
+    public ResponseEntity<ApiResponse<UnidMedida>> getById(@PathVariable String id) {
+        UnidMedida unidMedida = unidMedidaService.findById(id);
+        return ResponseEntity.ok(
+                ApiResponse.success(unidMedida)
+        );
     }
 
-    /**
-     * Incluir um novo registro
-     */
+    @Override
     @PostMapping
-    public ResponseEntity<UnidMedida> create(@RequestBody @Valid UnidMedida unidMedida) {
-
-        unidMedida = unidMedidaService.create(unidMedida);
-        return new ResponseEntity<>(unidMedida, HttpStatus.CREATED);
+    public ResponseEntity<ApiResponse<UnidMedida>> create(@RequestBody @Valid UnidMedida dto) {
+        UnidMedida unidMedida = unidMedidaService.create(dto);
+        return ResponseEntity.ok(
+                ApiResponse.success(unidMedida, "Condição de pagamento criada com sucesso")
+        );
     }
 
-    /**
-     * Alterar um registro existente
-     */
+    @Override
     @PutMapping
-    public ResponseEntity<UnidMedida> update(@RequestBody @Valid UnidMedida unidMedida) {
-
-        unidMedida = unidMedidaService.update(unidMedida);
-        return new ResponseEntity<>(unidMedida, HttpStatus.OK);
+    public ResponseEntity<ApiResponse<UnidMedida>> update(@RequestBody @Valid UnidMedida dto) {
+        UnidMedida unidMedida = unidMedidaService.update(dto);
+        return ResponseEntity.ok(
+                ApiResponse.success(unidMedida, "Coondição de pagamento alterada com sucesso")
+        );
     }
 
-    /**
-     * Excluir um registro
-     */
+    @Override
     @DeleteMapping
-    public ResponseEntity<?> delete(@RequestParam(name = "codUniMed") String codUniMed) {
-
-        unidMedidaService.delete(codUniMed);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable String id) {
+        unidMedidaService.deleteById(id);
+        return ResponseEntity.ok(
+                ApiResponse.success("Condição de pagamento excluída com sucesso")
+        );
     }
 
+    @Override
     @GetMapping("/list")
-    public ResponseEntity<ApiResponse> list(
-            @RequestParam(name = "status", defaultValue = "0") int status) {
+    public ResponseEntity<ApiResponse<List<UnidMedida>>> getList(@RequestParam(required = false) Map<String, String> filtros) {
+        List<UnidMedida> unidMedidas = unidMedidaService.findList(filtros);
+        return ResponseEntity.ok(
+                ApiResponse.success(unidMedidas, "Lista de condições de pagamento")
+        );
+    }
 
-        ApiResponse apiResponse = unidMedidaService.listUnidMedida(status);
-        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    @Override
+    @GetMapping("/page")
+    public ResponseEntity<ApiResponse<Page<UnidMedida>>> getPage(Pageable pageable,
+                                                                 @RequestParam(required = false) Map<String, String> filtros) {
+        return null;
+    }
+
+    @PutMapping("/archive")
+    public ResponseEntity<ApiResponse<Void>> archive(@PathVariable String id) {
+        unidMedidaService.archive(id);
+        return ResponseEntity.ok(
+                ApiResponse.success("Condição de pagamento arquivada com sucesso")
+        );
+    }
+
+    @PutMapping("/unarchive")
+    public ResponseEntity<ApiResponse<Void>> unarchive(@PathVariable String id) {
+        unidMedidaService.unarchive(id);
+        return ResponseEntity.ok(
+                ApiResponse.success("Condição de pagamento desarquivada com sucesso")
+        );
     }
 }

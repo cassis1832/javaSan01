@@ -46,7 +46,7 @@ public class TituloApService implements BaseService<TituloAp, Integer, VwTituloA
 
     @Override
     @Transactional
-    public TituloAp save(@Nonnull TituloAp tituloAp) {
+    public TituloAp create(@Nonnull TituloAp tituloAp) {
         if (tituloApRepository.existsById(tituloAp.getId())) {
             throw new ApiRequestException("Este id já existe!");
         }

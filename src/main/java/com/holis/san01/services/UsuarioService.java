@@ -40,7 +40,7 @@ public class UsuarioService implements BaseService<Usuario, Integer, VwUsuario> 
 
     @Override
     @Transactional
-    public Usuario save(@Nonnull Usuario usuario) {
+    public Usuario create(@Nonnull Usuario usuario) {
         if (usuarioRepository.existsByEmail(usuario.getEmail())) {
             throw new ApiRequestException("Este email já existe!");
         }

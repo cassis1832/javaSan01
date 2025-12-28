@@ -42,7 +42,7 @@ public class ItemService implements BaseService<Item, String, VwItem> {
 
     @Override
     @Transactional
-    public Item save(@Nonnull Item item) {
+    public Item create(@Nonnull Item item) {
         if (itemRepository.existsById(item.getCodItem())) {
             throw new ApiRequestException("Este código de item já existe!");
         }

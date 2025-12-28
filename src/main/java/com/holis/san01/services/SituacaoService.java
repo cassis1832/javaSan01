@@ -1,49 +1,62 @@
 package com.holis.san01.services;
 
-import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.model.Situacao;
 import com.holis.san01.repository.SituacaoRepository;
 import jakarta.annotation.Nonnull;
-import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Service para tratamento da tabela de situações
  */
 @Service
 @RequiredArgsConstructor
-public class SituacaoService {
+public class SituacaoService implements BaseService<Situacao, Integer, String> {
 
     private final SituacaoRepository situacaoRepository;
 
-    public Situacao findBySituacao(@NotNull final String objeto, @NotNull final Integer codSit) {
-        return situacaoRepository.findBySituacao(objeto, codSit)
-                .orElseThrow(() -> new ApiRequestException("Situação não encontrada"));
+    @Override
+    public Situacao findById(@Nonnull Integer integer) {
+        return null;
     }
 
-    public List<Situacao> listSituacao(@Nonnull final String objeto) {
-        return situacaoRepository.listSituacao(objeto);
+    @Override
+    public Situacao create(@Nonnull Situacao situacao) {
+        return null;
     }
 
-    @Transactional
-    public Situacao create(@NotNull final Situacao situacao) {
-        if (situacaoRepository.existsByObjetoAndCodSit(situacao.getObjeto(), situacao.getCodSit()))
-            throw new ApiRequestException("Situação já existe!");
-
-        return situacaoRepository.saveAndFlush(situacao);
+    @Override
+    public Situacao update(@Nonnull Situacao situacao) {
+        return null;
     }
 
-    @Transactional
-    public Situacao update(@NotNull final Situacao dto) {
-        Situacao situacao = situacaoRepository.findById(dto.getId())
-                .orElseThrow(() -> new ApiRequestException("Situação não encontrada!"));
+    @Override
+    public void deleteById(@Nonnull Integer integer) {
 
-        situacao.setDescricao(dto.getDescricao());
-        situacao.setSequencia(dto.getSequencia());
-        return situacaoRepository.saveAndFlush(situacao);
+    }
+
+    @Override
+    public List<Situacao> findList(Map<String, String> filters) {
+        return List.of();
+    }
+
+    @Override
+    public Page<String> findPage(Pageable pageable, Map<String, String> filtros) {
+        return null;
+    }
+
+    @Override
+    public void archive(@Nonnull Integer integer) {
+
+    }
+
+    @Override
+    public void unarchive(@Nonnull Integer integer) {
+
     }
 }
