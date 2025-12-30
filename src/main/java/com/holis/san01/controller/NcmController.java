@@ -27,7 +27,7 @@ public class NcmController {
     /**
      * Ler um determinado registro pelo código
      */
-    @GetMapping
+    @GetMapping("/{id}")
     public ResponseEntity<Ncm> ler(
             @RequestParam(name = "codNcm", defaultValue = "") String codNcm) {
         return ResponseEntity.status(HttpStatus.OK).body(ncmService.findById(codNcm));
@@ -60,7 +60,7 @@ public class NcmController {
     /**
      * Alterar um registro existente
      */
-    @PutMapping
+    @PutMapping("/{id}")
     public ResponseEntity<Ncm> alterar(@RequestBody @Valid Ncm ncm) {
 
         ncm = ncmService.alterar(ncm);
@@ -70,7 +70,7 @@ public class NcmController {
     /**
      * Excluir um registro
      */
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> excluir(@RequestParam(name = "codNcm") String codNcm) {
 
         try {

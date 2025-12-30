@@ -16,7 +16,7 @@ import java.util.Map;
  */
 @Service
 @RequiredArgsConstructor
-public class SituacaoService implements BaseService<Situacao, Integer, String> {
+public class SituacaoService implements BaseService<Situacao, Integer, Situacao> {
 
     private final SituacaoRepository situacaoRepository;
 
@@ -36,27 +36,24 @@ public class SituacaoService implements BaseService<Situacao, Integer, String> {
     }
 
     @Override
-    public void deleteById(@Nonnull Integer integer) {
-
+    public void delete(@Nonnull Integer integer) {
     }
 
     @Override
-    public List<Situacao> findList(Map<String, String> filters) {
+    public List<Situacao> findAll(Map<String, String> filters) {
         return List.of();
     }
 
     @Override
-    public Page<String> findPage(Pageable pageable, Map<String, String> filtros) {
+    public Page<Situacao> findPage(Pageable pageable, Map<String, String> filtros) {
         return null;
     }
 
     @Override
-    public void archive(@Nonnull Integer integer) {
-
+    public void arquivar(@Nonnull Integer integer) {
     }
 
     @Override
-    public void unarchive(@Nonnull Integer integer) {
-
+    public void desarquivar(@Nonnull Integer integer) {
     }
 }

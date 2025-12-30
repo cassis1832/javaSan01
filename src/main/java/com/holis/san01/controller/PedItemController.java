@@ -1,9 +1,9 @@
 package com.holis.san01.controller;
 
 import com.holis.san01.dto.ApiResponse;
+import com.holis.san01.dto.PedItemDto;
 import com.holis.san01.mapper.PedItemMapper;
 import com.holis.san01.model.PedItem;
-import com.holis.san01.model.PedItemDto;
 import com.holis.san01.model.VwPedItem;
 import com.holis.san01.services.PedItemService;
 import jakarta.validation.Valid;
@@ -29,8 +29,8 @@ public class PedItemController implements BaseController<PedItemDto, Integer, Vw
     private final PedItemMapper pedItemMapper;
 
     @Override
-    @GetMapping
-    public ResponseEntity<ApiResponse<PedItemDto>> getById(@PathVariable Integer id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<PedItemDto>> findByID(@PathVariable Integer id) {
         PedItem pedItem = pedItemService.findById(id);
         return ResponseEntity.ok(
                 ApiResponse.success(pedItemMapper.toDto(pedItem))
@@ -48,8 +48,10 @@ public class PedItemController implements BaseController<PedItemDto, Integer, Vw
     }
 
     @Override
-    @PutMapping
-    public ResponseEntity<ApiResponse<PedItemDto>> update(@RequestBody @Valid PedItemDto dto) {
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<PedItemDto>> update(
+            @PathVariable Integer id,
+            @RequestBody @Valid PedItemDto dto) {
         PedItem pedItem = pedItemService.update(pedItemMapper.toEntity(dto));
         PedItemDto pedItemDto = pedItemMapper.toDto(pedItem);
         return ResponseEntity.ok(
@@ -58,9 +60,9 @@ public class PedItemController implements BaseController<PedItemDto, Integer, Vw
     }
 
     @Override
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Integer id) {
-        pedItemService.deleteById(id);
+        pedItemService.delete(id);
         return ResponseEntity.ok(
                 ApiResponse.success("Item excluído sucesso")
         );
@@ -68,36 +70,36 @@ public class PedItemController implements BaseController<PedItemDto, Integer, Vw
 
     @Override
     @GetMapping("/list")
-    public ResponseEntity<ApiResponse<List<PedItemDto>>> getList(@RequestParam(required = false)
-                                                                 Map<String, String> filtros) {
-        List<PedItem> pedIs = pedItemService.findList(filtros);
-        List<PedItemDto> dtos = pedItemMapper.toDtoList(pedIs);
+    public ResponseEntity<ApiResponse<List<VwPedItem>>> findAll(
+            @RequestParam(required = false) Map<String, String> filtros) {
+        List<VwPedItem> pedIs = pedItemService.findAll(filtros);
         return ResponseEntity.ok(
-                ApiResponse.success(dtos, "Lista de Itens")
+                ApiResponse.success(pedIs, "Lista de Itens")
         );
     }
 
     @Override
     @GetMapping("/page")
-    public ResponseEntity<ApiResponse<Page<VwPedItem>>> getPage(Pageable pageable,
-                                                                @RequestParam(required = false) Map<String, String> filtros) {
+    public ResponseEntity<ApiResponse<Page<VwPedItem>>> findPage(
+            Pageable pageable,
+            @RequestParam(required = false) Map<String, String> filtros) {
         Page<VwPedItem> pagina = pedItemService.findPage(pageable, filtros);
         return ResponseEntity.ok(
                 ApiResponse.success(pagina, "Pagina de PedItems")
         );
     }
 
-    @PutMapping("/archive")
-    public ResponseEntity<ApiResponse<Void>> archive(@PathVariable Integer id) {
-        pedItemService.archive(id);
+    @PatchMapping("/{id}/arquivar")
+    public ResponseEntity<ApiResponse<Void>> arquivar(@PathVariable Integer id) {
+        pedItemService.arquivar(id);
         return ResponseEntity.ok(
                 ApiResponse.success("Cliente/fornecedor arquivado com sucesso")
         );
     }
 
-    @PutMapping("/unarchive")
-    public ResponseEntity<ApiResponse<Void>> unarchive(@PathVariable Integer id) {
-        pedItemService.unarchive(id);
+    @PatchMapping("/{id}/desarquivar")
+    public ResponseEntity<ApiResponse<Void>> desarquivar(@PathVariable Integer id) {
+        pedItemService.desarquivar(id);
         return ResponseEntity.ok(
                 ApiResponse.success("Cliente/fornecedor desarquivado com sucesso")
         );

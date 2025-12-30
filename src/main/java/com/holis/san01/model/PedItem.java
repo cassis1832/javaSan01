@@ -23,7 +23,6 @@ public class PedItem {
 
     private Integer nrSequencia;
 
-    @Column(nullable = false)
     private String codItem;
 
     @Column(nullable = false)
@@ -125,4 +124,5 @@ public class PedItem {
     private SituacaoPedidoEnum situacao;
 
     private int status;
+
 }

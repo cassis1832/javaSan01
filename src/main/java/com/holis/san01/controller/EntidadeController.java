@@ -1,9 +1,9 @@
 package com.holis.san01.controller;
 
 import com.holis.san01.dto.ApiResponse;
+import com.holis.san01.dto.EntidadeDto;
 import com.holis.san01.mapper.EntidadeMapper;
 import com.holis.san01.model.Entidade;
-import com.holis.san01.model.EntidadeDto;
 import com.holis.san01.services.EntidadeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,14 +22,14 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/entds", produces = MediaType.APPLICATION_JSON_VALUE)
-public class EntidadeController implements BaseController<EntidadeDto, Integer, Entidade> {
+public class EntidadeController implements BaseController<EntidadeDto, Integer, EntidadeDto> {
 
     private final EntidadeService entidadeService;
     private final EntidadeMapper entidadeMapper;
 
     @Override
-    @GetMapping
-    public ResponseEntity<ApiResponse<EntidadeDto>> getById(@PathVariable Integer id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<EntidadeDto>> findByID(@PathVariable Integer id) {
         Entidade entidade = entidadeService.findById(id);
         return ResponseEntity.ok(
                 ApiResponse.success(entidadeMapper.toDto(entidade))
@@ -47,8 +47,10 @@ public class EntidadeController implements BaseController<EntidadeDto, Integer, 
     }
 
     @Override
-    @PutMapping
-    public ResponseEntity<ApiResponse<EntidadeDto>> update(@RequestBody @Valid EntidadeDto dto) {
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<EntidadeDto>> update(
+            @PathVariable Integer id,
+            @RequestBody @Valid EntidadeDto dto) {
         Entidade entidade = entidadeService.update(entidadeMapper.toEntity(dto));
         EntidadeDto entidadeDto = entidadeMapper.toDto(entidade);
         return ResponseEntity.ok(
@@ -57,9 +59,9 @@ public class EntidadeController implements BaseController<EntidadeDto, Integer, 
     }
 
     @Override
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Integer id) {
-        entidadeService.deleteById(id);
+        entidadeService.delete(id);
         return ResponseEntity.ok(
                 ApiResponse.success("Item excluído sucesso")
         );
@@ -67,9 +69,9 @@ public class EntidadeController implements BaseController<EntidadeDto, Integer, 
 
     @Override
     @GetMapping("/list")
-    public ResponseEntity<ApiResponse<List<EntidadeDto>>> getList(@RequestParam(required = false)
-                                                                  Map<String, String> filtros) {
-        List<Entidade> entidades = entidadeService.findList(filtros);
+    public ResponseEntity<ApiResponse<List<EntidadeDto>>> findAll(
+            @RequestParam(required = false) Map<String, String> filtros) {
+        List<Entidade> entidades = entidadeService.findAll(filtros);
         List<EntidadeDto> dtos = entidadeMapper.toDtoList(entidades);
         return ResponseEntity.ok(
                 ApiResponse.success(dtos, "Lista de Itens")
@@ -78,25 +80,27 @@ public class EntidadeController implements BaseController<EntidadeDto, Integer, 
 
     @Override
     @GetMapping("/page")
-    public ResponseEntity<ApiResponse<Page<Entidade>>> getPage(Pageable pageable,
-                                                               @RequestParam(required = false) Map<String, String> filtros) {
+    public ResponseEntity<ApiResponse<Page<EntidadeDto>>> findPage(
+            Pageable pageable,
+            @RequestParam(required = false) Map<String, String> filtros) {
         Page<Entidade> pagina = entidadeService.findPage(pageable, filtros);
+        Page<EntidadeDto> dtos = entidadeMapper.toDtoPage(pagina);
         return ResponseEntity.ok(
-                ApiResponse.success(pagina, "Pagina de Entidades")
+                ApiResponse.success(dtos, "Pagina de Entidades")
         );
     }
 
-    @PutMapping("/archive")
-    public ResponseEntity<ApiResponse<Void>> archive(@PathVariable Integer id) {
-        entidadeService.archive(id);
+    @PatchMapping("/{id}/arquivar")
+    public ResponseEntity<ApiResponse<Void>> arquivar(@PathVariable Integer id) {
+        entidadeService.arquivar(id);
         return ResponseEntity.ok(
                 ApiResponse.success("Cliente/fornecedor arquivado com sucesso")
         );
     }
 
-    @PutMapping("/unarchive")
-    public ResponseEntity<ApiResponse<Void>> unarchive(@PathVariable Integer id) {
-        entidadeService.unarchive(id);
+    @PatchMapping("/{id}/desarquivar")
+    public ResponseEntity<ApiResponse<Void>> desarquivar(@PathVariable Integer id) {
+        entidadeService.desarquivar(id);
         return ResponseEntity.ok(
                 ApiResponse.success("Cliente/fornecedor desarquivado com sucesso")
         );

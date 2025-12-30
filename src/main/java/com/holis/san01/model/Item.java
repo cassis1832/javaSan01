@@ -23,10 +23,8 @@ public class Item {
     @Column(length = 60, nullable = false)
     private String descricao;
 
-    @Column(length = 2, nullable = false)
     private String codTipoItem;
 
-    @Column(length = 6, nullable = false)
     private String codUniMed;
 
     private BigDecimal precoVenda;

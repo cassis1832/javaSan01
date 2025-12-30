@@ -5,9 +5,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -21,20 +19,32 @@ import java.util.Map;
  */
 public interface BaseController<DTO, ID, VIEW> {
 
-    ResponseEntity<ApiResponse<DTO>> getById(@PathVariable ID id);
+    @GetMapping("/{id}")
+    ResponseEntity<ApiResponse<DTO>> findByID(@PathVariable ID id);
 
+    @PostMapping
     ResponseEntity<ApiResponse<DTO>> create(@RequestBody @Valid DTO dto);
 
-    ResponseEntity<ApiResponse<DTO>> update(@RequestBody @Valid DTO dto);
+    @PutMapping("/{id}")
+    ResponseEntity<ApiResponse<DTO>> update(
+            @PathVariable ID id,
+            @RequestBody @Valid DTO dto);
 
+    @DeleteMapping("/{id}")
     ResponseEntity<ApiResponse<Void>> delete(@PathVariable ID id);
 
-    ResponseEntity<ApiResponse<Void>> archive(@PathVariable ID id);
+    @PatchMapping("/{id}/arquivar")
+    ResponseEntity<ApiResponse<Void>> arquivar(@PathVariable ID id);
 
-    ResponseEntity<ApiResponse<Void>> unarchive(@PathVariable ID id);
+    @PatchMapping("/{id}/desarquivar")
+    ResponseEntity<ApiResponse<Void>> desarquivar(@PathVariable ID id);
 
-    ResponseEntity<ApiResponse<List<DTO>>> getList(@RequestParam(required = false) Map<String, String> filtros);
+    @GetMapping("/list")
+    ResponseEntity<ApiResponse<List<VIEW>>> findAll(
+            @RequestParam(required = false) Map<String, String> filtros);
 
-    ResponseEntity<ApiResponse<Page<VIEW>>> getPage(Pageable pageable,
-                                                    @RequestParam(required = false) Map<String, String> filtros);
+    @GetMapping("/page")
+    ResponseEntity<ApiResponse<Page<VIEW>>> findPage(
+            Pageable pageable,
+            @RequestParam(required = false) Map<String, String> filtros);
 }

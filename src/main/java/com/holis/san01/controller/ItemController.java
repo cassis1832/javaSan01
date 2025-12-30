@@ -1,9 +1,9 @@
 package com.holis.san01.controller;
 
 import com.holis.san01.dto.ApiResponse;
+import com.holis.san01.dto.ItemDto;
 import com.holis.san01.mapper.ItemMapper;
 import com.holis.san01.model.Item;
-import com.holis.san01.model.ItemDto;
 import com.holis.san01.model.TipoItem;
 import com.holis.san01.model.VwItem;
 import com.holis.san01.services.ItemService;
@@ -32,8 +32,8 @@ public class ItemController implements BaseController<ItemDto, String, VwItem> {
     private final ItemMapper itemMapper;
 
     @Override
-    @GetMapping
-    public ResponseEntity<ApiResponse<ItemDto>> getById(@PathVariable String id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<ItemDto>> findByID(@PathVariable String id) {
         Item item = itemService.findById(id);
         return ResponseEntity.ok(
                 ApiResponse.success(itemMapper.toDto(item))
@@ -51,8 +51,10 @@ public class ItemController implements BaseController<ItemDto, String, VwItem> {
     }
 
     @Override
-    @PutMapping
-    public ResponseEntity<ApiResponse<ItemDto>> update(@RequestBody @Valid ItemDto dto) {
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<ItemDto>> update(
+            @PathVariable String id,
+            @RequestBody @Valid ItemDto dto) {
         Item salvo = itemService.update(itemMapper.toEntity(dto));
         ItemDto salvoDTO = itemMapper.toDto(salvo);
         return ResponseEntity.ok(
@@ -61,9 +63,9 @@ public class ItemController implements BaseController<ItemDto, String, VwItem> {
     }
 
     @Override
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable String id) {
-        itemService.deleteById(id);
+        itemService.delete(id);
         return ResponseEntity.ok(
                 ApiResponse.success("Item excluído sucesso")
         );
@@ -71,35 +73,36 @@ public class ItemController implements BaseController<ItemDto, String, VwItem> {
 
     @Override
     @GetMapping("/list")
-    public ResponseEntity<ApiResponse<List<ItemDto>>> getList(@RequestParam(required = false) Map<String, String> filtros) {
-        List<Item> entidades = itemService.findList(filtros);
-        List<ItemDto> dtos = itemMapper.toDtoList(entidades);
+    public ResponseEntity<ApiResponse<List<VwItem>>> findAll(
+            @RequestParam(required = false) Map<String, String> filtros) {
+        List<VwItem> vwItems = itemService.findAll(filtros);
         return ResponseEntity.ok(
-                ApiResponse.success(dtos, "Lista de Itens")
+                ApiResponse.success(vwItems, "Lista de Itens")
         );
     }
 
     @Override
     @GetMapping("/page")
-    public ResponseEntity<ApiResponse<Page<VwItem>>> getPage(Pageable pageable,
-                                                             @RequestParam(required = false) Map<String, String> filtros) {
+    public ResponseEntity<ApiResponse<Page<VwItem>>> findPage(
+            Pageable pageable,
+            @RequestParam(required = false) Map<String, String> filtros) {
         Page<VwItem> pagina = itemService.findPage(pageable, filtros);
         return ResponseEntity.ok(
                 ApiResponse.success(pagina, "Pagina de VwItem")
         );
     }
 
-    @PutMapping("/archive")
-    public ResponseEntity<ApiResponse<Void>> archive(@PathVariable String id) {
-        itemService.archive(id);
+    @PatchMapping("/{id}/arquivar")
+    public ResponseEntity<ApiResponse<Void>> arquivar(@PathVariable String id) {
+        itemService.arquivar(id);
         return ResponseEntity.ok(
                 ApiResponse.success("Item arquivado com sucesso")
         );
     }
 
-    @PutMapping("/unarchive")
-    public ResponseEntity<ApiResponse<Void>> unarchive(@PathVariable String id) {
-        itemService.unarchive(id);
+    @PatchMapping("/{id}/desarquivar")
+    public ResponseEntity<ApiResponse<Void>> desarquivar(@PathVariable String id) {
+        itemService.desarquivar(id);
         return ResponseEntity.ok(
                 ApiResponse.success("Item desarquivado com sucesso")
         );

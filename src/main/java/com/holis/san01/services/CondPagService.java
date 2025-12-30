@@ -60,13 +60,13 @@ public class CondPagService implements BaseService<CondPag, String, CondPag> {
     }
 
     @Override
-    public void deleteById(@Nonnull String codCondPag) {
+    public void delete(@Nonnull String codCondPag) {
         checkDelete(codCondPag);
         condPagRepository.deleteById(codCondPag);
     }
 
     @Override
-    public List<CondPag> findList(Map<String, String> filters) {
+    public List<CondPag> findAll(Map<String, String> filters) {
         Specification<CondPag> spec = SpecificationUtils.createSpecification(filters);
         return condPagRepository.findAll(spec);
     }
@@ -82,7 +82,7 @@ public class CondPagService implements BaseService<CondPag, String, CondPag> {
 
     @Override
     @Transactional
-    public void archive(@Nonnull String id) {
+    public void arquivar(@Nonnull String id) {
         CondPag condPag = condPagRepository.findById(id)
                 .orElseThrow(() -> new NotFoundRequestException("Item não cadastrado"));
 
@@ -91,7 +91,7 @@ public class CondPagService implements BaseService<CondPag, String, CondPag> {
 
     @Override
     @Transactional
-    public void unarchive(@Nonnull String id) {
+    public void desarquivar(@Nonnull String id) {
         CondPag condPag = condPagRepository.findById(id)
                 .orElseThrow(() -> new NotFoundRequestException("Item não cadastrado"));
 

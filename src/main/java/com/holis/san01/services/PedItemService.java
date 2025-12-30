@@ -38,7 +38,6 @@ public class PedItemService implements BaseService<PedItem, Integer, VwPedItem> 
     @Override
     @Transactional
     public PedItem create(@Nonnull final PedItem pedItem) {
-        itemRepository.findById(pedItem.getCodItem());
         return pedItemRepository.saveAndFlush(pedItem);
     }
 
@@ -48,15 +47,15 @@ public class PedItemService implements BaseService<PedItem, Integer, VwPedItem> 
     }
 
     @Override
-    public void deleteById(@Nonnull Integer id) {
+    public void delete(@Nonnull Integer id) {
         checkDelete(id);
         pedItemRepository.deleteById(id);
     }
 
     @Override
-    public List<PedItem> findList(Map<String, String> filters) {
-        Specification<PedItem> spec = SpecificationUtils.createSpecification(filters);
-        return pedItemRepository.findAll(spec);
+    public List<VwPedItem> findAll(Map<String, String> filters) {
+        Specification<VwPedItem> spec = SpecificationUtils.createSpecification(filters);
+        return vwPedItemRepository.findAll(spec);
     }
 
     @Override
@@ -70,12 +69,12 @@ public class PedItemService implements BaseService<PedItem, Integer, VwPedItem> 
     }
 
     @Override
-    public void archive(@Nonnull Integer integer) {
+    public void arquivar(@Nonnull Integer integer) {
 
     }
 
     @Override
-    public void unarchive(@Nonnull Integer integer) {
+    public void desarquivar(@Nonnull Integer integer) {
 
     }
 
@@ -85,7 +84,7 @@ public class PedItemService implements BaseService<PedItem, Integer, VwPedItem> 
     }
 
     public boolean existsByCoditem(String codItem) {
-        return pedItemRepository.existsByCodItem(codItem);
+        return pedItemRepository.existsByCodItemIgnoreCase(codItem);
     }
 
 }

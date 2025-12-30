@@ -32,7 +32,7 @@ public class UnidMedidaService implements BaseService<UnidMedida, String, UnidMe
 
     @Override
     @Transactional
-    public UnidMedida create(@NotNull final UnidMedida unidMedida) {
+    public UnidMedida create(@Nonnull @NotNull final UnidMedida unidMedida) {
 
         if (unidMedidaRepository.existsBycodUniMed(unidMedida.getCodUniMed()))
             throw new ApiRequestException("Unidade de medida já existe!");
@@ -42,7 +42,7 @@ public class UnidMedidaService implements BaseService<UnidMedida, String, UnidMe
 
     @Override
     @Transactional
-    public UnidMedida update(@NotNull final UnidMedida dto) {
+    public UnidMedida update(@Nonnull @NotNull final UnidMedida dto) {
 
         UnidMedida unidMedida = unidMedidaRepository.findById(dto.getCodUniMed())
                 .orElseThrow(() -> new ApiRequestException("Unidade de medida não encontrada!"));
@@ -55,7 +55,7 @@ public class UnidMedidaService implements BaseService<UnidMedida, String, UnidMe
     }
 
     @Transactional
-    public void deleteById(@Nonnull final String codUniMed) {
+    public void delete(@Nonnull final String codUniMed) {
         if (!unidMedidaRepository.existsBycodUniMed(codUniMed))
             throw new ApiRequestException("Unidade de medida não encontrada!");
 
@@ -63,7 +63,7 @@ public class UnidMedidaService implements BaseService<UnidMedida, String, UnidMe
     }
 
     @Override
-    public List<UnidMedida> findList(Map<String, String> filters) {
+    public List<UnidMedida> findAll(Map<String, String> filters) {
         return List.of();
     }
 
@@ -73,12 +73,12 @@ public class UnidMedidaService implements BaseService<UnidMedida, String, UnidMe
     }
 
     @Override
-    public void archive(@Nonnull String s) {
+    public void arquivar(@Nonnull String s) {
 
     }
 
     @Override
-    public void unarchive(@Nonnull String s) {
+    public void desarquivar(@Nonnull String s) {
 
     }
 }

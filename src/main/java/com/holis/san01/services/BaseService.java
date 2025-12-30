@@ -22,13 +22,13 @@ public interface BaseService<ENTITY, ID, VIEW> {
 
     ENTITY update(@Nonnull final ENTITY entity);
 
-    void deleteById(@Nonnull ID id);
+    void delete(@Nonnull ID id);
 
-    List<ENTITY> findList(Map<String, String> filters);
+    void arquivar(@Nonnull ID id);
+
+    void desarquivar(@Nonnull ID id);
+
+    List<VIEW> findAll(Map<String, String> filters);
 
     Page<VIEW> findPage(Pageable pageable, Map<String, String> filtros);
-
-    void archive(@Nonnull ID id);
-
-    void unarchive(@Nonnull ID id);
 }

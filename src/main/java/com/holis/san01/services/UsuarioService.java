@@ -42,7 +42,7 @@ public class UsuarioService implements BaseService<Usuario, Integer, VwUsuario> 
     @Transactional
     public Usuario create(@Nonnull Usuario usuario) {
         if (usuarioRepository.existsByEmail(usuario.getEmail())) {
-            throw new ApiRequestException("Este email já existe!");
+            throw new ApiRequestException("Este email já existe no sistema");
         }
 
         usuario.setStatus(0);
@@ -68,13 +68,19 @@ public class UsuarioService implements BaseService<Usuario, Integer, VwUsuario> 
     }
 
     @Override
-    public void deleteById(@Nonnull Integer id) {
-        usuarioRepository.deleteById(id);
+    public void delete(@Nonnull Integer id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new NotFoundRequestException("Usuário não cadastrado"));
+        if (usuario.getDtUltLogin() == null)
+            usuarioRepository.deleteById(id);
+        else
+            throw new ApiRequestException("Usuário não pode ser deletado");
     }
 
     @Override
-    public List<Usuario> findList(Map<String, String> filters) {
-        return List.of();
+    public List<VwUsuario> findAll(Map<String, String> filters) {
+        Specification<VwUsuario> spec = SpecificationUtils.createSpecification(filters);
+        return vwUsuarioRepository.findAll(spec);
     }
 
     @Override
@@ -88,7 +94,7 @@ public class UsuarioService implements BaseService<Usuario, Integer, VwUsuario> 
     }
 
     @Transactional
-    public void archive(@Nonnull Integer id) {
+    public void arquivar(@Nonnull Integer id) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundRequestException("Usuario não cadastrado"));
 
@@ -96,7 +102,7 @@ public class UsuarioService implements BaseService<Usuario, Integer, VwUsuario> 
     }
 
     @Transactional
-    public void unarchive(@Nonnull Integer id) {
+    public void desarquivar(@Nonnull Integer id) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundRequestException("Usuario não cadastrado"));
 

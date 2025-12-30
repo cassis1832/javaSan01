@@ -105,13 +105,13 @@ public class EntidadeService implements BaseService<Entidade, Integer, Entidade>
 
     @Override
     @Transactional
-    public void deleteById(@Nonnull final Integer id) {
+    public void delete(@Nonnull final Integer id) {
         checkDelete(id);
         entidadeRepository.deleteById(id);
     }
 
     @Override
-    public List<Entidade> findList(Map<String, String> filters) {
+    public List<Entidade> findAll(Map<String, String> filters) {
         Specification<Entidade> spec = SpecificationUtils.createSpecification(filters);
         return entidadeRepository.findAll(spec);
     }
@@ -127,7 +127,7 @@ public class EntidadeService implements BaseService<Entidade, Integer, Entidade>
     }
 
     @Override
-    public void archive(@Nonnull Integer id) {
+    public void arquivar(@Nonnull Integer id) {
         Entidade entidade = entidadeRepository.findById(id)
                 .orElseThrow(() -> new NotFoundRequestException("Cliente/fornecedor não cadastrado"));
 
@@ -135,7 +135,7 @@ public class EntidadeService implements BaseService<Entidade, Integer, Entidade>
     }
 
     @Override
-    public void unarchive(@Nonnull Integer id) {
+    public void desarquivar(@Nonnull Integer id) {
         Entidade entidade = entidadeRepository.findById(id)
                 .orElseThrow(() -> new NotFoundRequestException("Cliente/fornecedor não cadastrado"));
 

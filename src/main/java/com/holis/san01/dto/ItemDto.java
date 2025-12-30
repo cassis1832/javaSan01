@@ -1,4 +1,4 @@
-package com.holis.san01.model;
+package com.holis.san01.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

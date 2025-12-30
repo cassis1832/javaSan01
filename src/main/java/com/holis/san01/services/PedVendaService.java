@@ -148,15 +148,15 @@ public class PedVendaService implements BaseService<PedVenda, Integer, VwPedVend
 
     @Override
     @Transactional
-    public void deleteById(@Nonnull Integer nrPedido) {
+    public void delete(@Nonnull Integer nrPedido) {
         if (!pedVRepository.existsById(nrPedido)) throw new ApiRequestException("Pedido de venda não encontrado");
         pedVRepository.deleteById(nrPedido);
     }
 
     @Override
-    public List<PedVenda> findList(Map<String, String> filters) {
-        Specification<PedVenda> spec = SpecificationUtils.createSpecification(filters);
-        return pedVRepository.findAll(spec);
+    public List<VwPedVenda> findAll(Map<String, String> filters) {
+        Specification<VwPedVenda> spec = SpecificationUtils.createSpecification(filters);
+        return vwPedVRepository.findAll(spec);
     }
 
     @Override
@@ -182,13 +182,13 @@ public class PedVendaService implements BaseService<PedVenda, Integer, VwPedVend
     }
 
     @Transactional
-    public void archive(@Nonnull Integer nrPedido) {
+    public void arquivar(@Nonnull Integer nrPedido) {
         PedVenda pedVenda = pedVRepository.findById(nrPedido).orElseThrow(() -> new ApiRequestException("Pedido de venda não encontrado"));
         pedVenda.setStatus(STATUS_ARQUIVADO);
     }
 
     @Transactional
-    public void unarchive(@Nonnull Integer nrPedido) {
+    public void desarquivar(@Nonnull Integer nrPedido) {
         PedVenda pedVenda = pedVRepository.findById(nrPedido).orElseThrow(() -> new ApiRequestException("Pedido de venda não encontrado"));
         pedVenda.setStatus(STATUS_ATIVO);
     }

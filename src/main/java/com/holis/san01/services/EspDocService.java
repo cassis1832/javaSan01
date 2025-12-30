@@ -42,12 +42,12 @@ public class EspDocService implements BaseService<EspDoc, String, EspDoc> {
 
     @Override
     @Transactional
-    public void deleteById(@Nonnull String s) {
+    public void delete(@Nonnull String s) {
 
     }
 
     @Override
-    public List<EspDoc> findList(Map<String, String> filters) {
+    public List<EspDoc> findAll(Map<String, String> filters) {
         return List.of();
     }
 
@@ -57,12 +57,12 @@ public class EspDocService implements BaseService<EspDoc, String, EspDoc> {
     }
 
     @Override
-    public void archive(@Nonnull String s) {
+    public void arquivar(@Nonnull String s) {
 
     }
 
     @Override
-    public void unarchive(@Nonnull String s) {
+    public void desarquivar(@Nonnull String s) {
 
     }
 

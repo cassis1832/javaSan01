@@ -1,7 +1,7 @@
 package com.holis.san01.mapper;
 
+import com.holis.san01.dto.PedItemDto;
 import com.holis.san01.model.PedItem;
-import com.holis.san01.model.PedItemDto;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

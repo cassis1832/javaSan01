@@ -119,7 +119,7 @@ public class TituloApService implements BaseService<TituloAp, Integer, VwTituloA
     }
 
     @Override
-    public void deleteById(@Nonnull Integer id) {
+    public void delete(@Nonnull Integer id) {
         TituloAp tituloAp = tituloApRepository.findById(id)
                 .orElseThrow(() -> new NotFoundRequestException("Título não encontrado"));
 
@@ -134,9 +134,9 @@ public class TituloApService implements BaseService<TituloAp, Integer, VwTituloA
     }
 
     @Override
-    public List<TituloAp> findList(Map<String, String> filters) {
-        Specification<TituloAp> spec = SpecificationUtils.createSpecification(filters);
-        return tituloApRepository.findAll(spec);
+    public List<VwTituloAp> findAll(Map<String, String> filters) {
+        Specification<VwTituloAp> spec = SpecificationUtils.createSpecification(filters);
+        return vwTituloApRepository.findAll(spec);
     }
 
     @Override
@@ -149,12 +149,12 @@ public class TituloApService implements BaseService<TituloAp, Integer, VwTituloA
     }
 
     @Override
-    public void archive(@Nonnull Integer integer) {
+    public void arquivar(@Nonnull Integer integer) {
 
     }
 
     @Override
-    public void unarchive(@Nonnull Integer integer) {
+    public void desarquivar(@Nonnull Integer integer) {
 
     }
 

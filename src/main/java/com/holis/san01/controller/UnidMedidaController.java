@@ -25,8 +25,8 @@ public class UnidMedidaController implements BaseController<UnidMedida, String, 
     private final UnidMedidaService unidMedidaService;
 
     @Override
-    @GetMapping
-    public ResponseEntity<ApiResponse<UnidMedida>> getById(@PathVariable String id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<UnidMedida>> findByID(@PathVariable String id) {
         UnidMedida unidMedida = unidMedidaService.findById(id);
         return ResponseEntity.ok(
                 ApiResponse.success(unidMedida)
@@ -43,8 +43,10 @@ public class UnidMedidaController implements BaseController<UnidMedida, String, 
     }
 
     @Override
-    @PutMapping
-    public ResponseEntity<ApiResponse<UnidMedida>> update(@RequestBody @Valid UnidMedida dto) {
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<UnidMedida>> update(
+            @PathVariable String id,
+            @RequestBody @Valid UnidMedida dto) {
         UnidMedida unidMedida = unidMedidaService.update(dto);
         return ResponseEntity.ok(
                 ApiResponse.success(unidMedida, "Coondição de pagamento alterada com sucesso")
@@ -52,9 +54,9 @@ public class UnidMedidaController implements BaseController<UnidMedida, String, 
     }
 
     @Override
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable String id) {
-        unidMedidaService.deleteById(id);
+        unidMedidaService.delete(id);
         return ResponseEntity.ok(
                 ApiResponse.success("Condição de pagamento excluída com sucesso")
         );
@@ -62,8 +64,9 @@ public class UnidMedidaController implements BaseController<UnidMedida, String, 
 
     @Override
     @GetMapping("/list")
-    public ResponseEntity<ApiResponse<List<UnidMedida>>> getList(@RequestParam(required = false) Map<String, String> filtros) {
-        List<UnidMedida> unidMedidas = unidMedidaService.findList(filtros);
+    public ResponseEntity<ApiResponse<List<UnidMedida>>> findAll(
+            @RequestParam(required = false) Map<String, String> filtros) {
+        List<UnidMedida> unidMedidas = unidMedidaService.findAll(filtros);
         return ResponseEntity.ok(
                 ApiResponse.success(unidMedidas, "Lista de condições de pagamento")
         );
@@ -71,22 +74,23 @@ public class UnidMedidaController implements BaseController<UnidMedida, String, 
 
     @Override
     @GetMapping("/page")
-    public ResponseEntity<ApiResponse<Page<UnidMedida>>> getPage(Pageable pageable,
-                                                                 @RequestParam(required = false) Map<String, String> filtros) {
+    public ResponseEntity<ApiResponse<Page<UnidMedida>>> findPage(
+            Pageable pageable,
+            @RequestParam(required = false) Map<String, String> filtros) {
         return null;
     }
 
-    @PutMapping("/archive")
-    public ResponseEntity<ApiResponse<Void>> archive(@PathVariable String id) {
-        unidMedidaService.archive(id);
+    @PatchMapping("/{id}/arquivar")
+    public ResponseEntity<ApiResponse<Void>> arquivar(@PathVariable String id) {
+        unidMedidaService.arquivar(id);
         return ResponseEntity.ok(
                 ApiResponse.success("Condição de pagamento arquivada com sucesso")
         );
     }
 
-    @PutMapping("/unarchive")
-    public ResponseEntity<ApiResponse<Void>> unarchive(@PathVariable String id) {
-        unidMedidaService.unarchive(id);
+    @PatchMapping("/{id}/desarquivar")
+    public ResponseEntity<ApiResponse<Void>> desarquivar(@PathVariable String id) {
+        unidMedidaService.desarquivar(id);
         return ResponseEntity.ok(
                 ApiResponse.success("Condição de pagamento desarquivada com sucesso")
         );

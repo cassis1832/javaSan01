@@ -25,7 +25,7 @@ public class SituacaoController implements BaseController<Situacao, Integer, Sit
     private final SituacaoService situacaoService;
 
     @Override
-    public ResponseEntity<ApiResponse<Situacao>> getById(Integer integer) {
+    public ResponseEntity<ApiResponse<Situacao>> findByID(Integer integer) {
         return null;
     }
 
@@ -35,7 +35,7 @@ public class SituacaoController implements BaseController<Situacao, Integer, Sit
     }
 
     @Override
-    public ResponseEntity<ApiResponse<Situacao>> update(Situacao situacao) {
+    public ResponseEntity<ApiResponse<Situacao>> update(Integer id, Situacao situacao) {
         return null;
     }
 
@@ -45,22 +45,22 @@ public class SituacaoController implements BaseController<Situacao, Integer, Sit
     }
 
     @Override
-    public ResponseEntity<ApiResponse<Void>> archive(Integer integer) {
+    public ResponseEntity<ApiResponse<Void>> arquivar(Integer integer) {
         return null;
     }
 
     @Override
-    public ResponseEntity<ApiResponse<Void>> unarchive(Integer integer) {
+    public ResponseEntity<ApiResponse<Void>> desarquivar(Integer integer) {
         return null;
     }
 
     @Override
-    public ResponseEntity<ApiResponse<List<Situacao>>> getList(Map<String, String> filtros) {
+    public ResponseEntity<ApiResponse<List<Situacao>>> findAll(Map<String, String> filtros) {
         return null;
     }
 
     @Override
-    public ResponseEntity<ApiResponse<Page<Situacao>>> getPage(Pageable pageable, Map<String, String> filtros) {
+    public ResponseEntity<ApiResponse<Page<Situacao>>> findPage(Pageable pageable, Map<String, String> filtros) {
         return null;
     }
 }

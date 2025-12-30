@@ -25,8 +25,8 @@ public class EspDocController implements BaseController<EspDoc, String, EspDoc> 
     private final EspDocService espDocService;
 
     @Override
-    @GetMapping
-    public ResponseEntity<ApiResponse<EspDoc>> getById(@PathVariable String id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<EspDoc>> findByID(@PathVariable String id) {
         EspDoc espDoc = espDocService.findById(id);
         return ResponseEntity.ok(
                 ApiResponse.success(espDoc)
@@ -39,7 +39,9 @@ public class EspDocController implements BaseController<EspDoc, String, EspDoc> 
     }
 
     @Override
-    public ResponseEntity<ApiResponse<EspDoc>> update(@RequestBody @Valid EspDoc espDoc) {
+    public ResponseEntity<ApiResponse<EspDoc>> update(
+            @PathVariable String id,
+            @RequestBody @Valid EspDoc espDoc) {
         return null;
     }
 
@@ -49,24 +51,25 @@ public class EspDocController implements BaseController<EspDoc, String, EspDoc> 
     }
 
     @Override
-    public ResponseEntity<ApiResponse<Void>> archive(@PathVariable String id) {
+    public ResponseEntity<ApiResponse<Void>> arquivar(@PathVariable String id) {
         return null;
     }
 
     @Override
-    public ResponseEntity<ApiResponse<Void>> unarchive(@PathVariable String id) {
+    public ResponseEntity<ApiResponse<Void>> desarquivar(@PathVariable String id) {
         return null;
     }
 
     @Override
-    public ResponseEntity<ApiResponse<List<EspDoc>>> getList(@RequestParam(required = false)
-                                                             Map<String, String> filtros) {
+    public ResponseEntity<ApiResponse<List<EspDoc>>> findAll(
+            @RequestParam(required = false) Map<String, String> filtros) {
         return null;
     }
 
     @Override
-    public ResponseEntity<ApiResponse<Page<EspDoc>>> getPage(Pageable pageable,
-                                                             @RequestParam(required = false) Map<String, String> filtros) {
+    public ResponseEntity<ApiResponse<Page<EspDoc>>> findPage(
+            Pageable pageable,
+            @RequestParam(required = false) Map<String, String> filtros) {
         return null;
     }
 }

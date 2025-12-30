@@ -1,10 +1,9 @@
-package com.holis.san01.model;
+package com.holis.san01.dto;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
-import java.time.Instant;
-import java.time.LocalDate;
+import java.util.Date;
 
 @Data
 public class UsuarioDto {
@@ -19,33 +18,27 @@ public class UsuarioDto {
     @Size(max = 100, message = "O email deve ter até 100 caracteres")
     private String email;
 
+    @Size(max = 200, message = "Roles deve ter até 200 caracteres")
+    private String roles; // ADMIN,USER
+
     @NotNull(message = "Data de inicio é obrigatória")
     @FutureOrPresent
-    private LocalDate dtInicio;
+    private Date dtInicio;
 
+    @NotNull(message = "Data de inicio é obrigatória")
     @FutureOrPresent
-    private LocalDate dtTermino;
+    private Date dtTermino;
 
-    @PastOrPresent
-    private Instant dtUltLogin;
-
-    @PastOrPresent
-    private Instant dtAltSenha;
-
-    @PastOrPresent
-    private Instant dtRecup;
-
-    @Size(max = 1, message = "O tipo de meun deve ter 1 caracter")
-    private String tipoMenu;
+    @NotNull(message = "O status é obrigatório")
+    private Integer status;
 
     @NotNull(message = "Filial é obrigatória")
     private Integer codFilial;
 
+    private Date dtCriacao;
+    private String ipUltimaAlteracao;
+
     @Size(max = 20, message = "A situação deve ter até 20 caracteres")
     private String situacao;
 
-    private Instant dtCriacao;
-
-    @NotNull(message = "O status é obrigatório")
-    private int status;
 }

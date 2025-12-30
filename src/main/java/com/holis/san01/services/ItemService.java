@@ -9,6 +9,8 @@ import com.holis.san01.repository.PedItemRepository;
 import com.holis.san01.repository.VwItemRepository;
 import com.holis.san01.utils.SpecificationUtils;
 import jakarta.annotation.Nonnull;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -33,17 +35,19 @@ public class ItemService implements BaseService<Item, String, VwItem> {
     private final ItemRepository itemRepository;
     private final VwItemRepository vwItemRepository;
     private final PedItemRepository pedItemRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public Item findById(@Nonnull String id) {
-        return itemRepository.findById(id)
+        return itemRepository.findByCodItemIgnoreCase(id)
                 .orElseThrow(() -> new NotFoundRequestException("Item não cadastrado"));
     }
 
     @Override
     @Transactional
     public Item create(@Nonnull Item item) {
-        if (itemRepository.existsById(item.getCodItem())) {
+        if (itemRepository.existsByCodItemIgnoreCase(item.getCodItem())) {
             throw new ApiRequestException("Este código de item já existe!");
         }
 
@@ -55,12 +59,13 @@ public class ItemService implements BaseService<Item, String, VwItem> {
     @Override
     @Transactional
     public Item update(@Nonnull final Item item) {
-        Item existing = itemRepository.findById(item.getCodItem())
+        Item existing = itemRepository.findByCodItemIgnoreCase(item.getCodItem())
                 .orElseThrow(() -> new NotFoundRequestException("Item não cadastrado"));
 
         existing.setCodItem(item.getCodItem());
-        existing.setStatus(item.getStatus());
         existing.setCodTipoItem(item.getCodTipoItem());
+        existing.setCodUniMed(item.getCodUniMed());
+        existing.setStatus(item.getStatus());
         existing.setAliquotaIpi(item.getAliquotaIpi());
         existing.setGtin(item.getGtin());
         existing.setCodLocaliz(item.getCodLocaliz());
@@ -93,7 +98,6 @@ public class ItemService implements BaseService<Item, String, VwItem> {
         existing.setResCompra(item.getResCompra());
         existing.setResFabric(item.getResFabric());
         existing.setTempoRessup(item.getTempoRessup());
-        existing.setCodUniMed(item.getCodUniMed());
         existing.setUsuarioObsol(item.getUsuarioObsol());
         existing.setSituacao(item.getSituacao());
         existing.setLibCompra(item.getLibCompra());
@@ -104,15 +108,15 @@ public class ItemService implements BaseService<Item, String, VwItem> {
 
     @Override
     @Transactional
-    public void deleteById(@Nonnull String id) {
+    public void delete(@Nonnull String id) {
         checkDelete(id);
-        itemRepository.deleteById(id);
+        itemRepository.deleteByCodItemIgnoreCase(id);
     }
 
     @Override
-    public List<Item> findList(Map<String, String> filters) {
-        Specification<Item> spec = SpecificationUtils.createSpecification(filters);
-        return itemRepository.findAll(spec);
+    public List<VwItem> findAll(Map<String, String> filters) {
+        Specification<VwItem> spec = SpecificationUtils.createSpecification(filters);
+        return vwItemRepository.findAll(spec);
     }
 
     @Override
@@ -126,17 +130,17 @@ public class ItemService implements BaseService<Item, String, VwItem> {
     }
 
     public void checkDelete(String codItem) {
-        if (!itemRepository.existsById(codItem))
+        if (!itemRepository.existsByCodItemIgnoreCase(codItem))
             throw new NotFoundRequestException("Item não cadastrado");
 
-        if (pedItemRepository.existsByCodItem(codItem))
+        if (pedItemRepository.existsByCodItemIgnoreCase(codItem))
             throw new ApiRequestException("Exclusão inválida, existem pedidos para o item");
     }
 
     @Override
     @Transactional
-    public void archive(@Nonnull String id) {
-        Item item = itemRepository.findById(id)
+    public void arquivar(@Nonnull String id) {
+        Item item = itemRepository.findByCodItemIgnoreCase(id)
                 .orElseThrow(() -> new NotFoundRequestException("Item não cadastrado"));
 
         itemRepository.archive(item.getCodItem(), STATUS_ARQUIVADO);
@@ -144,8 +148,8 @@ public class ItemService implements BaseService<Item, String, VwItem> {
 
     @Override
     @Transactional
-    public void unarchive(@Nonnull String id) {
-        Item item = itemRepository.findById(id)
+    public void desarquivar(@Nonnull String id) {
+        Item item = itemRepository.findByCodItemIgnoreCase(id)
                 .orElseThrow(() -> new NotFoundRequestException("Item não cadastrado"));
 
         itemRepository.archive(item.getCodItem(), STATUS_ATIVO);

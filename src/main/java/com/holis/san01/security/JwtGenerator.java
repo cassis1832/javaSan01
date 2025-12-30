@@ -52,7 +52,7 @@ public class JwtGenerator {
             userRoles = userRoles + authority.getAuthority();
         }
 
-        return new TokenResponse(usuario.getNome(), usuario.getEmail(), userRoles, token);
+        return new TokenResponse(token, token);
     }
 
     public String getEmailFromJWT(String token) {

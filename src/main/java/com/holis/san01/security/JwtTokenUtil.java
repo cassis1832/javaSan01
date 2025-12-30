@@ -17,7 +17,7 @@ public class JwtTokenUtil {
         this.nomeUsuario = JWT.decode(token).getClaim("usr").toString().replaceAll("\"", "");
     }
 
-    // Obter o nome do usuário a partir do Header (que contém o token)
+    // Obter o nome do usuário a partir do Header (que contém o accessToken)
     public String getUsuario(String authHeader) {
         Claim usuario = JWT.decode(authHeader.substring(SecurityConstants.TOKEN_INDEX)).getClaim("usr");
         return usuario.toString().replaceAll("\"", "");
