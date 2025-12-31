@@ -3,9 +3,7 @@ package com.holis.san01.services;
 import com.holis.san01.exceptions.ApiRequestException;
 import com.holis.san01.exceptions.NotFoundRequestException;
 import com.holis.san01.model.Usuario;
-import com.holis.san01.model.VwUsuario;
 import com.holis.san01.repository.UsuarioRepository;
-import com.holis.san01.repository.VwUsuarioRepository;
 import com.holis.san01.utils.SpecificationUtils;
 import jakarta.annotation.Nonnull;
 import jakarta.transaction.Transactional;
@@ -27,10 +25,9 @@ import static com.holis.san01.utils.Constantes.STATUS_ATIVO;
  */
 @Service
 @RequiredArgsConstructor
-public class UsuarioService implements BaseService<Usuario, Integer, VwUsuario> {
+public class UsuarioService implements BaseService<Usuario, Integer, Usuario> {
 
     private final UsuarioRepository usuarioRepository;
-    private final VwUsuarioRepository vwUsuarioRepository;
 
     @Override
     public Usuario findById(@Nonnull Integer id) {
@@ -78,19 +75,19 @@ public class UsuarioService implements BaseService<Usuario, Integer, VwUsuario> 
     }
 
     @Override
-    public List<VwUsuario> findAll(Map<String, String> filters) {
-        Specification<VwUsuario> spec = SpecificationUtils.createSpecification(filters);
-        return vwUsuarioRepository.findAll(spec);
+    public List<Usuario> findAll(Map<String, String> filters) {
+        Specification<Usuario> spec = SpecificationUtils.createSpecification(filters);
+        return usuarioRepository.findAll(spec);
     }
 
     @Override
-    public Page<VwUsuario> findPage(Pageable pageable, Map<String, String> filtros) {
-        Specification<VwUsuario> spec = SpecificationUtils.createSpecification(
+    public Page<Usuario> findPage(Pageable pageable, Map<String, String> filtros) {
+        Specification<Usuario> spec = SpecificationUtils.createSpecification(
                 filtros,                            // Map com parâmetros da requisição
                 "email", "nome"    // campos que serão usados no OR do filterText
         );
 
-        return vwUsuarioRepository.findAll(spec, pageable);
+        return usuarioRepository.findAll(spec, pageable);
     }
 
     @Transactional

@@ -4,7 +4,6 @@ import com.holis.san01.dto.ApiResponse;
 import com.holis.san01.dto.UsuarioDto;
 import com.holis.san01.mapper.UsuarioMapper;
 import com.holis.san01.model.Usuario;
-import com.holis.san01.model.VwUsuario;
 import com.holis.san01.services.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +19,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/users", produces = MediaType.APPLICATION_JSON_VALUE)
-public class UsuarioController implements BaseController<UsuarioDto, Integer, VwUsuario> {
+public class UsuarioController implements BaseController<UsuarioDto, Integer, UsuarioDto> {
 
     private final UsuarioService usuarioService;
     private final UsuarioMapper usuarioMapper;
@@ -67,22 +66,24 @@ public class UsuarioController implements BaseController<UsuarioDto, Integer, Vw
 
     @Override
     @GetMapping("/list")
-    public ResponseEntity<ApiResponse<List<VwUsuario>>> findAll(
+    public ResponseEntity<ApiResponse<List<UsuarioDto>>> findAll(
             @RequestParam(required = false) Map<String, String> filtros) {
-        List<VwUsuario> vwUsuarios = usuarioService.findAll(filtros);
+        List<Usuario> usuarios = usuarioService.findAll(filtros);
+        List<UsuarioDto> usuarioDtos = usuarioMapper.toDtoList(usuarios);
         return ResponseEntity.ok(
-                ApiResponse.success(vwUsuarios, "Lista de usuários")
+                ApiResponse.success(usuarioDtos, "Lista de usuários")
         );
     }
 
     @Override
     @GetMapping("/page")
-    public ResponseEntity<ApiResponse<Page<VwUsuario>>> findPage(
+    public ResponseEntity<ApiResponse<Page<UsuarioDto>>> findPage(
             Pageable pageable,
             @RequestParam(required = false) Map<String, String> filtros) {
-        Page<VwUsuario> pagina = usuarioService.findPage(pageable, filtros);
+        Page<Usuario> usuarioPage = usuarioService.findPage(pageable, filtros);
+        Page<UsuarioDto> usuarioDtos = usuarioMapper.toDtoPage(usuarioPage);
         return ResponseEntity.ok(
-                ApiResponse.success(pagina, "Pagina de Usuarios")
+                ApiResponse.success(usuarioDtos, "Pagina de Usuarios")
         );
     }
 
